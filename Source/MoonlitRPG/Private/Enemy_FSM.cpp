@@ -75,6 +75,20 @@ void UEnemy_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 		DieState();
 		break;
 	}
+
+	if (bUpdateHP)
+	{
+		ratioHP += DeltaTime;
+		
+		if (ratioHP >= 1)
+		{
+			ratioHP = 1;
+			bUpdateHP = false;
+		}
+
+		float lerpHP = FMath::Lerp(prevHP, currHP, ratioHP);
+		me->enemyHPUI->UpdateHP(lerpHP, maxHP);
+	}
 }
 
 void UEnemy_FSM::IdleState()
@@ -161,7 +175,10 @@ void UEnemy_FSM::AttackDelayState()
 
 void UEnemy_FSM::DamageState()
 {
-
+	if (DelayComplete(1.0))
+	{
+		ChangeState(EEnemyState::Idle);
+	}
 }
 
 void UEnemy_FSM::DieState()
@@ -171,12 +188,15 @@ void UEnemy_FSM::DieState()
 
 void UEnemy_FSM::ReceiveDamage(float damage)
 {
+	prevHP = currHP;
+	bUpdateHP = true;
+	ratioHP = 0;
+
 	currHP -= damage;
 
 	if (currHP > 0)
 	{
 		ChangeState(EEnemyState::Damage);
-		me->enemyHPUI->UpdateHP(currHP, maxHP);
 	}
 	else
 	{

@@ -49,20 +49,21 @@ public:
 
 	float currentTime = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float traceRange = 700.0f;		// 인지 범위
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float attackRange = 100.0f;		// 공격 범위
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float moveRange = 2000.0f;		// 추격 범위
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
 	float maxHP = 10;
 
 	float currHP;
 	float prevHP;
+	float ratioHP;
 
 	bool bUpdateHP = false;
 
