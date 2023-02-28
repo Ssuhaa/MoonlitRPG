@@ -4,33 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InventoryComponent.generated.h"
+#include "AttackComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MOONLITRPG_API UInventoryComponent : public UActorComponent
+class MOONLITRPG_API UAttackComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:	
 	// Sets default values for this component's properties
-	UInventoryComponent();
+	UAttackComponent();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	TArray<class UInputAction*> inputarray;
 
+	void CommonAttack();
+	void intensiveAttack();
+	void SpecialAttack();
 
-	TSubclassOf<class UInventoryWG> invenFactory;
-	class UInventoryWG* inventory;
-
-	TArray<class UInputAction*> inputArray;
-
-	class ASH_Player* Player;
 
 public:	
-	void InventoryOpen();
-
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
+		
 };
