@@ -50,6 +50,4 @@ public:
 	class UPlayerMainWG* MainHUD;
 
 	bool isPlayerMove();
-	UFUNCTION()
-	void onClickedBackPack();
 };

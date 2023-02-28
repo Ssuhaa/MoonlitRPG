@@ -19,8 +19,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UProgressBar* StaminaBar;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* Button_backpack;
 
 	void VisibleStaminaBar(bool isUseStamina);
 

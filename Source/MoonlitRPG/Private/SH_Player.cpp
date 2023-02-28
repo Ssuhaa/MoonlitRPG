@@ -55,7 +55,6 @@ void ASH_Player::BeginPlay()
 	playerCon->PlayerCameraManager->ViewPitchMin = -10.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 50.0f;
 
-	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -83,9 +82,4 @@ bool ASH_Player::isPlayerMove()
 		return true;
 	}
 	return false;
-}
-
-void ASH_Player::onClickedBackPack()
-{
-	InvenComp->InventoryOpen();
 }

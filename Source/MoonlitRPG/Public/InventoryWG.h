@@ -21,4 +21,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Close;
 	class ASH_Player* Player;
+
+public:
+	void AddWidget();
+	UFUNCTION()
+	void RemoveWidget();
 };
