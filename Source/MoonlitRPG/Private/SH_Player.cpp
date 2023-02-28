@@ -5,8 +5,12 @@
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
 #include "MoveComponent.h"
 #include <Camera/CameraComponent.h>
+#include "InventoryComponent.h"
+#include "AttackComponent.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "PlayerMainWG.h"
+#include "SH_PlayerAnim.h"
 
 ASH_Player::ASH_Player()
 {
@@ -22,16 +26,36 @@ ASH_Player::ASH_Player()
 	MoveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComp"));
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = true;
+
+	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
+	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
+
+	ConstructorHelpers::FClassFinder<UPlayerMainWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
+	if (tempWG.Succeeded())
+	{
+		MainWGFactory = tempWG.Class; 
+	}
+	ConstructorHelpers::FClassFinder<UAnimInstance> tempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrint/ABP_Player.ABP_Player_C'"));
+	if (tempAnim.Succeeded())
+	{
+		GetMesh()->SetAnimClass(tempAnim.Class);
+		
+	}
 	
 }
 
 void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerController* playerCon = GetWorld()->GetFirstPlayerController();
+	MainHUD = CreateWidget<UPlayerMainWG>(GetWorld(), MainWGFactory);
+	MainHUD->AddToViewport();
+	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
 
+	APlayerController* playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -10.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 50.0f;
+
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -46,5 +70,22 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	if (EnhancedInputComponent != nullptr)
 	{
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
+		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
+		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
 	}
+}
+
+
+bool ASH_Player::isPlayerMove()
+{
+	if (playerAnim->dirH != 0 || playerAnim->dirV != 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+void ASH_Player::onClickedBackPack()
+{
+	InvenComp->InventoryOpen();
 }

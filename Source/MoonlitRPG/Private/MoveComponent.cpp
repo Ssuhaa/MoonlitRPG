@@ -7,6 +7,8 @@
 #include "SH_Player.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
+#include <GameFramework/CharacterMovementComponent.h>
+#include "PlayerMainWG.h"
 
 // Sets default values for this component's properties
 UMoveComponent::UMoveComponent()
@@ -40,7 +42,11 @@ UMoveComponent::UMoveComponent()
 	{
 		inputArray.Add(tempAction3.Object);//3번 Space
 	}
-
+	ConstructorHelpers::FObjectFinder<UInputAction> tempAction4(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Key_Shift.Key_Shift'"));
+	if (tempAction4.Succeeded())
+	{
+		inputArray.Add(tempAction4.Object);//4번 Shift
+	}
 }
 
 
@@ -51,6 +57,7 @@ void UMoveComponent::BeginPlay()
 
 	APlayerController* playercontroller = GetWorld()->GetFirstPlayerController();
 	Player = Cast<ASH_Player>(GetOwner());
+	Movement = Player->GetCharacterMovement();
 	UEnhancedInputLocalPlayerSubsystem* subSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(playercontroller->GetLocalPlayer());
 
 	subSystem->AddMappingContext(IMC, 0);
@@ -67,14 +74,22 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Player->AddMovementInput(dir.GetSafeNormal());
 	dir = FVector::ZeroVector;
 
+	StaminaUpdate();
+
 }
 
 void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent)
 {
-	EnhancedInputComponent->BindAction(inputArray[0],ETriggerEvent::Triggered, this, &UMoveComponent::Horizontal); // 0번 AD
-	EnhancedInputComponent->BindAction(inputArray[1],ETriggerEvent::Triggered,  this, &UMoveComponent::Vertical); // 1번 WS
-	EnhancedInputComponent->BindAction(inputArray[2],ETriggerEvent::Triggered,  this, &UMoveComponent::Look); // 2번 마우스XY
-	EnhancedInputComponent->BindAction(inputArray[3],ETriggerEvent::Triggered, this, &UMoveComponent::Jump); // 3번 Space
+	if (inputArray.IsValidIndex(0))
+	{
+		EnhancedInputComponent->BindAction(inputArray[0],ETriggerEvent::Triggered, this, &UMoveComponent::Horizontal); // 0번 AD
+		EnhancedInputComponent->BindAction(inputArray[1],ETriggerEvent::Triggered,  this, &UMoveComponent::Vertical); // 1번 WS
+		EnhancedInputComponent->BindAction(inputArray[2],ETriggerEvent::Triggered,  this, &UMoveComponent::Look); // 2번 마우스XY
+		EnhancedInputComponent->BindAction(inputArray[3],ETriggerEvent::Triggered, this, &UMoveComponent::Jump); // 3번 Space
+		EnhancedInputComponent->BindAction(inputArray[4],ETriggerEvent::Triggered, this, &UMoveComponent::Run); //4번 Shift
+		EnhancedInputComponent->BindAction(inputArray[4],ETriggerEvent::Completed, this, &UMoveComponent::Walk);
+	}
+
 }
 
 
@@ -94,13 +109,62 @@ void UMoveComponent::Look(const FInputActionValue& value)
 {
 	FVector2D MouseAxis = value.Get<FVector2D>();
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), MouseAxis.Y);
-
 	Player->AddControllerYawInput(MouseAxis.X);
-	Player->AddControllerPitchInput(MouseAxis.Y);
+	Player->AddControllerPitchInput(-MouseAxis.Y);
 }
 
 void UMoveComponent::Jump()
 {
 	Player->Jump();
+}
+
+void UMoveComponent::Walk()
+{
+	isStaminaUse = false;
+	WalkToRunRatio = 0;
+	Movement->MaxWalkSpeed = WalkSpeed;
+}
+
+void UMoveComponent::Run()
+{
+	isStaminaUse = true;
+	if (Stamina > 1)
+	{
+		WalkToRunRatio += GetWorld()->GetDeltaSeconds();
+		WalkToRunRatio =  FMath::Clamp(WalkToRunRatio, 0.0f, 1.0f);
+		Movement->MaxWalkSpeed = FMath::Lerp(WalkSpeed, RunSpeed, WalkToRunRatio);
+	}
+	else
+	{
+		WalkToRunRatio -= GetWorld()->GetDeltaSeconds();
+		WalkToRunRatio = FMath::Clamp(WalkToRunRatio, 0.0f, 1.0f);
+		Movement->MaxWalkSpeed = FMath::Lerp(WalkSpeed, RunSpeed, WalkToRunRatio);
+	}
+}
+
+void UMoveComponent::StaminaUpdate()
+{
+	if (isStaminaUse)
+	{
+		if (Player->isPlayerMove())
+		{
+			Stamina -= decreaseStamina;
+			Stamina = FMath::Clamp(Stamina, minStamina, maxStamina);
+		}
+		else
+		{
+			Stamina += decreaseStamina;
+			Stamina = FMath::Clamp(Stamina, minStamina, maxStamina);
+		}
+	}
+	else
+	{
+		Stamina += decreaseStamina;
+		Stamina = FMath::Clamp(Stamina, minStamina, maxStamina);
+	}
+
+	if (Player->MainHUD != nullptr)
+	{
+		Player->MainHUD->UpdateStamina(Stamina, maxStamina);
+	}
 }

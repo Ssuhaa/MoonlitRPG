@@ -6,6 +6,13 @@
 #include "CharacterBase.h"
 #include "SH_Player.generated.h"
 
+enum EPlayerState : uint8
+{
+	Idle,
+	Walk,
+	Run,
+	Attack,
+};
 /**
  * 
  */
@@ -18,20 +25,31 @@ class MOONLITRPG_API ASH_Player : public ACharacterBase
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MoveComponent)
-	class UMoveComponent* MoveComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UCameraComponent* CamComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
+	class UMoveComponent* MoveComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UInventoryComponent* InvenComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UAttackComponent* AttackComp;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class USH_PlayerAnim* playerAnim;
 
-
+	TSubclassOf<class UPlayerMainWG> MainWGFactory;
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	EPlayerState ChracterState = Idle;
+	class UPlayerMainWG* MainHUD;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	bool isPlayerMove();
+	UFUNCTION()
+	void onClickedBackPack();
 };
