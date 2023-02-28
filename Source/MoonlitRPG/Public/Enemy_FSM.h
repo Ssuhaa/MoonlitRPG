@@ -62,6 +62,9 @@ public:
 	float maxHP = 10;
 
 	float currHP;
+	float prevHP;
+
+	bool bUpdateHP = false;
 
 	FVector originPos;		// 최초 위치
 	FVector randPos;		// 랜덤 위치
