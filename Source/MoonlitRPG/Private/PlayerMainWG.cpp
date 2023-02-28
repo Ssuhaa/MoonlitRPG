@@ -13,11 +13,7 @@
 void UPlayerMainWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-	if (Player != nullptr)
-	{
-		Button_backpack->OnClicked.AddDynamic(Player, & ASH_Player::onClickedBackPack);
-	}
+
 
 }
 void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -59,13 +59,10 @@ void UInventoryComponent::InventoryOpen()
 {
 	if (!inventory->IsInViewport())
 	{
-		inventory->AddToViewport();
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
-		
+		inventory->AddWidget();
 	}
 	else
 	{
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
-		inventory->RemoveFromParent();
+		inventory->RemoveWidget();
 	}
 }

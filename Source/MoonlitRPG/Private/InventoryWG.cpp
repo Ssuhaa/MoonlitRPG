@@ -9,15 +9,26 @@
 void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-	if (Player != nullptr)
-	{
-		Button_Close->OnClicked.AddDynamic(Player, &ASH_Player::onClickedBackPack);
-	}
+
+	Button_Close->OnClicked.AddDynamic(this, &UInventoryWG::RemoveWidget);
 }
 
 void UInventoryWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+}
+
+void UInventoryWG::RemoveWidget()
+{
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	RemoveFromParent();
+}
+
+void UInventoryWG::AddWidget()
+{
+	AddToViewport();
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
