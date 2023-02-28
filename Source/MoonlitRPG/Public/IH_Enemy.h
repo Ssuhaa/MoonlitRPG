@@ -26,4 +26,10 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UEnemy_FSM* FSM;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* compEnemyHP;
+ 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UIH_EnemyHPUI* enemyHPUI;
 };

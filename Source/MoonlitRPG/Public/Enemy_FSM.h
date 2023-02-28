@@ -40,18 +40,45 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FSM")
 	EEnemyState currState = EEnemyState::Idle;
 
+	class ASH_Player* target;
 	class AIH_Enemy* me;
+	class UIH_EnemyAnim* anim;
+
+	UPROPERTY(EditAnywhere)
+	class AAIController* ai;
 
 	float currentTime = 0;
 
-public:
-	void IdleState(); // 대기 상태
-	void MoveState(); // 이동 상태
-	void ChaseState(); // 쫓는 상태
-	void AttackState(); // 공격 상태
-	void DamageState(); // 피격 상태
-	void DieState(); // 죽음 상태
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float traceRange = 700.0f;		// 인지 범위
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float attackRange = 100.0f;		// 공격 범위
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float moveRange = 2000.0f;		// 추격 범위
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxHP = 10;
+
+	float currHP;
+
+	FVector originPos;		// 최초 위치
+	FVector randPos;		// 랜덤 위치
+
+public:
+	void IdleState();	// 대기 상태
+	void MoveState();	// 이동 상태
+	void ChaseState();	// 쫓는 상태
+	void ReturnState();		// 복귀 상태
+	void AttackState();		// 공격 상태
+	void AttackDelayState();	// 공격대기 상태
+	void DamageState();		// 피격 상태
+	void DieState();	// 죽음 상태
+
+	void ReceiveDamage(float damage);
 	bool DelayComplete(float delayTime);
 	void ChangeState(EEnemyState state);
+	bool IsTargetTrace();
+	void MoveToPos(FVector pos);
 };

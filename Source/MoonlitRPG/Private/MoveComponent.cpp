@@ -94,10 +94,8 @@ void UMoveComponent::Look(const FInputActionValue& value)
 {
 	FVector2D MouseAxis = value.Get<FVector2D>();
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), MouseAxis.Y);
-
 	Player->AddControllerYawInput(MouseAxis.X);
-	Player->AddControllerPitchInput(MouseAxis.Y);
+	Player->AddControllerPitchInput(-MouseAxis.Y);
 }
 
 void UMoveComponent::Jump()
