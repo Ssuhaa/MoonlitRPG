@@ -26,6 +26,7 @@ protected:
 	void intensiveAttack();
 	void SpecialAttack();
 
+	class AIH_Enemy* Target;
 
 public:	
 	// Called every frame

@@ -48,7 +48,7 @@ void AIH_Enemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	enemyHPUI = Cast<UIH_EnemyHPUI>(compEnemyHP->GetWidgetClass());
+	enemyHPUI = Cast<UIH_EnemyHPUI>(compEnemyHP->GetUserWidgetObject());
 }
 
 void AIH_Enemy::Tick(float DeltaTime)

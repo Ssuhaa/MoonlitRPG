@@ -4,6 +4,9 @@
 #include "AttackComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
+#include <Kismet/GameplayStatics.h>
+#include "Enemy_FSM.h"
+#include "IH_Enemy.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -33,7 +36,7 @@ UAttackComponent::UAttackComponent()
 void UAttackComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Target = Cast<AIH_Enemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_Enemy::StaticClass()));
 }
 
 
@@ -56,6 +59,10 @@ void UAttackComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 void UAttackComponent::CommonAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CommonAttack"));
+	if (Target != nullptr)
+	{
+		Target->FSM->ReceiveDamage(1);
+	}
 }
 
 void UAttackComponent::intensiveAttack()
