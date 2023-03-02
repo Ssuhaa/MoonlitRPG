@@ -13,7 +13,7 @@ enum class EItemType : uint8
 	Consum,
 	Outfit,
 	Quest,
-	food,
+	Food,
 };
 
 USTRUCT(BlueprintType)
@@ -24,7 +24,7 @@ struct FIteminfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ItemName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString itemDiscription = "None";
+	FString itemDescription = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UTexture2D* itemImage = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -59,7 +59,7 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
-	FIteminfo ItemInfomation;
+	FIteminfo ItemInformation;
 
 	void GetItem();
 };

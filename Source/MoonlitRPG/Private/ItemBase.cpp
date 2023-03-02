@@ -37,7 +37,8 @@ void AItemBase::GetItem()
 {
 	if(Player != nullptr)
 	{
-		Player->InvenComp->CheckSameItem(ItemInfomation);
+		Player->InvenComp->CheckSameItem(ItemInformation);
+		Destroy();
 	}
 }
 
