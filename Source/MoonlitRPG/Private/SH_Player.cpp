@@ -41,6 +41,11 @@ ASH_Player::ASH_Player()
 		GetMesh()->SetAnimClass(tempAnim.Class);
 		
 	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempAction(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Key_F.Key_F'"));
+	if (tempAction.Succeeded())
+	{
+		fkey = tempAction.Object; //fŰ
+	}
 	
 }
 
@@ -68,9 +73,31 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent != nullptr)
 	{
+		EnhancedInputComponent->BindAction(fkey, ETriggerEvent::Triggered, this, &ASH_Player::interactionObject);
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
+	}
+}
+
+
+void ASH_Player::interactionObject()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FKey"));
+	FHitResult hitinfo;
+	FCollisionShape interColli = FCollisionShape::MakeSphere(150.0f);
+	FCollisionQueryParams param;
+	param.AddIgnoredActor(this);
+	bool bhit = GetWorld()->SweepSingleByChannel(hitinfo, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_Visibility, interColli, param);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), interColli.GetSphereRadius(), 100, FColor::Red, false, 1,0, 0.5);
+	if (bhit)
+	{
+		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
+		if (curritem != nullptr)
+		{
+			curritem->GetItem();
+		}
+		
 	}
 }
 

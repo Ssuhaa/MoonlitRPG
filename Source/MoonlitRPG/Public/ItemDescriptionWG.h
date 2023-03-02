@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryComponent.h"
-#include "ItemDiscriptionWG.generated.h"
+#include "ItemDescriptionWG.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOONLITRPG_API UItemDiscriptionWG : public UUserWidget
+class MOONLITRPG_API UItemDescriptionWG : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -22,9 +22,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* ItemName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* itemDiscription;
+	class UTextBlock* Description;
 
 public:
-	void SetDiscription(FInvenItem iteminfo);
+	
+	FInvenItem iteminfo;
+	void SetDescription();
 
 };

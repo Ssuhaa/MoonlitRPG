@@ -15,6 +15,7 @@ class MOONLITRPG_API UInventorySlotWG : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UInventorySlotWG(const FObjectInitializer& ObjectInitializer);
 protected:
 	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -23,10 +24,14 @@ protected:
 	class UTextBlock* ItemAmont;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* ItemButton;
-	void PopItemDiscription();
+	UFUNCTION()
+	void PopItemDescription();
+	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
+	class UItemDescriptionWG* Description;
 
 public:
 	class UInventoryWG* invenWG;
-	void SetItemSlot(FInvenItem iteminfo);
+	FInvenItem iteminfo;
+	void SetItemSlot();
 
 };

@@ -43,6 +43,10 @@ protected:
 	class USH_PlayerAnim* playerAnim;
 
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
+
+	class UInputAction* fkey;
+	void interactionObject();
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;

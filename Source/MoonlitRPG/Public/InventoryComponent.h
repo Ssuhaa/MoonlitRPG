@@ -34,9 +34,6 @@ protected:
 
 
 	TSubclassOf<class UInventoryWG> invenFactory;
-	TSubclassOf<class UInventorySlotWG> SlotFactory;
-	TSubclassOf<class UItemDiscriptionWG> DiscriptionFactory;
-
 	class UInventoryWG* inventory;
 
 	TArray<class UInputAction*> inputArray;
