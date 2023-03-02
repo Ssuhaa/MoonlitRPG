@@ -31,8 +31,22 @@ public:
 	class USceneComponent* compSpawnPos;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USphereComponent* compSphere;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* compInteractWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
+
+	class ASH_Player* player;
 
 public:
 	void DropItem();
+
+	UFUNCTION()
+	void FloatInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void RemoveInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

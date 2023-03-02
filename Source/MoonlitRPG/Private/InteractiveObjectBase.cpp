@@ -5,6 +5,9 @@
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include "ItemBase.h"
+#include <UMG/Public/Components/WidgetComponent.h>
+#include "SH_Player.h"
+#include "IH_InteractionUI.h"
 
 // Sets default values
 AInteractiveObjectBase::AInteractiveObjectBase()
@@ -18,13 +21,31 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Position Component"));
 	compSpawnPos->SetupAttachment(RootComponent);
 	compSpawnPos->SetRelativeLocation(FVector(0, 0, 30));
+
+	compSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
+	compSphere->SetupAttachment(RootComponent);
+	compSphere->SetSphereRadius(300.0);
+
+	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
+	compInteractWidget->SetupAttachment(RootComponent);
+	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
+	compInteractWidget->SetVisibility(false);
+
+	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractionUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
+	if (tempinteractionUI.Succeeded())
+	{
+		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
+		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	}
 }
 
 // Called when the game starts or when spawned
 void AInteractiveObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	compSphere->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveObjectBase::FloatInteract);
+	compSphere->OnComponentEndOverlap.AddDynamic(this, &AInteractiveObjectBase::RemoveInteract);
 }
 
 // Called every frame
@@ -49,6 +70,30 @@ void AInteractiveObjectBase::DropItem()
 		{
 			int32 randNum = FMath::RandRange(0, spawnItems.Num()-1);
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+		}
+	}
+}
+
+void AInteractiveObjectBase::FloatInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor != this)
+	{
+		player = Cast<ASH_Player>(OtherActor);
+		if (OtherActor == player)
+		{
+			compInteractWidget->SetVisibility(true);
+		}
+	}
+}
+
+void AInteractiveObjectBase::RemoveInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor != this)
+	{
+		player = Cast<ASH_Player>(OtherActor);
+		if (OtherActor == player)
+		{
+			compInteractWidget->SetVisibility(false);
 		}
 	}
 }

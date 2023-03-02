@@ -33,7 +33,7 @@ AIH_Enemy::AIH_Enemy()
 	compEnemyHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("HP Widget Component"));
 	compEnemyHP->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FClassFinder<UIH_EnemyHPUI>tempEnemyHP(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrint/WG_EnemyHP.WG_EnemyHP_C'"));
+	ConstructorHelpers::FClassFinder<UIH_EnemyHPUI>tempEnemyHP(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_EnemyHP.WG_EnemyHP_C'"));
 	if(tempEnemyHP.Succeeded())
 	{
 		compEnemyHP->SetWidgetClass(tempEnemyHP.Class);
