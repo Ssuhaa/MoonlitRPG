@@ -7,6 +7,7 @@
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "IH_EnemyHPUI.h"
 #include <Components/CapsuleComponent.h>
+#include "ItemBase.h"
 
 AIH_Enemy::AIH_Enemy()
 {
@@ -42,7 +43,7 @@ AIH_Enemy::AIH_Enemy()
 
 	itemSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Item Spawn Position"));
 	itemSpawnPos->SetupAttachment(RootComponent);
-	itemSpawnPos->SetRelativeLocation(FVector(0, 0, 50));
+	itemSpawnPos->SetRelativeLocation(FVector(0, 0, 40));
 	
 	bUseControllerRotationYaw = false;
  	GetCharacterMovement()->bUseControllerDesiredRotation = true;

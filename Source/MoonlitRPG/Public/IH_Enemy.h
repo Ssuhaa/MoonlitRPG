@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* itemSpawnPos;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf <class AItemBase>> spawnItems;
+
 public:
 	void SetActive(bool bActive);
 };

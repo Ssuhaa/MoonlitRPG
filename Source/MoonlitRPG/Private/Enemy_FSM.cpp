@@ -11,6 +11,8 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "IH_EnemyAnim.h"
 #include "IH_EnemyHPUI.h"
+#include "ItemBase.h"
+#include "IH_EnemyManager.h"
 
 
 // Sets default values for this component's properties
@@ -193,7 +195,25 @@ void UEnemy_FSM::DieState()
 	{
 		if (DelayComplete(2.0))
 		{
-			me->Destroy();
+			if (me->spawnItems.IsValidIndex(0))		// spawnItem 배열의 첫번째 요소가 있을 때
+			{
+				int32 randAmount = FMath::RandRange(1, 3);
+				for (int32 i = 1; i <= randAmount; i++)
+				{
+					int32 itemNum = FMath::RandRange(0, me->spawnItems.Num()-1);
+					GetWorld()->SpawnActor<AItemBase>(me->spawnItems[itemNum], me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
+				}
+			}
+
+			AIH_EnemyManager* manager = Cast<AIH_EnemyManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_EnemyManager::StaticClass()));
+			manager->enemyArr.Add(me);
+
+			me->SetActive(false);
+
+			currHP = maxHP;
+			ChangeState(EEnemyState::Idle);
+			me->StopAnimMontage(enemyMontage);
+			bDiedone = false;
 		}
 	}
 }
@@ -281,11 +301,28 @@ bool UEnemy_FSM::IsTargetTrace()
 	float dot = FVector::DotProduct(forwardVector, targetVector.GetSafeNormal());		// ForwardVector는 값이 1이기 때문에 Normalize를 해주지 않아도 됨.
 	float degree = UKismetMathLibrary::DegAcos(dot);
 
-	if (degree < 90 && targetVector.Length() < traceRange)
+	if (degree < 70 && targetVector.Length() < traceRange)
 	{
-		return true;
+		FHitResult hitinfo;
+		FCollisionShape myCollision = FCollisionShape::MakeSphere(25.0f);
+		FCollisionQueryParams param;
+		param.AddIgnoredActor(me);
+
+		bool bHit = GetWorld()->SweepSingleByChannel(hitinfo, me->GetActorLocation(), me->GetActorLocation()+targetVector, FQuat::Identity, ECC_Visibility, myCollision, param);
+
+// 		bool bHit = GetWorld()->LineTraceSingleByChannel(hitinfo, me->GetActorLocation(), target->GetActorLocation(), ECC_Visibility, param);
+// 		DrawDebugLine(GetWorld(), me->GetActorLocation(), target->GetActorLocation(), FColor::Cyan, false, 0.5f, 2.0f);
+
+		if (bHit)
+		{
+			if (hitinfo.GetActor()->GetName().Contains(TEXT("Player")))
+			{
+				return true;
+			}
+		}
 	}
-	else return false;
+
+	return false;
 }
 
 void UEnemy_FSM::MoveToPos(FVector pos)

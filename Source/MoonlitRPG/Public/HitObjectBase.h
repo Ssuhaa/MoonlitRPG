@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractiveObjectBase.generated.h"
+#include "HitObjectBase.generated.h"
 
 UCLASS()
-class MOONLITRPG_API AInteractiveObjectBase : public AActor
+class MOONLITRPG_API AHitObjectBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AInteractiveObjectBase();
+	AHitObjectBase();
 
 protected:
 	// Called when the game starts or when spawned
