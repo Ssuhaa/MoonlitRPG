@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "InventoryComponent.h"
 #include "InventoryWG.generated.h"
 
 /**
@@ -13,17 +14,31 @@ UCLASS()
 class MOONLITRPG_API UInventoryWG : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	class ASH_Player* Player;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Close;
-	class ASH_Player* Player;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UScrollBox* ItemScrollBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* Button_Consum;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* Button_Outfit;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UOverlay* Overlay_ItemInfo;
+	void Setinventory(TArray<FInvenItem> invenArr);
+
 
 public:
-	void AddWidget();
+	void AddWidget(TArray<FInvenItem> invenArr);
 	UFUNCTION()
 	void RemoveWidget();
-};
+
+	TSubclassOf<class UInventorySlotWG> SlotFactory;
+
+	void ItemSlotClicked();
+ };

@@ -6,10 +6,21 @@
 #include "GameFramework/Actor.h"
 #include "ItemBase.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	Consum,
+	Outfit,
+	Quest,
+	food,
+};
+
 USTRUCT(BlueprintType)
 struct FIteminfo
 {
 	GENERATED_BODY()
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ItemName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -17,9 +28,15 @@ struct FIteminfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UTexture2D* itemImage = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 ItemAmont = 0;
-
+	EItemType itemType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool Stackalbe = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 SellPrice = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 PurchasePrice = 0;
 };
+
 
 UCLASS()
 class MOONLITRPG_API AItemBase : public AActor
@@ -38,9 +55,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UStaticMeshComponent* Mesh;
 
+	class ASH_Player* Player;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
 	FIteminfo ItemInfomation;
 
+	void GetItem();
 };
