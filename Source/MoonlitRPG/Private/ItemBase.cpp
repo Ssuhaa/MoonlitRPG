@@ -2,6 +2,9 @@
 
 
 #include "ItemBase.h"
+#include <Kismet/GameplayStatics.h>
+#include "SH_Player.h"
+#include "InventoryComponent.h"
 
 
 // Sets default values
@@ -19,7 +22,8 @@ AItemBase::AItemBase()
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+
 }
 
 // Called every frame
@@ -27,5 +31,13 @@ void AItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AItemBase::GetItem()
+{
+	if(Player != nullptr)
+	{
+		Player->InvenComp->CheckSameItem(ItemInfomation);
+	}
 }
 

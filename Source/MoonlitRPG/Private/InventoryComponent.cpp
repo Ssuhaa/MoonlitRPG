@@ -8,6 +8,8 @@
 #include "InventoryWG.h"
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
+#include "InventorySlotWG.h"
+#include "ItemDiscriptionWG.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -25,6 +27,16 @@ UInventoryComponent::UInventoryComponent()
 	{
 		invenFactory = tempWG.Class; 
 	}
+	ConstructorHelpers::FClassFinder <UInventorySlotWG> tempslot(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenSlot.BP_InvenSlot_C'"));
+	if (tempslot.Succeeded())
+	{
+		SlotFactory = tempslot.Class;
+	}
+	ConstructorHelpers::FClassFinder <UItemDiscriptionWG> tempDisrip(TEXT("//Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_ItemDiscription.BP_ItemDiscription_C'"));
+	if (tempDisrip.Succeeded())
+	{
+		DiscriptionFactory = tempDisrip.Class;
+	}
 
 }
 
@@ -35,6 +47,7 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 	Player = Cast<ASH_Player>(GetOwner());
 	inventory = CreateWidget<UInventoryWG>(GetWorld(), invenFactory);
+	inventory->SlotFactory = SlotFactory;
 }
 
 
@@ -54,14 +67,42 @@ void UInventoryComponent::SetupPlayerInputComponent(class UEnhancedInputComponen
 	}
 }
 
+
 void UInventoryComponent::InventoryOpen()
 {
 	if (!inventory->IsInViewport())
 	{
-		inventory->AddWidget();
+		inventory->AddWidget(invenItemArr);
 	}
 	else
 	{
 		inventory->RemoveWidget();
 	}
+}
+
+void UInventoryComponent::CheckSameItem(FIteminfo iteminfo)
+{
+	bool bisSame = false;
+	for (int32 i = 0; i < invenItemArr.Num(); i++)
+	{
+		if (invenItemArr[i].iteminfomation.ItemName == iteminfo.ItemName)
+		{
+			invenItemArr[i].itemAmont += 1;
+			bisSame = true;
+			break;
+		}
+	}
+
+	if (bisSame == false)
+	{
+		AddInven(iteminfo);
+	}
+}
+
+void UInventoryComponent::AddInven(FIteminfo Getiteminfo)
+{
+	FInvenItem currGetItem;
+	currGetItem.iteminfomation = Getiteminfo;
+	currGetItem.itemAmont = 1;
+	invenItemArr.Add(currGetItem);
 }

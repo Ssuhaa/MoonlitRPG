@@ -37,8 +37,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UMoveComponent* MoveComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
-	class UInventoryComponent* InvenComp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UAttackComponent* AttackComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
@@ -46,6 +44,9 @@ protected:
 
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UInventoryComponent* InvenComp;
+
 	EPlayerState ChracterState = Idle;
 	class UPlayerMainWG* MainHUD;
 
