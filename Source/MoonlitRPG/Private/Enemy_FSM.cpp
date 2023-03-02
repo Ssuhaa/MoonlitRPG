@@ -20,7 +20,13 @@ UEnemy_FSM::UEnemy_FSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	ConstructorHelpers::FObjectFinder<UAnimMontage>tempMontage(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Enemy.AMT_Enemy'"));
+	if (tempMontage.Succeeded())
+	{
+		enemyMontage = tempMontage.Object;
+	}
+
+	bAutoActivate = true;
 }
 
 
@@ -183,7 +189,13 @@ void UEnemy_FSM::DamageState()
 
 void UEnemy_FSM::DieState()
 {
-
+	if (bDiedone)
+	{
+		if (DelayComplete(2.0))
+		{
+			me->Destroy();
+		}
+	}
 }
 
 void UEnemy_FSM::ReceiveDamage(float damage)
@@ -193,6 +205,7 @@ void UEnemy_FSM::ReceiveDamage(float damage)
 	ratioHP = 0;
 
 	currHP -= damage;
+	me->enemyHPUI->ReduceHP(currHP, maxHP);
 
 	if (currHP > 0)
 	{
@@ -201,6 +214,7 @@ void UEnemy_FSM::ReceiveDamage(float damage)
 	else
 	{
 		ChangeState(EEnemyState::Die);
+		me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Die")));
 	}
 }
 
@@ -251,6 +265,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 
 	case EEnemyState::Damage:
 		UE_LOG(LogTemp, Warning, TEXT("Damage"));
+		me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Damage0")));
 		break;
 
 	case EEnemyState::Die:

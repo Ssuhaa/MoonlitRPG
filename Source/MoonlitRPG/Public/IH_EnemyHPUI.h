@@ -18,6 +18,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UProgressBar* enemyHP_Bar;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* enemyHP_ReduceBar;
+
 public:
 	void UpdateHP(float currHP, float maxHP);
+	void ReduceHP(float currHP, float maxHP);
 };

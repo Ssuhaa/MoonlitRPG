@@ -32,4 +32,10 @@ public:
  
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UIH_EnemyHPUI* enemyHPUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* itemSpawnPos;
+
+public:
+	void SetActive(bool bActive);
 };

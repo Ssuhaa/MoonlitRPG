@@ -27,4 +27,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FSM)
 	EEnemyState animState;
+
+public:
+	UFUNCTION()
+	void AnimNotify_DieEnd();
 };

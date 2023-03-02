@@ -16,3 +16,8 @@ void UIH_EnemyAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 }
+
+void UIH_EnemyAnim::AnimNotify_DieEnd()
+{
+	me->FSM->bDiedone = true;
+}

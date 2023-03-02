@@ -6,6 +6,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "IH_EnemyHPUI.h"
+#include <Components/CapsuleComponent.h>
 
 AIH_Enemy::AIH_Enemy()
 {
@@ -19,6 +20,7 @@ AIH_Enemy::AIH_Enemy()
 		GetMesh()->SetSkeletalMesh(tempmesh.Object);
 		GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 		GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	ConstructorHelpers::FClassFinder<UAnimInstance>tempanim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrint/ABP_IH_Enemy.ABP_IH_Enemy_C'"));
@@ -35,13 +37,19 @@ AIH_Enemy::AIH_Enemy()
 	{
 		compEnemyHP->SetWidgetClass(tempEnemyHP.Class);
 		compEnemyHP->SetWidgetSpace(EWidgetSpace::Screen);
-		compEnemyHP->SetRelativeLocation(FVector(90, 0, 0));
+		compEnemyHP->SetRelativeLocation(FVector(0, 0, 50));
 	}
+
+	itemSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Item Spawn Position"));
+	itemSpawnPos->SetupAttachment(RootComponent);
+	itemSpawnPos->SetRelativeLocation(FVector(0, 0, 50));
 	
 	bUseControllerRotationYaw = false;
  	GetCharacterMovement()->bUseControllerDesiredRotation = true;
  	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void AIH_Enemy::BeginPlay()
@@ -54,4 +62,23 @@ void AIH_Enemy::BeginPlay()
 void AIH_Enemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AIH_Enemy::SetActive(bool bActive)
+{
+	if (bActive)
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		FSM->originPos = GetActorLocation();
+	}
+	else
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	GetMesh()->SetActive(bActive);
+	GetMesh()->SetVisibility(bActive);
+	GetMovementComponent()->SetActive(bActive);
+	compEnemyHP->SetVisibility(bActive);
+	FSM->SetActive(bActive);
 }

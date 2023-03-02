@@ -43,9 +43,10 @@ public:
 	class ASH_Player* target;
 	class AIH_Enemy* me;
 	class UIH_EnemyAnim* anim;
-
-	UPROPERTY(EditAnywhere)
 	class AAIController* ai;
+
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	class UAnimMontage* enemyMontage;
 
 	float currentTime = 0;
 
@@ -66,6 +67,7 @@ public:
 	float ratioHP;
 
 	bool bUpdateHP = false;
+	bool bDiedone = false;
 
 	FVector originPos;		// 최초 위치
 	FVector randPos;		// 랜덤 위치
