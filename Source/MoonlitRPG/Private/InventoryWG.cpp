@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "InventoryWG.h"
@@ -10,6 +10,7 @@
 #include <UMG/Public/Components/Overlay.h>
 #include "ItemDescriptionWG.h"
 #include <UMG/Public/Components/WrapBox.h>
+#include <UMG/Public/Components/TextBlock.h>
 
 
 
@@ -30,6 +31,8 @@ void UInventoryWG::NativeConstruct()
 	Button_Outfit->OnClicked.AddDynamic(this, &UInventoryWG::ClickedOutfit);
 	Button_Food->OnClicked.AddDynamic(this, &UInventoryWG::ClickedFood);
 	Button_Quest->OnClicked.AddDynamic(this, &UInventoryWG::ClickedQuest);
+	Button_Right->OnClicked.AddDynamic(this, &UInventoryWG::RightMenu);
+	Button_Left->OnClicked.AddDynamic(this, &UInventoryWG::LeftMenu);
 }
 
 
@@ -40,10 +43,12 @@ void UInventoryWG::RemoveWidget()
 	RemoveFromParent();
 }
 
-void UInventoryWG::AddWidget(TArray<FInvenItem> invenArr)
+void UInventoryWG::AddWidget(TArray<FInvenItem> invenArr, int32 money)
 {
 	invenArray = invenArr;
+	CurrMoney = money; 
 	Setinventory();
+	Money_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"),CurrMoney)));
 	AddToViewport();
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
@@ -80,11 +85,50 @@ void UInventoryWG::ClickedQuest()
 	Setinventory();
 }
 
+void UInventoryWG::LeftMenu()
+{
+	int32 index = int32(currinventype);
+	index--;
+	index = FMath::Clamp(index, 0, int32(EItemType::Count) - 1);
+	currinventype = EItemType(index);
+	Setinventory();
+}
+
+void UInventoryWG::RightMenu()
+{
+	int32 index = int32(currinventype);
+	index++;
+	index = FMath::Clamp(index, 0, int32(EItemType::Count) - 1);
+	currinventype = EItemType(index);
+	Setinventory();
+}
+
+
 void UInventoryWG::Setinventory()
 {
 	if (!invenArray.IsValidIndex(0)) return;
 	WrapBox->ClearChildren();
 	Overlay_ItemInfo->ClearChildren();
+
+	FText currslotName;
+
+	switch (currinventype)
+	{	
+	case EItemType::Consum:
+		currslotName = FText::FromString(TEXT("소비창"));
+		break;
+	case EItemType::Outfit:
+		currslotName = FText::FromString(TEXT("장비창"));
+		break;
+	case EItemType::Quest :
+		currslotName = FText::FromString(TEXT("퀘스트창"));
+		break;
+	case EItemType::Food :
+		currslotName = FText::FromString(TEXT("음식창"));
+		break;
+	}
+
+	CurrSlot_Text->SetText(currslotName);
 
 	for (int32 i = 0; i < invenArray.Num(); i++)
 	{

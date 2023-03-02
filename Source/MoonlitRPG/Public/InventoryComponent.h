@@ -31,26 +31,27 @@ protected:
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	TArray<class UInputAction*> inputArray; //πŸ¿ŒµÂ
 
 
 	TSubclassOf<class UInventoryWG> invenFactory;
 	class UInventoryWG* inventory;
 
-	TArray<class UInputAction*> inputArray;
 
 	class ASH_Player* Player;
 
 
 	void InventoryOpen();
 
-public:	
-
+	UPROPERTY(EditAnywhere)
+	int32 Money = 0;
 	UPROPERTY(EditAnywhere)
 	TArray<FInvenItem> invenItemArr;
 
+public:	
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
 	void CheckSameItem(FIteminfo iteminfo);
-
 	void AddInven(FIteminfo Getiteminfo);
+
 };

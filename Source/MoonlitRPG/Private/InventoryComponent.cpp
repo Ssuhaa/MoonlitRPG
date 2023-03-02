@@ -59,7 +59,7 @@ void UInventoryComponent::InventoryOpen()
 {
 	if (!inventory->IsInViewport())
 	{
-		inventory->AddWidget(invenItemArr);
+		inventory->AddWidget(invenItemArr, Money);
 	}
 	else
 	{
