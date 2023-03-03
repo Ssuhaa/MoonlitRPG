@@ -38,8 +38,9 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	Button_Close->OnPressed.AddDynamic(this, &UInventoryWG::RemoveWidget);
-	Button_Consum->OnPressed.AddDynamic(this, &UInventoryWG::ClickedConsum);
+	Button_Consum->OnPressed.AddDynamic(this, &UInventoryWG::ClickedConsum); 
 	Button_Outfit->OnPressed.AddDynamic(this, &UInventoryWG::ClickedOutfit);
 	Button_Food->OnPressed.AddDynamic(this, &UInventoryWG::ClickedFood);
 	Button_Quest->OnPressed.AddDynamic(this, &UInventoryWG::ClickedQuest);
@@ -62,8 +63,8 @@ void UInventoryWG::RemoveWidget()
 
 void UInventoryWG::AddWidget()
 {
-	Setinventory();
 	AddToViewport();
+	Setinventory();
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
@@ -74,7 +75,7 @@ void UInventoryWG::ItemSlotClicked(FInvenItem currSelectItem)
 	Overlay_ItemInfo->ClearChildren();
 	Overlay_Use->ClearChildren();
 
-	Description->SetDescription(SelectedSlot);
+	Description->SetDescription(SelectedSlot); //키고난 후 
 	Overlay_ItemInfo->AddChildToOverlay(Description);
 	if (SelectedSlot.iteminfomation.itemType == EItemType::Food)
 	{
@@ -138,15 +139,6 @@ void UInventoryWG::RightMenu()
 void UInventoryWG::Setinventory()
 {
 	if(!InvenComp->invenItemArr.IsValidIndex(0)) return;
-	if (Money_Text != nullptr)
-	{
-		Money_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"), InvenComp->Money)));
-	}
-	if (Text_Count != nullptr)
-	{
-		Text_Count->SetText(FText::FromString(FString::Printf(TEXT("%d"), InvenComp->CountItem())));
-
-	}
 
 	WrapBox->ClearChildren();
 	Overlay_Use->ClearChildren();
@@ -185,4 +177,13 @@ void UInventoryWG::Setinventory()
 		}
 	}
 
+	if (Money_Text != nullptr)
+	{
+		Money_Text->SetText(FText::FromString(FString::FromInt(InvenComp->Money)));
+	}
+
+	if (Text_Count != nullptr)
+	{
+		Text_Count->SetText(FText::FromString(FString::FromInt(InvenComp->CountItem())));
+	}
 }

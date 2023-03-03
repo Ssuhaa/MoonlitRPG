@@ -6,8 +6,18 @@
 #include <UMG/Public/Components/TextBlock.h>
 
 void UItemDescriptionWG::SetDescription(FInvenItem iteminfo)
-{
-	ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
-	ItemName->SetText(FText::FromString(iteminfo.iteminfomation.ItemName));
-	Description->SetText(FText::FromString(iteminfo.iteminfomation.itemDescription));
+{	
+	if(ItemImage != nullptr)
+	{
+		ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
+	}
+	if (ItemName != nullptr)
+	{
+		ItemName->SetText(FText::FromString(iteminfo.iteminfomation.ItemName));
+	}
+	if (Description != nullptr)
+	{
+		Description->SetText(FText::FromString(iteminfo.iteminfomation.itemDescription));
+	}
+
 }

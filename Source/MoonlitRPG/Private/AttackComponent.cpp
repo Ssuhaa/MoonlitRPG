@@ -114,7 +114,10 @@ void UAttackComponent::CommonAttack()
 			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
 			{
 				Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
-				Target->FSM->ReceiveDamage(1);
+				if (Target != nullptr)
+				{
+					Target->FSM->ReceiveDamage(1);
+				}
 			}
 		}
 	}
