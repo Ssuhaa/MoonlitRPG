@@ -2,12 +2,13 @@
 
 
 #include "InteractiveObjectBase.h"
-#include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include "ItemBase.h"
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "SH_Player.h"
 #include "IH_InteractionUI.h"
+#include <Kismet/GameplayStatics.h>
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values
 AInteractiveObjectBase::AInteractiveObjectBase()
@@ -21,10 +22,6 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Position Component"));
 	compSpawnPos->SetupAttachment(RootComponent);
 	compSpawnPos->SetRelativeLocation(FVector(0, 0, 30));
-
-	compSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
-	compSphere->SetupAttachment(RootComponent);
-	compSphere->SetSphereRadius(300.0);
 
 	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
 	compInteractWidget->SetupAttachment(RootComponent);
@@ -44,8 +41,7 @@ void AInteractiveObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	compSphere->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveObjectBase::FloatInteract);
-	compSphere->OnComponentEndOverlap.AddDynamic(this, &AInteractiveObjectBase::RemoveInteract);
+	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
 }
 
 // Called every frame
@@ -53,6 +49,19 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector targetVector = player->GetActorLocation() - GetActorLocation();
+	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
+	float degree = UKismetMathLibrary::DegAcos(dot);
+	float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
+
+	if (degree < 180 && distance < 300)
+	{
+		compInteractWidget->SetVisibility(true);
+	}
+	else
+	{
+		compInteractWidget->SetVisibility(false);
+	}
 }
 
 void AInteractiveObjectBase::DropItem()
@@ -66,34 +75,11 @@ void AInteractiveObjectBase::DropItem()
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		for (int32 i = 1; i <= spawnItems.Num(); i++)
+		int32 randAmount = FMath::RandRange(3, 5);
+		for (int32 i = 1; i <= randAmount; i++)
 		{
 			int32 randNum = FMath::RandRange(0, spawnItems.Num()-1);
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
-		}
-	}
-}
-
-void AInteractiveObjectBase::FloatInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor != this)
-	{
-		player = Cast<ASH_Player>(OtherActor);
-		if (OtherActor == player)
-		{
-			compInteractWidget->SetVisibility(true);
-		}
-	}
-}
-
-void AInteractiveObjectBase::RemoveInteract(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor != this)
-	{
-		player = Cast<ASH_Player>(OtherActor);
-		if (OtherActor == player)
-		{
-			compInteractWidget->SetVisibility(false);
 		}
 	}
 }

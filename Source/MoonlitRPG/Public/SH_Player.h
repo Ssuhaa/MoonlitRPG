@@ -32,13 +32,8 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USpringArmComponent* SpringArmComp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
-	class UCameraComponent* CamComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UMoveComponent* MoveComp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
-	class UAttackComponent* AttackComp;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
 
@@ -48,6 +43,10 @@ protected:
 	void interactionObject();
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UCameraComponent* CamComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UAttackComponent* AttackComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;
 

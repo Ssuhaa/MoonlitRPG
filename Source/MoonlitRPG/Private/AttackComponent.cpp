@@ -7,6 +7,10 @@
 #include <Kismet/GameplayStatics.h>
 #include "Enemy_FSM.h"
 #include "IH_Enemy.h"
+#include "SH_Player.h"
+#include <Kismet/KismetMathLibrary.h>
+#include <Camera/CameraComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -29,6 +33,11 @@ UAttackComponent::UAttackComponent()
 	{
 		inputarray.Add(tempAction2.Object);  //2번 Q키
 	}
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempAttackMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player.AMT_Player'"));
+	if (tempAttackMont.Succeeded())
+	{
+		attackMontage = tempAttackMont.Object;
+	}
 }
 
 
@@ -36,7 +45,9 @@ UAttackComponent::UAttackComponent()
 void UAttackComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	Target = Cast<AIH_Enemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_Enemy::StaticClass()));
+
+	player = Cast<ASH_Player>(GetOwner());
+	//Target = Cast<AIH_Enemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_Enemy::StaticClass()));
 }
 
 
@@ -56,21 +67,73 @@ void UAttackComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 	}
 }
 
+void UAttackComponent::ComboAttackSave()
+{
+
+}
+
+void UAttackComponent::ComboReset()
+{
+	isAttacking = false;
+	attackCount = 0;
+	player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
 void UAttackComponent::CommonAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CommonAttack"));
-	if (Target != nullptr)
+
+	FCollisionShape attackCollision = FCollisionShape::MakeSphere(attackRadius);
+	FCollisionQueryParams param;
+	param.AddIgnoredActor(player);
+
+	TArray <FHitResult> hitinfos;
+
+	if (!isAttacking)
 	{
-		Target->FSM->ReceiveDamage(1);
+		bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation()+player->GetActorForwardVector()*attackRange,
+		FQuat::Identity, ECC_Visibility, attackCollision, param);
+	
+		// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
+		FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
+		directionVector.Z = 0.0f;
+		player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
+
+		// 디버그 캡슐 그리기
+		FVector centerLoc = player->GetActorLocation()+player->GetActorForwardVector()*attackRange*0.5f;
+		float halfHeight = attackRange * 0.5f + attackRadius;
+		FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector()*attackRange).ToQuat();
+		DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
+		
+		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack0")));
+		player->GetCharacterMovement()->DisableMovement();
+		isAttacking = true;
+
+		for (int32 i = 0; i < hitinfos.Num(); i++)
+		{
+			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+			{
+				Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
+				Target->FSM->ReceiveDamage(1);
+			}
+		}
 	}
 }
 
 void UAttackComponent::intensiveAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("intensiveAttack"));
+
+	player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
+	player->GetCharacterMovement()->DisableMovement();
+	isAttacking = true;
 }
 
 void UAttackComponent::SpecialAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SpecialAttack"));
+
+	player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
+	player->GetCharacterMovement()->DisableMovement();
+	isAttacking = true;
 }

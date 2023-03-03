@@ -25,6 +25,7 @@ void AHitObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	hitCount = FMath::RandRange(3, 5);
 }
 
 // Called every frame
@@ -45,8 +46,9 @@ void AHitObjectBase::DropItem()
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		for (int32 i = 1; i <= spawnItems.Num(); i++)
+		if (currCount <= hitCount)
 		{
+			currCount += 1;
 			int32 randNum = FMath::RandRange(0, spawnItems.Num() - 1);
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}

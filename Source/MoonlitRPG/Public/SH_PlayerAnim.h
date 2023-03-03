@@ -30,4 +30,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAir = false;
+
+public:
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
 };

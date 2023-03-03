@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
 
+	int32 currCount = 0;
+	int32 hitCount;
+
 public:
 	void DropItem();
 };

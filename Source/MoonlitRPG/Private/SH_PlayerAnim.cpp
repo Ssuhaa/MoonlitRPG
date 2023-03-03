@@ -4,6 +4,7 @@
 #include "SH_PlayerAnim.h"
 #include "SH_Player.h"
 #include <GameFramework/CharacterMovementComponent.h>
+#include "AttackComponent.h"
 
 void USH_PlayerAnim::NativeBeginPlay()
 {
@@ -33,4 +34,9 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중에 있는지 여부 세팅
 		bAir = Player->GetCharacterMovement()->IsFalling();
 	}
+}
+
+void USH_PlayerAnim::AnimNotify_AttackEnd()
+{
+	Player->AttackComp->ComboReset();
 }
