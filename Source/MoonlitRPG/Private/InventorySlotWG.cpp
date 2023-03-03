@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "InventorySlotWG.h"
@@ -8,20 +8,11 @@
 #include "InventoryWG.h"
 #include "ItemDescriptionWG.h"
 
-UInventorySlotWG::UInventorySlotWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-	ConstructorHelpers::FClassFinder <UItemDescriptionWG> tempDesrip(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_ItemDescription.BP_ItemDescription_C'"));
-	if (tempDesrip.Succeeded())
-	{
-		DescriptionFactory = tempDesrip.Class;
-	}
-}
 
 void UInventorySlotWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Description = CreateWidget<UItemDescriptionWG> (GetWorld(), DescriptionFactory);
-	ItemButton->OnClicked.AddDynamic(this, &UInventorySlotWG::PopItemDescription);
+	ItemButton->OnPressed.AddDynamic(this, &UInventorySlotWG::PopItemDescription);
 }
 
 void UInventorySlotWG::SetItemSlot()
@@ -35,7 +26,5 @@ void UInventorySlotWG::SetItemSlot()
 
 void UInventorySlotWG::PopItemDescription()
 {
-	Description->iteminfo = iteminfo;
-	Description->SetDescription();
-	invenWG->ItemSlotClicked(Description);
+	invenWG->ItemSlotClicked(iteminfo);
 }

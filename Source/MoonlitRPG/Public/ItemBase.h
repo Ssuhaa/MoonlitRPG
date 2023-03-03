@@ -23,19 +23,21 @@ struct FIteminfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EItemType itemType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ItemName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString itemDescription = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UTexture2D* itemImage = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EItemType itemType;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool Stackalbe = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 SellPrice = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 PurchasePrice = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Heal = 0;
 };
 
 

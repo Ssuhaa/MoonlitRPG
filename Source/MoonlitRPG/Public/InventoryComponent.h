@@ -12,6 +12,7 @@ struct FInvenItem
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FIteminfo iteminfomation;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -36,22 +37,25 @@ protected:
 
 	TSubclassOf<class UInventoryWG> invenFactory;
 	class UInventoryWG* inventory;
-
-
+	
 	class ASH_Player* Player;
 
+	void AddItemToinven(FIteminfo Getiteminfo, int32 Amont);
 
 	void InventoryOpen();
 
+
+public:	
+	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 	UPROPERTY(EditAnywhere)
 	int32 Money = 0;
 	UPROPERTY(EditAnywhere)
 	TArray<FInvenItem> invenItemArr;
 
-public:	
-	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
+	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amont);
+	bool PlusMinusItemAmont(FIteminfo AdditemInfo, int32 Amont);
+	int32 FindItem(FIteminfo iteminfo);
 
-	void CheckSameItem(FIteminfo iteminfo);
-	void AddInven(FIteminfo Getiteminfo);
+	int32 CountItem();
 
 };

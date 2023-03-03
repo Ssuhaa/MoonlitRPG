@@ -5,12 +5,14 @@
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
 #include <UMG/Public/Components/Button.h>
-#include "InventorySlotWG.h"
 #include <UMG/Public/Components/ScrollBox.h>
 #include <UMG/Public/Components/Overlay.h>
-#include "ItemDescriptionWG.h"
 #include <UMG/Public/Components/WrapBox.h>
 #include <UMG/Public/Components/TextBlock.h>
+#include "InventoryComponent.h"
+#include "InventorySlotWG.h"
+#include "ItemDescriptionWG.h"
+#include "inventoryUseButton.h"
 
 
 
@@ -21,18 +23,33 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 	{
 		SlotFactory = tempslot.Class;
 	}
+	ConstructorHelpers::FClassFinder <UinventoryUseButton> tempButton(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenUseButton.BP_InvenUseButton_C'"));
+	if (tempButton.Succeeded())
+	{
+		ButtonFactory = tempButton.Class;
+	}
+	ConstructorHelpers::FClassFinder <UItemDescriptionWG> tempDesrip(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_ItemDescription.BP_ItemDescription_C'"));
+	if (tempDesrip.Succeeded())
+	{
+		DescriptionFactory = tempDesrip.Class;
+	}
 }
 
 void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Button_Close->OnClicked.AddDynamic(this, &UInventoryWG::RemoveWidget);
-	Button_Consum->OnClicked.AddDynamic(this, &UInventoryWG::ClickedConsum);
-	Button_Outfit->OnClicked.AddDynamic(this, &UInventoryWG::ClickedOutfit);
-	Button_Food->OnClicked.AddDynamic(this, &UInventoryWG::ClickedFood);
-	Button_Quest->OnClicked.AddDynamic(this, &UInventoryWG::ClickedQuest);
-	Button_Right->OnClicked.AddDynamic(this, &UInventoryWG::RightMenu);
-	Button_Left->OnClicked.AddDynamic(this, &UInventoryWG::LeftMenu);
+	Button_Close->OnPressed.AddDynamic(this, &UInventoryWG::RemoveWidget);
+	Button_Consum->OnPressed.AddDynamic(this, &UInventoryWG::ClickedConsum);
+	Button_Outfit->OnPressed.AddDynamic(this, &UInventoryWG::ClickedOutfit);
+	Button_Food->OnPressed.AddDynamic(this, &UInventoryWG::ClickedFood);
+	Button_Quest->OnPressed.AddDynamic(this, &UInventoryWG::ClickedQuest);
+	Button_Right->OnPressed.AddDynamic(this, &UInventoryWG::RightMenu);
+	Button_Left->OnPressed.AddDynamic(this, &UInventoryWG::LeftMenu);
+
+	ButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory);
+	ButtonWG->InvenWG = this;
+	ButtonWG->Button_Use->OnPressed.AddDynamic(this, &UInventoryWG::ClickedUseButton);
+	Description = CreateWidget<UItemDescriptionWG>(GetWorld(), DescriptionFactory);
 }
 
 
@@ -43,22 +60,36 @@ void UInventoryWG::RemoveWidget()
 	RemoveFromParent();
 }
 
-void UInventoryWG::AddWidget(TArray<FInvenItem> invenArr, int32 money)
+void UInventoryWG::AddWidget()
 {
-	invenArray = invenArr;
-	CurrMoney = money; 
 	Setinventory();
-	Money_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"),CurrMoney)));
 	AddToViewport();
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 }
 
-void UInventoryWG::ItemSlotClicked(class UItemDescriptionWG* DescriptionWG)
+void UInventoryWG::ItemSlotClicked(FInvenItem currSelectItem)
 {
+	SelectedSlot = currSelectItem;
 	Overlay_ItemInfo->ClearChildren();
-	Overlay_ItemInfo->AddChildToOverlay(DescriptionWG);
+	Overlay_Use->ClearChildren();
+
+	Description->SetDescription(SelectedSlot);
+	Overlay_ItemInfo->AddChildToOverlay(Description);
+	if (SelectedSlot.iteminfomation.itemType == EItemType::Food)
+	{
+		Overlay_Use->AddChildToOverlay(ButtonWG);
+	}
+	//장비 착용 버튼 추가
 }
+
+void UInventoryWG::ClickedUseButton()
+{
+	InvenComp->PlusMinusItemAmont(SelectedSlot.iteminfomation, -1);
+	//HP 회복 호출
+	Setinventory();
+}
+
 
 void UInventoryWG::ClickedConsum()
 {
@@ -106,8 +137,19 @@ void UInventoryWG::RightMenu()
 
 void UInventoryWG::Setinventory()
 {
-	if (!invenArray.IsValidIndex(0)) return;
+	if(!InvenComp->invenItemArr.IsValidIndex(0)) return;
+	if (Money_Text != nullptr)
+	{
+		Money_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"), InvenComp->Money)));
+	}
+	if (Text_Count != nullptr)
+	{
+		Text_Count->SetText(FText::FromString(FString::Printf(TEXT("%d"), InvenComp->CountItem())));
+
+	}
+
 	WrapBox->ClearChildren();
+	Overlay_Use->ClearChildren();
 	Overlay_ItemInfo->ClearChildren();
 
 	FText currslotName;
@@ -130,13 +172,14 @@ void UInventoryWG::Setinventory()
 
 	CurrSlot_Text->SetText(currslotName);
 
-	for (int32 i = 0; i < invenArray.Num(); i++)
+	for (int32 i = 0; i < InvenComp->invenItemArr.Num(); i++)
 	{
-		if (invenArray[i].iteminfomation.itemType == currinventype)
+	
+		if (InvenComp->invenItemArr[i].iteminfomation.itemType == currinventype)
 		{
 			UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
 			currslot->invenWG = this;
-			currslot->iteminfo = invenArray[i];
+			currslot->iteminfo = InvenComp->invenItemArr[i];
 			currslot->SetItemSlot();
 			WrapBox->AddChildToWrapBox(currslot);
 		}
