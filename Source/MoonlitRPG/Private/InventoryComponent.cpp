@@ -20,7 +20,7 @@ UInventoryComponent::UInventoryComponent()
 	{
 		inputArray.Add(tempAction.Object); //0번 탭
 	}
-	ConstructorHelpers::FClassFinder<UUserWidget> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_Inventory.BP_WG_Inventory_C'"));
+	ConstructorHelpers::FClassFinder<UInventoryWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_Inventory.BP_WG_Inventory_C'"));
 	if (tempWG.Succeeded())
 	{
 		invenFactory = tempWG.Class; 
@@ -35,6 +35,7 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 	Player = Cast<ASH_Player>(GetOwner());
 	inventory = CreateWidget<UInventoryWG>(GetWorld(), invenFactory);
+	inventory->InvenComp = this;
 }
 
 
@@ -59,7 +60,7 @@ void UInventoryComponent::InventoryOpen()
 {
 	if (!inventory->IsInViewport())
 	{
-		inventory->AddWidget(invenItemArr, Money);
+		inventory->AddWidget();
 	}
 	else
 	{
@@ -67,32 +68,84 @@ void UInventoryComponent::InventoryOpen()
 	}
 }
 
-void UInventoryComponent::CheckSameItem(FIteminfo iteminfo)
+void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amont) //아이템 추가 함수
 {
-	bool bisSame = false;
+	int32 value = FindItem(iteminfo);
+	if (value > -1)
+	{
+		if (invenItemArr[value].iteminfomation.Stackalbe)
+		{
+			invenItemArr[value].itemAmont += Amont;
+		}
+	}
+	else
+	{
+		AddItemToinven(iteminfo, Amont);
+	}
+}
+
+void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amont) 
+{
+	FInvenItem currGetItem;
+	currGetItem.iteminfomation = Getiteminfo;
+	currGetItem.itemAmont = Amont;
+	invenItemArr.Add(currGetItem);
+}
+
+bool UInventoryComponent::PlusMinusItemAmont(FIteminfo AdditemInfo, int32 Amont) // 기존에 있는 아이템 찾는
+{
+	int32 value = FindItem(AdditemInfo);
+	if (value > -1)
+	{
+		if (Amont < 0)
+		{
+			if (invenItemArr[value].itemAmont < Amont)
+			{
+				return false;
+			}
+			else
+			{
+				invenItemArr[value].itemAmont += Amont;
+				if (invenItemArr[value].itemAmont <= 0)
+				{
+					invenItemArr.RemoveAt(value);
+				}
+				return true;
+			}
+		}
+		else
+		{
+			invenItemArr[value].itemAmont += Amont;
+			if (invenItemArr[value].itemAmont <= 0)
+			{
+				invenItemArr.RemoveAt(value);
+			}
+			return true;
+		}
+	
+	}
+	else return false;
+}
+
+int32 UInventoryComponent::FindItem(FIteminfo iteminfo)
+{
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
 	{
 		if (invenItemArr[i].iteminfomation.ItemName == iteminfo.ItemName)
 		{
-			if (invenItemArr[i].iteminfomation.Stackalbe)
-			{
-				invenItemArr[i].itemAmont += 1;
-				bisSame = true;
-				break;
-			}
+			return i;
 		}
 	}
-
-	if (bisSame == false)
-	{
-		AddInven(iteminfo);
-	}
+	return -1;
 }
 
-void UInventoryComponent::AddInven(FIteminfo Getiteminfo)
+int32 UInventoryComponent::CountItem()
 {
-	FInvenItem currGetItem;
-	currGetItem.iteminfomation = Getiteminfo;
-	currGetItem.itemAmont = 1;
-	invenItemArr.Add(currGetItem);
+	int32 value = 0;
+	for (int32 i = 0; i < invenItemArr.Num(); i++)
+	{
+		value += invenItemArr[i].itemAmont;
+	}
+	return value;
 }
+

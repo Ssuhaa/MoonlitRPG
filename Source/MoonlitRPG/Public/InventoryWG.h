@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -46,12 +46,20 @@ protected:
 	class UTextBlock* CurrSlot_Text;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Money_Text;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UOverlay* Overlay_Use;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Count;
 
-	TArray<FInvenItem> invenArray;
+	UFUNCTION()
 	void Setinventory();
 	int32 CurrMoney = 0;
 
 	TSubclassOf<class UInventorySlotWG> SlotFactory;
+	TSubclassOf<class UinventoryUseButton> ButtonFactory;
+	class UinventoryUseButton* ButtonWG;
+	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
+	class UItemDescriptionWG* Description;
 
 	EItemType currinventype = EItemType::Consum;
 
@@ -68,10 +76,23 @@ protected:
 	UFUNCTION()
 	void RightMenu();
 
+	FInvenItem SelectedSlot;
+
+
+
 public:
-	void AddWidget(TArray<FInvenItem> invenArr, int32 money);
+
+	class UInventoryComponent* InvenComp;
+
+	UFUNCTION()
+	void AddWidget();
 	UFUNCTION()
 	void RemoveWidget();
 
-	void ItemSlotClicked(class UItemDescriptionWG* descriptionWG);
+	UFUNCTION()
+	void ClickedUseButton();
+
+	UFUNCTION()
+	void ItemSlotClicked(FInvenItem currSelectItem);
+
  };

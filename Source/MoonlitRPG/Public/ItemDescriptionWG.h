@@ -24,9 +24,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Description;
 
+
 public:
-	
-	FInvenItem iteminfo;
-	void SetDescription();
+	void SetDescription(FInvenItem iteminfo);
 
 };
