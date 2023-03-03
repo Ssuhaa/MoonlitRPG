@@ -260,12 +260,10 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 	switch (state)
 	{
 	case EEnemyState::Idle:
-		UE_LOG(LogTemp, Warning, TEXT("Idle"));
 		break;
 
 	case EEnemyState::Move:
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Move"));
 		me->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 		UNavigationSystemV1* ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 		FNavLocation loc;
@@ -275,21 +273,17 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 	}
 
 	case EEnemyState::Chase:
-		UE_LOG(LogTemp, Warning, TEXT("Chase"));
 		me->GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		break;
 
 	case EEnemyState::Attack:
-		UE_LOG(LogTemp, Warning, TEXT("Attack"));
 		break;
 
 	case EEnemyState::Damage:
-		UE_LOG(LogTemp, Warning, TEXT("Damage"));
 		me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Damage0")));
 		break;
 
 	case EEnemyState::Die:
-		UE_LOG(LogTemp, Warning, TEXT("Die"));
 		break;
 	}
 }

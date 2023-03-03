@@ -34,4 +34,7 @@ public:
 public:
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
+
+	UFUNCTION()
+	void AnimNotify_NextCombo();
 };

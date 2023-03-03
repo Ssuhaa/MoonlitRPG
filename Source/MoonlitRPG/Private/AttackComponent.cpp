@@ -67,56 +67,58 @@ void UAttackComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 	}
 }
 
-void UAttackComponent::ComboAttackSave()
+void UAttackComponent::NextCombo()
 {
+	if (goToNextCombo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("gotoNextCombo"));
+		goToNextCombo = false;
 
-}
+		attackCount++;
+		UE_LOG(LogTemp, Warning, TEXT("%d"), attackCount);
 
-void UAttackComponent::ComboReset()
-{
-	isAttacking = false;
-	attackCount = 0;
-	player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		switch (attackCount)
+		{
+		case 1:
+			attackCount = 2;
+			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack1")));
+			break;
+		case 2:
+			attackCount = 0;
+			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack2")));
+			break;
+		}
+	}
 }
 
 void UAttackComponent::CommonAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CommonAttack"));
 
-	FCollisionShape attackCollision = FCollisionShape::MakeSphere(attackRadius);
-	FCollisionQueryParams param;
-	param.AddIgnoredActor(player);
-
-	TArray <FHitResult> hitinfos;
-
 	if (!isAttacking)
 	{
-		bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation()+player->GetActorForwardVector()*attackRange,
-		FQuat::Identity, ECC_Visibility, attackCollision, param);
-	
-		// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
-		FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
-		directionVector.Z = 0.0f;
-		player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
-
-		// 디버그 캡슐 그리기
-		FVector centerLoc = player->GetActorLocation()+player->GetActorForwardVector()*attackRange*0.5f;
-		float halfHeight = attackRange * 0.5f + attackRadius;
-		FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector()*attackRange).ToQuat();
-		DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
-		
 		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack0")));
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
 
-		for (int32 i = 0; i < hitinfos.Num(); i++)
+		if (CanAttack(50, 80))
 		{
-			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+			for (int32 i = 0; i < hitinfos.Num(); i++)
 			{
-				Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
-				Target->FSM->ReceiveDamage(1);
+				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+				{
+					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
+					if (Target != nullptr)
+					{
+						Target->FSM->ReceiveDamage(1);
+					}
+				}
 			}
 		}
+	}
+	else
+	{
+		goToNextCombo = true;
 	}
 }
 
@@ -124,16 +126,78 @@ void UAttackComponent::intensiveAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("intensiveAttack"));
 
-	player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
-	player->GetCharacterMovement()->DisableMovement();
-	isAttacking = true;
+	if (!isAttacking)
+	{
+		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
+		player->GetCharacterMovement()->DisableMovement();
+		isAttacking = true;
+
+		if (CanAttack(80, 100))
+		{
+			for (int32 i = 0; i < hitinfos.Num(); i++)
+			{
+				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+				{
+					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
+					if (Target != nullptr)
+					{
+						Target->FSM->ReceiveDamage(3);
+					}
+				}
+			}
+		}
+	}
 }
 
 void UAttackComponent::SpecialAttack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SpecialAttack"));
 
-	player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
-	player->GetCharacterMovement()->DisableMovement();
-	isAttacking = true;
+	if (!isAttacking)
+	{
+		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
+		player->GetCharacterMovement()->DisableMovement();
+		isAttacking = true;
+
+		if (CanAttack(150, 100))
+		{
+			for (int32 i = 0; i < hitinfos.Num(); i++)
+			{
+				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+				{
+					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
+					if (Target != nullptr)
+					{
+						Target->FSM->ReceiveDamage(5);
+					}
+				}
+			}
+		}
+	}
+}
+
+bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
+{
+	FCollisionShape attackCollision = FCollisionShape::MakeSphere(attackRadius);
+	FCollisionQueryParams param;
+	param.AddIgnoredActor(player);
+
+	// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
+	FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
+	directionVector.Z = 0.0f;
+	player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
+
+	// 디버그 캡슐 그리기
+	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * attackLength * 0.5f;
+	float halfHeight = attackLength * 0.5f + attackRadius;
+	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * attackLength).ToQuat();
+	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
+
+	bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * attackLength, FQuat::Identity, ECC_Visibility, attackCollision, param);
+
+	if (bHits)
+	{
+		return true;
+	}
+	else return false;
 }

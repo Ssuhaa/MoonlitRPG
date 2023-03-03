@@ -21,33 +21,32 @@ protected:
 	virtual void BeginPlay() override;
 	
 	TArray<class UInputAction*> inputarray;
+	TArray<FHitResult>hitinfos;
 
 	void CommonAttack();
 	void intensiveAttack();
 	void SpecialAttack();
+	bool CanAttack(float attackRadius, float attackLength);
 
 	class ASH_Player* player;
 	class AIH_Enemy* Target;
 
 public:
-	UPROPERTY(EditAnywhere, Category = Range)
-	float attackRange = 80.0f;
-	
-	UPROPERTY(EditAnywhere, Category = Range)
-	float attackRadius = 50.0;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = Montage)
 	class UAnimMontage* attackMontage;
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* combo1Montage;
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* combo2Montage;
 
 	bool isAttacking = false;
-	bool saveAttack = false;
+	bool goToNextCombo = false;
 	int32 attackCount = 0;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
-	
-	void ComboAttackSave();
-	void ComboReset();
+
+	void NextCombo();
 };

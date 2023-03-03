@@ -38,5 +38,12 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
-	Player->AttackComp->ComboReset();
+	Player->AttackComp->isAttacking = false;
+	Player->AttackComp->attackCount = 0;
+	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void USH_PlayerAnim::AnimNotify_NextCombo()
+{
+	Player->AttackComp->NextCombo();
 }
