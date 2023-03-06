@@ -28,6 +28,7 @@ protected:
 	
 
 public:
+	UPROPERTY()
 	class UInventoryWG* invenWG;
 	FInvenItem iteminfo;
 	void SetItemSlot();

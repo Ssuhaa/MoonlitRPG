@@ -21,8 +21,6 @@ protected:
 	UPROPERTY()
 	class ASH_Player* Player;
 
-
-public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float dirV = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -37,4 +35,9 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_NextCombo();
+
+	UFUNCTION()
+	void AnimNotify_DashEnd();	
+	UFUNCTION()
+	void AnimNotify_DashToWalk();
 };

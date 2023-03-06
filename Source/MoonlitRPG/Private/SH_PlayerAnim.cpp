@@ -48,3 +48,13 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 {
 	Player->AttackComp->NextCombo();
 }
+
+void USH_PlayerAnim::AnimNotify_DashEnd()
+{
+	Player->GetCharacterMovement()->DisableMovement();
+}
+
+void USH_PlayerAnim::AnimNotify_DashToWalk()
+{
+	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}

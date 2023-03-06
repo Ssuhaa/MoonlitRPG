@@ -57,8 +57,10 @@ protected:
 
 	TSubclassOf<class UInventorySlotWG> SlotFactory;
 	TSubclassOf<class UinventoryUseButton> ButtonFactory;
-	class UinventoryUseButton* ButtonWG;
 	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
+	UPROPERTY()
+	class UinventoryUseButton* ButtonWG;
+	UPROPERTY()
 	class UItemDescriptionWG* Description;
 
 	EItemType currinventype = EItemType::Consum;
@@ -81,7 +83,7 @@ protected:
 
 
 public:
-
+	UPROPERTY()
 	class UInventoryComponent* InvenComp;
 
 	UFUNCTION()

@@ -30,8 +30,7 @@ protected:
 	void Vertical(const struct FInputActionValue& value);
 	void Look(const struct FInputActionValue& value);
 	void Jump();
-	void Run();
-	void Walk();
+	void Dash();
 
 	FVector dir;
 
@@ -43,20 +42,38 @@ protected:
 	float WalkSpeed = 300.0f;
 	UPROPERTY(EditAnywhere, Category = WalkSpeed)
 	float RunSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, Category = WalkSpeed)
+	float DashSpeed = 1200.0f;
+	UPROPERTY(VisibleAnywhere, Category = WalkSpeed)
+	float CurrSpeed;
 
+	void DashToWalk();
+	void SetWalkSpped(float MinSpeed, float MaxSpeed, float MinusSpeed);
+
+	UPROPERTY(VisibleAnywhere, Category = Stamina)
+	float minStamina = 0.0f;
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float maxStamina = 100.0f;
 	UPROPERTY(VisibleAnywhere, Category = Stamina)
 	float Stamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = Stamina)
 	float decreaseStamina = 1.0f;
-	float maxStamina = 100.0f;
-	float minStamina = 0.0f;
-
-	class UPlayerMainWG* MainHud;
 
 	bool isStaminaUse = false;
-	float WalkToRunRatio = 0.0f; 
-
 	void StaminaUpdate();
+
+	UPROPERTY()
+	class UPlayerMainWG* MainHud;
+
+	UPROPERTY()
+	class UAnimMontage* MoveMontage;
+
+
+	bool PlayerMoveCheck();
+	bool isPlayerMove = false;
+	bool isAir= false;
+	float dirH;
+	float dirV;
 
 public:	
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);

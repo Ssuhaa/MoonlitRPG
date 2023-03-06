@@ -108,11 +108,3 @@ void ASH_Player::interactionObject()
 }
 
 
-bool ASH_Player::isPlayerMove()
-{
-	if (playerAnim->dirH != 0 || playerAnim->dirV != 0)
-	{
-		return true;
-	}
-	return false;
-}
