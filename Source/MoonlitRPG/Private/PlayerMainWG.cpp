@@ -45,12 +45,38 @@ void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
 
 void UPlayerMainWG::UpdateEtime(float Etime)
 {
-	Text_ETime->SetText(FText::AsNumber(Etime));
+	FNumberFormattingOptions NumOption = FNumberFormattingOptions();
+	NumOption.MaximumFractionalDigits = 1;
+	NumOption.MinimumFractionalDigits = 1;
+
+	if (Etime == 0)
+	{
+		Text_E->SetColorAndOpacity(FLinearColor::Red);
+		Text_ETime->SetText(FText::FromString((TEXT(" "))));
+	}
+	else
+	{
+		Text_E->SetColorAndOpacity(FLinearColor::White);
+		Text_ETime->SetText(FText::AsNumber(Etime, &NumOption));
+	}
 }
 
-void UPlayerMainWG::UpdateQPercent(float Qpercent)
+void UPlayerMainWG::UpdateQPercent(float Qpercent) 
 {
-	Text_Qpercent->SetText(FText::AsNumber(Qpercent));
+	if (Qpercent == 100)
+	{
+		Text_Q->SetColorAndOpacity(FLinearColor::Red);
+		Text_Qpercent->SetText(FText::FromString((TEXT(" "))));
+	}
+	else if (Qpercent == 0)
+	{
+		Text_Q->SetColorAndOpacity(FLinearColor::White);
+		Text_Qpercent->SetText(FText::FromString((TEXT(" "))));
+	}
+	else
+	{
+		Text_Qpercent->SetText(FText::AsNumber(Qpercent));
+	}
 }
 
 void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)

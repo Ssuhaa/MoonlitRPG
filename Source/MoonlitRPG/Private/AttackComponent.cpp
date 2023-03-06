@@ -59,19 +59,15 @@ void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (coolTimeRunning)
-	{	
+	{
 		intensiveDelay -= DeltaTime;
-		currentTime += DeltaTime;
 		if (intensiveDelay <= 0)
 		{
 			intensiveDelay = 0;
 			coolTimeRunning = false;
 		}
-		if (currentTime > 1)
-		{
-			player->MainHUD->UpdateEtime(intensiveDelay);
-			currentTime = 0;
-		}
+		player->MainHUD->UpdateEtime(intensiveDelay);
+
 	}
 }
 
@@ -96,12 +92,12 @@ void UAttackComponent::NextCombo()
 		case 1:
 			attackCount = 2;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack1")));
-			TargetCheck(50, 80, 1);
+			TargetCheck(commonRange);
 			break;
 		case 2:
 			attackCount = 0;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack2")));
-			TargetCheck(50, 80, 2);
+			TargetCheck(commonRange);
 			break;
 		}
 	}
@@ -115,7 +111,8 @@ void UAttackComponent::CommonAttack()
 		attackCount = 1;
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
-		TargetCheck(50, 80, 1);
+		TargetCheck(commonRange);
+
 	}
 	else
 	{
@@ -133,12 +130,10 @@ void UAttackComponent::intensiveAttack()
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
-			TargetCheck(80, 100, 3);
+			TargetCheck(IntensiveRange);
 			coolTimeRunning = true;
 			intensiveDelay = 5;
-			specialCount+=addPercent;
-			specialCount = FMath::Clamp(specialCount, 0, 100);
-			player->MainHUD->UpdateQPercent(specialCount);
+
 		}
 	}
 }
@@ -152,10 +147,7 @@ void UAttackComponent::SpecialAttack()
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
-
-			TargetCheck(150, 100, 5);
-			specialCount = 0;
-			player->MainHUD->UpdateQPercent(specialCount);
+			TargetCheck(SpecialRange);
 		}
 	}
 }
@@ -190,9 +182,10 @@ bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
 
 // CanAttack 함수가 True일 때, 부딪힌 액터들을 확인하고 해당 액터들의 함수를 호출하는 함수.
 // attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
-void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float damage)
+
+void UAttackComponent::TargetCheck(FDamageRange damageRange)
 {
-	if (CanAttack(attackRadius, attackLength))
+	if (CanAttack(damageRange.attackRadius, damageRange.attackLength))
 	{
 		for (int32 i = 0; i < hitinfos.Num(); i++)
 		{
@@ -201,15 +194,34 @@ void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float
 				Target = Cast<AEnemyBase>(hitinfos[i].GetActor());
 				if (Target != nullptr)
 				{
-					Target->FSM->ReceiveDamage(damage);
+					Target->FSM->ReceiveDamage(damageRange.damage);
+
+					FVector force = -1.0f * Target->GetActorForwardVector() * damageRange.pushForce;
+					Target->GetMesh()->AddForce(force, NAME_None, true);
+
+					switch (damageRange.damageType)
+					{
+					case EDamageType::Common:
+						intensiveDelay -= 1.0f;
+						break;
+					case  EDamageType::Intensive:
+						specialCount += addPercent;
+						specialCount = FMath::Clamp(specialCount, 0, 100);
+						player->MainHUD->UpdateQPercent(specialCount);
+						break;
+					case EDamageType::Special:
+						specialCount = 0;
+						player->MainHUD->UpdateQPercent(specialCount);
+						break;
+					}
 				}
-			}
-			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
-			{
-				HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
-				if (HitObject != nullptr)
+				else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
 				{
-					HitObject->DropItem();
+					HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
+					if (HitObject != nullptr)
+					{
+						HitObject->DropItem();
+					}
 				}
 			}
 		}
