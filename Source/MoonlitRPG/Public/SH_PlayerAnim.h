@@ -35,6 +35,10 @@ public:
 	void AnimNotify_AttackEnd();
 	UFUNCTION()
 	void AnimNotify_NextCombo();
+	UFUNCTION()
+	void AnimNotify_PushEnemy_1();
+	UFUNCTION()
+	void AnimNotify_PushEnemy_2();
 
 	UFUNCTION()
 	void AnimNotify_DashEnd();	

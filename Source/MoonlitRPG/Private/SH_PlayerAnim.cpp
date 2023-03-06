@@ -49,6 +49,16 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 	Player->AttackComp->NextCombo();
 }
 
+void USH_PlayerAnim::AnimNotify_PushEnemy_1()
+{
+	Player->AttackComp->PushEnemy(30.0f);
+}
+
+void USH_PlayerAnim::AnimNotify_PushEnemy_2()
+{
+	Player->AttackComp->PushEnemy(50.0f);
+}
+
 void USH_PlayerAnim::AnimNotify_DashEnd()
 {
 	Player->GetCharacterMovement()->DisableMovement();

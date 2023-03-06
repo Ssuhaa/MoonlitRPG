@@ -62,5 +62,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
 	void NextCombo();
-	void TargetCheck(float attackRadius, float attackLength, float damage, float pushForce);
+	void TargetCheck(float attackRadius, float attackLength, float damage);
+	void PushEnemy(float pushForce);
 };
