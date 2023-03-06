@@ -41,6 +41,7 @@ protected:
 	class UInputAction* fkey;
 	void interactionObject();
 
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;

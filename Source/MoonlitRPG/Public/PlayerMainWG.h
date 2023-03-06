@@ -27,6 +27,8 @@ protected:
 	class UTextBlock* Text_E;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Q;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_HP;
 
 
 	void VisibleStaminaBar(bool isUseStamina);
@@ -39,4 +41,5 @@ public:
 	void UpdateStamina(float Stamina, float MaxStamina);
 	void UpdateEtime(float Etime);
 	void UpdateQPercent(float Qpercent);
+	void UpdateHP(int32 hp);
 };

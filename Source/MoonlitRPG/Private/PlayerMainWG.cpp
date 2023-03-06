@@ -8,6 +8,7 @@
 #include "InventoryComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include <UMG/Public/Components/TextBlock.h>
+#include <UMG/Public/Animation/WidgetAnimation.h>
 
 
 
@@ -41,6 +42,8 @@ void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
 {
 	float percent = Stamina/MaxStamina;	
 	StaminaBar->SetPercent(percent);
+	StaminaBar->SetFillColorAndOpacity(FLinearColor::LerpUsingHSV(FLinearColor::Red, FLinearColor::Green, percent));
+
 }
 
 void UPlayerMainWG::UpdateEtime(float Etime)
@@ -77,6 +80,11 @@ void UPlayerMainWG::UpdateQPercent(float Qpercent)
 	{
 		Text_Qpercent->SetText(FText::AsNumber(Qpercent));
 	}
+}
+
+void UPlayerMainWG::UpdateHP(int32 hp)
+{
+	Text_HP->SetText(FText::AsNumber(hp));
 }
 
 void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)
