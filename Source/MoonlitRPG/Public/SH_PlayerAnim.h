@@ -26,13 +26,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float dirH = 0;
 
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAir = false;
 
-public:
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
-
 	UFUNCTION()
 	void AnimNotify_NextCombo();
 
