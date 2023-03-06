@@ -23,6 +23,11 @@ protected:
 	class UTextBlock* Text_ETime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Qpercent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_E;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Q;
+
 
 	void VisibleStaminaBar(bool isUseStamina);
 
