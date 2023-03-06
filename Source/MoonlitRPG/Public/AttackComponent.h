@@ -23,6 +23,8 @@ protected:
 	TArray<class UInputAction*> inputarray;
 	TArray<FHitResult>hitinfos;
 
+	float currentTime = 0;
+
 	void CommonAttack();
 	void intensiveAttack();
 	void SpecialAttack();
@@ -47,7 +49,7 @@ public:
 	int32 attackCount = 0;
 
 	UPROPERTY(EditAnywhere)
-	float addPercent;
+	float addPercent = 35.0f;
 
 	float specialCount = 0;
 

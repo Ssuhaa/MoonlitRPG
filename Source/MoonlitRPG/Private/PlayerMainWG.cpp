@@ -50,7 +50,7 @@ void UPlayerMainWG::UpdateEtime(float Etime)
 
 void UPlayerMainWG::UpdateQPercent(float Qpercent)
 {
-	Text_ETime->SetText(FText::AsNumber(Qpercent));
+	Text_Qpercent->SetText(FText::AsNumber(Qpercent));
 }
 
 void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)

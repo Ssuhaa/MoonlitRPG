@@ -13,6 +13,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "HitObjectBase.h"
 #include "SH_PlayerAnim.h"
+#include "PlayerMainWG.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -58,11 +59,18 @@ void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (coolTimeRunning)
-	{
+	{	
 		intensiveDelay -= DeltaTime;
+		currentTime += DeltaTime;
 		if (intensiveDelay <= 0)
 		{
+			intensiveDelay = 0;
 			coolTimeRunning = false;
+		}
+		if (currentTime > 1)
+		{
+			player->MainHUD->UpdateEtime(intensiveDelay);
+			currentTime = 0;
 		}
 	}
 }
@@ -129,6 +137,8 @@ void UAttackComponent::intensiveAttack()
 			coolTimeRunning = true;
 			intensiveDelay = 5;
 			specialCount+=addPercent;
+			specialCount = FMath::Clamp(specialCount, 0, 100);
+			player->MainHUD->UpdateQPercent(specialCount);
 		}
 	}
 }
@@ -145,6 +155,7 @@ void UAttackComponent::SpecialAttack()
 
 			TargetCheck(150, 100, 5, 50);
 			specialCount = 0;
+			player->MainHUD->UpdateQPercent(specialCount);
 		}
 	}
 }
