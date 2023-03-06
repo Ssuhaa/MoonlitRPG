@@ -7,6 +7,7 @@
 #include "SH_Player.h"
 #include "InventoryComponent.h"
 #include <Kismet/GameplayStatics.h>
+#include <UMG/Public/Components/TextBlock.h>
 
 
 
@@ -40,6 +41,16 @@ void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
 {
 	float percent = Stamina/MaxStamina;	
 	StaminaBar->SetPercent(percent);
+}
+
+void UPlayerMainWG::UpdateEtime(float Etime)
+{
+	Text_ETime->SetText(FText::AsNumber(Etime));
+}
+
+void UPlayerMainWG::UpdateQPercent(float Qpercent)
+{
+	Text_ETime->SetText(FText::AsNumber(Qpercent));
 }
 
 void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)
