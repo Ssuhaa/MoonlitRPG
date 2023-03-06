@@ -29,6 +29,8 @@ void AIH_EnemyManager::BeginPlay()
 
 		enemyArr.Add(enemy);
 	}
+	
+	createTime = FMath::RandRange(minTime, maxTime);
 }
 
 // Called every frame

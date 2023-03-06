@@ -34,10 +34,10 @@ public:
 	float currentTime;
 
 	UPROPERTY(EditAnywhere, Category = DelayTime)
-	float createTime = 3;
+	float createTime;
 	
 	UPROPERTY(EditAnywhere, Category = DelayTime)
-	float minTime = 3;
+	float minTime = 5;
 
 	UPROPERTY(EditAnywhere, Category = DelayTime)
 	float maxTime = 10;

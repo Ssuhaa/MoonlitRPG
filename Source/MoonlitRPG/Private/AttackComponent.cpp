@@ -59,11 +59,10 @@ void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (coolTimeRunning)
 	{
-		currentTime += DeltaTime;
-		if (currentTime > intensiveDelay)
+		intensiveDelay -= DeltaTime;
+		if (intensiveDelay <= 0)
 		{
 			coolTimeRunning = false;
-			currentTime = 0;
 		}
 	}
 }
@@ -89,12 +88,12 @@ void UAttackComponent::NextCombo()
 		case 1:
 			attackCount = 2;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack1")));
-			TargetCheck(50, 80, 1);
+			TargetCheck(50, 80, 1, 10);
 			break;
 		case 2:
 			attackCount = 0;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack2")));
-			TargetCheck(50, 80, 2);
+			TargetCheck(50, 80, 2, 10);
 			break;
 		}
 	}
@@ -108,7 +107,7 @@ void UAttackComponent::CommonAttack()
 		attackCount = 1;
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
-		TargetCheck(50, 80, 1);
+		TargetCheck(50, 80, 1, 10);
 	}
 	else
 	{
@@ -126,9 +125,10 @@ void UAttackComponent::intensiveAttack()
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
-			TargetCheck(80, 100, 3);
+			TargetCheck(80, 100, 3, 30);
 			coolTimeRunning = true;
-			specialCount++;
+			intensiveDelay = 5;
+			specialCount+=addPercent;
 		}
 	}
 }
@@ -137,13 +137,13 @@ void UAttackComponent::SpecialAttack()
 {
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		if (specialCount == 3)
+		if (specialCount == 100)
 		{
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
-			TargetCheck(150, 100, 5);
+			TargetCheck(150, 100, 5, 50);
 			specialCount = 0;
 		}
 	}
@@ -179,7 +179,7 @@ bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
 
 // CanAttack 함수가 True일 때, 부딪힌 액터들을 확인하고 해당 액터들의 함수를 호출하는 함수.
 // attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
-void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float damage)
+void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float damage, float pushForce)
 {
 	if (CanAttack(attackRadius, attackLength))
 	{
@@ -191,6 +191,9 @@ void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float
 				if (Target != nullptr)
 				{
 					Target->FSM->ReceiveDamage(damage);
+
+					FVector force = -1.0f * Target->GetActorForwardVector() * pushForce;
+					Target->GetMesh()->AddForce(force, NAME_None, true);
 				}
 			}
 			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))

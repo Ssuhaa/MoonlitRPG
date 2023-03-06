@@ -45,9 +45,12 @@ public:
 	bool coolTimeRunning = false;
 
 	int32 attackCount = 0;
-	int32 specialCount = 0;
 
-	float currentTime = 0;
+	UPROPERTY(EditAnywhere)
+	float addPercent;
+
+	float specialCount = 0;
+
 	UPROPERTY(EditAnywhere)
 	float intensiveDelay = 5;
 
@@ -57,5 +60,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
 	void NextCombo();
-	void TargetCheck(float attackRadius, float attackLength, float damage);
+	void TargetCheck(float attackRadius, float attackLength, float damage, float pushForce);
 };
