@@ -230,8 +230,8 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 
 void UAttackComponent::PushEnemy(float pushForce)
 {
-	FVector direction = Target->GetActorLocation() - player->GetActorLocation();
-	FVector force = direction * pushForce;
-
-	Target->LaunchCharacter(force, true, true);
+// 	FVector direction = Target->GetActorLocation() - player->GetActorLocation();
+// 	FVector force = direction * pushForce;
+// 
+// 	Target->LaunchCharacter(force, true, true);
 }

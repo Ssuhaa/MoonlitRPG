@@ -128,7 +128,7 @@ void UMoveComponent::Jump()
 
 void UMoveComponent::Dash()
 {
-	if (Stamina > 1)
+	if (Stamina > 30)
 	{
 		isStaminaUse = true;
 		CurrSpeed = DashSpeed;
@@ -141,19 +141,22 @@ void UMoveComponent::DashToWalk()
 {
 	if (isStaminaUse)
 	{
-		if (Stamina > 1)
+		if (Stamina > 10)
 		{
 			SetWalkSpped(RunSpeed, DashSpeed, 10);
 		}
 		else
 		{
 			SetWalkSpped(WalkSpeed, DashSpeed, 10);
-			isStaminaUse = false;
+			if (Stamina < 1)
+			{
+				isStaminaUse = false;
+			}
 		}
 	}
 	else
 	{
-		SetWalkSpped(WalkSpeed, RunSpeed, 10);
+		SetWalkSpped(WalkSpeed, DashSpeed, 10);
 		isStaminaUse = false;
 	}
 }
