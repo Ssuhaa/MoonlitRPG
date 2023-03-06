@@ -11,6 +11,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "PlayerMainWG.h"
 #include "SH_PlayerAnim.h"
+#include "InteractiveObjectBase.h"
 
 ASH_Player::ASH_Player()
 {
@@ -98,6 +99,11 @@ void ASH_Player::interactionObject()
 			curritem->GetItem();
 		}
 		
+		AInteractiveObjectBase* currobject = Cast<AInteractiveObjectBase>(hitinfo.GetActor());
+		if (currobject != nullptr)
+		{
+			currobject->DropItem();
+		}
 	}
 }
 

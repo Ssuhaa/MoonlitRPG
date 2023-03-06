@@ -2,7 +2,7 @@
 
 
 #include "IH_EnemyManager.h"
-#include "IH_Enemy.h"
+#include "EnemyBase.h"
 
 // Sets default values
 AIH_EnemyManager::AIH_EnemyManager()
@@ -10,11 +10,6 @@ AIH_EnemyManager::AIH_EnemyManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FClassFinder<AIH_Enemy>tempEnemy(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_IH_Enemy.BP_IH_Enemy_C'"));
-	if (tempEnemy.Succeeded())
-	{
-		enemyFactory = tempEnemy.Class;
-	}
 }
 
 // Called when the game starts or when spawned
@@ -27,7 +22,9 @@ void AIH_EnemyManager::BeginPlay()
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AIH_Enemy* enemy = GetWorld()->SpawnActor<AIH_Enemy>(enemyFactory, GetActorTransform(), param);
+		int32 randNum = FMath::RandRange(0, enemyFactory.Num()-1);
+
+		AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
 		enemy->SetActive(false);
 
 		enemyArr.Add(enemy);

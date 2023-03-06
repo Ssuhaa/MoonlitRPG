@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "IH_Enemy.h"
+#include "EnemyBase.h"
 #include "Enemy_FSM.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include <UMG/Public/Components/WidgetComponent.h>
@@ -9,20 +9,15 @@
 #include <Components/CapsuleComponent.h>
 #include "ItemBase.h"
 
-AIH_Enemy::AIH_Enemy()
+AEnemyBase::AEnemyBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	FSM = CreateDefaultSubobject<UEnemy_FSM>(TEXT("FSM"));
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>tempmesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Geometry/JumpingSeed_Character/SM_PlayerMesh1.SM_PlayerMesh1'"));
-	if (tempmesh.Succeeded())
-	{
-		GetMesh()->SetSkeletalMesh(tempmesh.Object);
-		GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
-		GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
+	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	ConstructorHelpers::FClassFinder<UAnimInstance>tempanim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrint/ABP_IH_Enemy.ABP_IH_Enemy_C'"));
 	if (tempanim.Succeeded())
@@ -53,19 +48,19 @@ AIH_Enemy::AIH_Enemy()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
-void AIH_Enemy::BeginPlay()
+void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
 	enemyHPUI = Cast<UIH_EnemyHPUI>(compEnemyHP->GetUserWidgetObject());
 }
 
-void AIH_Enemy::Tick(float DeltaTime)
+void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AIH_Enemy::SetActive(bool bActive)
+void AEnemyBase::SetActive(bool bActive)
 {
 	if (bActive)
 	{

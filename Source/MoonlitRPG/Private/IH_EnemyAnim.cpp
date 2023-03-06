@@ -2,14 +2,14 @@
 
 
 #include "IH_EnemyAnim.h"
-#include "IH_Enemy.h"
+#include "EnemyBase.h"
 
 void UIH_EnemyAnim::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
 	ownerPawn = TryGetPawnOwner();
-	me=Cast<AIH_Enemy>(ownerPawn);
+	me=Cast<AEnemyBase>(ownerPawn);
 }
 
 void UIH_EnemyAnim::NativeUpdateAnimation(float DeltaSeconds)

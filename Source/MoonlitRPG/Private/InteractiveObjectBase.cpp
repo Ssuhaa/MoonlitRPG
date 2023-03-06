@@ -69,9 +69,9 @@ void AInteractiveObjectBase::DropItem()
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
 
-	float randDist = FMath::RandRange(60, 100);
-	FVector randForward = compSpawnPos->GetForwardVector()*randDist;
-	compSpawnPos->SetRelativeLocation(compSpawnPos->GetComponentLocation()+randForward);
+// 	float randDist = FMath::RandRange(10, 30);
+// 	FVector randForward = compSpawnPos->GetForwardVector()*randDist;
+// 	compSpawnPos->SetRelativeLocation(compSpawnPos->GetComponentLocation()+randForward);
 
 	if (spawnItems.IsValidIndex(0))
 	{
@@ -82,4 +82,6 @@ void AInteractiveObjectBase::DropItem()
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}
 	}
+
+	Destroy();
 }

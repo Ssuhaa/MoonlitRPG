@@ -6,11 +6,13 @@
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include "Enemy_FSM.h"
-#include "IH_Enemy.h"
+#include "EnemyBase.h"
 #include "SH_Player.h"
 #include <Kismet/KismetMathLibrary.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "HitObjectBase.h"
+#include "SH_PlayerAnim.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -47,7 +49,6 @@ void UAttackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	player = Cast<ASH_Player>(GetOwner());
-	//Target = Cast<AIH_Enemy>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_Enemy::StaticClass()));
 }
 
 
@@ -55,6 +56,16 @@ void UAttackComponent::BeginPlay()
 void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (coolTimeRunning)
+	{
+		currentTime += DeltaTime;
+		if (currentTime > intensiveDelay)
+		{
+			coolTimeRunning = false;
+			currentTime = 0;
+		}
+	}
 }
 
 void UAttackComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent)
@@ -71,21 +82,19 @@ void UAttackComponent::NextCombo()
 {
 	if (goToNextCombo)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("gotoNextCombo"));
 		goToNextCombo = false;
-
-		attackCount++;
-		UE_LOG(LogTemp, Warning, TEXT("%d"), attackCount);
 
 		switch (attackCount)
 		{
 		case 1:
 			attackCount = 2;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack1")));
+			TargetCheck(50, 80, 1);
 			break;
 		case 2:
 			attackCount = 0;
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack2")));
+			TargetCheck(50, 80, 2);
 			break;
 		}
 	}
@@ -93,28 +102,13 @@ void UAttackComponent::NextCombo()
 
 void UAttackComponent::CommonAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CommonAttack"));
-
-	if (!isAttacking)
+	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack0")));
+		attackCount = 1;
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
-
-		if (CanAttack(50, 80))
-		{
-			for (int32 i = 0; i < hitinfos.Num(); i++)
-			{
-				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
-				{
-					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
-					if (Target != nullptr)
-					{
-						Target->FSM->ReceiveDamage(1);
-					}
-				}
-			}
-		}
+		TargetCheck(50, 80, 1);
 	}
 	else
 	{
@@ -124,58 +118,39 @@ void UAttackComponent::CommonAttack()
 
 void UAttackComponent::intensiveAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("intensiveAttack"));
-
-	if (!isAttacking)
+	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
-		player->GetCharacterMovement()->DisableMovement();
-		isAttacking = true;
-
-		if (CanAttack(80, 100))
+		if (!coolTimeRunning)
 		{
-			for (int32 i = 0; i < hitinfos.Num(); i++)
-			{
-				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
-				{
-					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
-					if (Target != nullptr)
-					{
-						Target->FSM->ReceiveDamage(3);
-					}
-				}
-			}
+			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
+			player->GetCharacterMovement()->DisableMovement();
+			isAttacking = true;
+
+			TargetCheck(80, 100, 3);
+			coolTimeRunning = true;
+			specialCount++;
 		}
 	}
 }
 
 void UAttackComponent::SpecialAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SpecialAttack"));
-
-	if (!isAttacking)
+	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
-		player->GetCharacterMovement()->DisableMovement();
-		isAttacking = true;
-
-		if (CanAttack(150, 100))
+		if (specialCount == 3)
 		{
-			for (int32 i = 0; i < hitinfos.Num(); i++)
-			{
-				if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
-				{
-					Target = Cast<AIH_Enemy>(hitinfos[i].GetActor());
-					if (Target != nullptr)
-					{
-						Target->FSM->ReceiveDamage(5);
-					}
-				}
-			}
+			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
+			player->GetCharacterMovement()->DisableMovement();
+			isAttacking = true;
+
+			TargetCheck(150, 100, 5);
+			specialCount = 0;
 		}
 	}
 }
 
+// SweepTrace를 쏴서 공격할 수 있는지 없는지를 확인하는 함수
+// attackRadius는 구체 콜리전의 반지름, attackLength는 구체 콜리전의 길이
 bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
 {
 	FCollisionShape attackCollision = FCollisionShape::MakeSphere(attackRadius);
@@ -200,4 +175,32 @@ bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
 		return true;
 	}
 	else return false;
+}
+
+// CanAttack 함수가 True일 때, 부딪힌 액터들을 확인하고 해당 액터들의 함수를 호출하는 함수.
+// attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
+void UAttackComponent::TargetCheck(float attackRadius, float attackLength, float damage)
+{
+	if (CanAttack(attackRadius, attackLength))
+	{
+		for (int32 i = 0; i < hitinfos.Num(); i++)
+		{
+			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
+			{
+				Target = Cast<AEnemyBase>(hitinfos[i].GetActor());
+				if (Target != nullptr)
+				{
+					Target->FSM->ReceiveDamage(damage);
+				}
+			}
+			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
+			{
+				HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
+				if (HitObject != nullptr)
+				{
+					HitObject->DropItem();
+				}
+			}
+		}
+	}
 }

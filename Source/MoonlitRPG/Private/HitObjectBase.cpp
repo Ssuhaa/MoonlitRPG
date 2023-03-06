@@ -25,7 +25,7 @@ void AHitObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	hitCount = FMath::RandRange(3, 5);
+	originSpawnPos = compSpawnPos->GetComponentLocation();
 }
 
 // Called every frame
@@ -42,7 +42,7 @@ void AHitObjectBase::DropItem()
 
 	float randDist = FMath::RandRange(60, 100);
 	FVector randForward = compSpawnPos->GetForwardVector() * randDist;
-	compSpawnPos->SetRelativeLocation(compSpawnPos->GetComponentLocation() + randForward);
+	compSpawnPos->SetRelativeLocation(originSpawnPos + randForward);
 
 	if (spawnItems.IsValidIndex(0))
 	{
@@ -50,7 +50,7 @@ void AHitObjectBase::DropItem()
 		{
 			currCount += 1;
 			int32 randNum = FMath::RandRange(0, spawnItems.Num() - 1);
-			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetRelativeLocation(), compSpawnPos->GetRelativeRotation());
 		}
 	}
 }

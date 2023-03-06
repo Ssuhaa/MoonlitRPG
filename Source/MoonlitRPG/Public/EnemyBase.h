@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
-#include "IH_Enemy.generated.h"
+#include "EnemyBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOONLITRPG_API AIH_Enemy : public ACharacterBase
+class MOONLITRPG_API AEnemyBase : public ACharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	AIH_Enemy();
+	AEnemyBase();
 
 protected:
 	virtual void BeginPlay() override;

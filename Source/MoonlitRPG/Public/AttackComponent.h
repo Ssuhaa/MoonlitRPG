@@ -29,7 +29,8 @@ protected:
 	bool CanAttack(float attackRadius, float attackLength);
 
 	class ASH_Player* player;
-	class AIH_Enemy* Target;
+	class AEnemyBase* Target;
+	class AHitObjectBase* HitObject;
 
 public:
 	UPROPERTY(EditAnywhere, Category = Montage)
@@ -41,7 +42,14 @@ public:
 
 	bool isAttacking = false;
 	bool goToNextCombo = false;
+	bool coolTimeRunning = false;
+
 	int32 attackCount = 0;
+	int32 specialCount = 0;
+
+	float currentTime = 0;
+	UPROPERTY(EditAnywhere)
+	float intensiveDelay = 5;
 
 public:	
 	// Called every frame
@@ -49,4 +57,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
 	void NextCombo();
+	void TargetCheck(float attackRadius, float attackLength, float damage);
 };

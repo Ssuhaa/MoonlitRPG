@@ -40,9 +40,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FSM")
 	EEnemyState currState = EEnemyState::Idle;
 
+	UPROPERTY()
 	class ASH_Player* target;
-	class AIH_Enemy* me;
+	UPROPERTY()
+	class AEnemyBase* me;
+	UPROPERTY()
 	class UIH_EnemyAnim* anim;
+	UPROPERTY()
 	class AAIController* ai;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")

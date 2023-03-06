@@ -23,7 +23,7 @@ public:
 
 public:
 	class APawn* ownerPawn;
-	class AIH_Enemy* me;
+	class AEnemyBase* me;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FSM)
 	EEnemyState animState;

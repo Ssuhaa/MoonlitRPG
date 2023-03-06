@@ -34,8 +34,6 @@ protected:
 	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UMoveComponent* MoveComp;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
-	class USH_PlayerAnim* playerAnim;
 
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
 
@@ -43,6 +41,8 @@ protected:
 	void interactionObject();
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class USH_PlayerAnim* playerAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UCameraComponent* CamComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)

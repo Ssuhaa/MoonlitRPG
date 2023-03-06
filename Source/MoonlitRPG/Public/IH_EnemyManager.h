@@ -25,10 +25,10 @@ public:
 	
 public:
 	UPROPERTY(EditAnywhere)
-	TArray <class AIH_Enemy*> enemyArr;
+	TArray <class AEnemyBase*> enemyArr;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf <class AIH_Enemy> enemyFactory;
+	TArray<TSubclassOf <class AEnemyBase>> enemyFactory;
 
 public:
 	float currentTime;

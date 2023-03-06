@@ -2,7 +2,7 @@
 
 
 #include "Enemy_FSM.h"
-#include "IH_Enemy.h"
+#include "EnemyBase.h"
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
@@ -13,6 +13,7 @@
 #include "IH_EnemyHPUI.h"
 #include "ItemBase.h"
 #include "IH_EnemyManager.h"
+#include <Components/CapsuleComponent.h>
 
 
 // Sets default values for this component's properties
@@ -39,7 +40,7 @@ void UEnemy_FSM::BeginPlay()
 
 	target = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 
-	me = Cast<AIH_Enemy>(GetOwner());
+	me = Cast<AEnemyBase>(GetOwner());
 
 	ai = Cast<AAIController>(me->GetController());
 
@@ -280,10 +281,15 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		break;
 
 	case EEnemyState::Damage:
-		me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Damage0")));
+	{
+		int32 randNum = FMath::RandRange(0, 1);
+		FString randomSection = FString::Printf(TEXT("Damage%d"), randNum);
+		me->PlayAnimMontage(enemyMontage, 1.0f, FName(*randomSection));
 		break;
+	}
 
 	case EEnemyState::Die:
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
 	}
 }
