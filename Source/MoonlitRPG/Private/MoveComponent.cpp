@@ -9,6 +9,7 @@
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <GameFramework/CharacterMovementComponent.h>
 #include "PlayerMainWG.h"
+#include <Animation/AnimMontage.h>
 
 // Sets default values for this component's properties
 UMoveComponent::UMoveComponent()
@@ -47,6 +48,11 @@ UMoveComponent::UMoveComponent()
 	{
 		inputArray.Add(tempAction4.Object);//4번 Shift
 	}
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempMontage(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Move.AMT_Move'"));
+	if (tempMontage.Succeeded())
+	{
+		MoveMontage = tempMontage.Object;
+	}
 }
 
 
@@ -73,8 +79,10 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	dir = FTransform(Player->GetControlRotation()).TransformVector(dir);
 	Player->AddMovementInput(dir.GetSafeNormal());
 	dir = FVector::ZeroVector;
+	isPlayerMove = PlayerMoveCheck();
 
 	StaminaUpdate();
+	DashToWalk();
 
 }
 
@@ -85,9 +93,8 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* En
 		EnhancedInputComponent->BindAction(inputArray[0],ETriggerEvent::Triggered, this, &UMoveComponent::Horizontal); // 0번 AD
 		EnhancedInputComponent->BindAction(inputArray[1],ETriggerEvent::Triggered,  this, &UMoveComponent::Vertical); // 1번 WS
 		EnhancedInputComponent->BindAction(inputArray[2],ETriggerEvent::Triggered,  this, &UMoveComponent::Look); // 2번 마우스XY
-		EnhancedInputComponent->BindAction(inputArray[3],ETriggerEvent::Triggered, this, &UMoveComponent::Jump); // 3번 Space
-		EnhancedInputComponent->BindAction(inputArray[4],ETriggerEvent::Triggered, this, &UMoveComponent::Run); //4번 Shift
-		EnhancedInputComponent->BindAction(inputArray[4],ETriggerEvent::Completed, this, &UMoveComponent::Walk);
+		EnhancedInputComponent->BindAction(inputArray[3],ETriggerEvent::Triggered, this, &UMoveComponent::Jump); // 3번 Space 
+		EnhancedInputComponent->BindAction(inputArray[4],ETriggerEvent::Started, this, &UMoveComponent::Dash); //4번 Shift
 	}
 
 }
@@ -118,43 +125,60 @@ void UMoveComponent::Jump()
 	Player->Jump();
 }
 
-void UMoveComponent::Walk()
-{
-	isStaminaUse = false;
-	WalkToRunRatio = 0;
-	Movement->MaxWalkSpeed = WalkSpeed;
-}
 
-void UMoveComponent::Run()
+void UMoveComponent::Dash()
 {
-	isStaminaUse = true;
 	if (Stamina > 1)
 	{
-		WalkToRunRatio += GetWorld()->GetDeltaSeconds();
-		WalkToRunRatio =  FMath::Clamp(WalkToRunRatio, 0.0f, 1.0f);
-		Movement->MaxWalkSpeed = FMath::Lerp(WalkSpeed, RunSpeed, WalkToRunRatio);
+		isStaminaUse = true;
+		CurrSpeed = DashSpeed;
+	}
+}
+
+
+
+void UMoveComponent::DashToWalk()
+{
+	if (isStaminaUse)
+	{
+		if (Stamina > 1)
+		{
+			SetWalkSpped(RunSpeed, DashSpeed, 10);
+		}
+		else
+		{
+			SetWalkSpped(WalkSpeed, DashSpeed, 10);
+			isStaminaUse = false;
+		}
 	}
 	else
 	{
-		WalkToRunRatio -= GetWorld()->GetDeltaSeconds();
-		WalkToRunRatio = FMath::Clamp(WalkToRunRatio, 0.0f, 1.0f);
-		Movement->MaxWalkSpeed = FMath::Lerp(WalkSpeed, RunSpeed, WalkToRunRatio);
+		SetWalkSpped(WalkSpeed, RunSpeed, 10);
+		isStaminaUse = false;
 	}
+}
+
+void UMoveComponent::SetWalkSpped(float MinSpeed, float MaxSpeed, float MinusSpeed)
+{
+	CurrSpeed -= MinusSpeed;
+	CurrSpeed = FMath::Clamp(CurrSpeed, MinSpeed, MaxSpeed);
+	Movement->MaxWalkSpeed = CurrSpeed;
 }
 
 void UMoveComponent::StaminaUpdate()
 {
 	if (isStaminaUse)
 	{
-		if (Player->isPlayerMove())
+		if (isPlayerMove)
 		{
 			Stamina -= decreaseStamina;
 			Stamina = FMath::Clamp(Stamina, minStamina, maxStamina);
 		}
-		else
+		else 
 		{
 			Stamina += decreaseStamina;
 			Stamina = FMath::Clamp(Stamina, minStamina, maxStamina);
+			isStaminaUse = false;
 		}
 	}
 	else
@@ -167,4 +191,24 @@ void UMoveComponent::StaminaUpdate()
 	{
 		Player->MainHUD->UpdateStamina(Stamina, maxStamina);
 	}
+}
+
+bool UMoveComponent::PlayerMoveCheck()
+{
+	if (Player != nullptr)
+	{
+		FVector velocity = Player->GetVelocity();
+		FVector forwardVector = Player->GetActorForwardVector();
+		dirV = FVector::DotProduct(forwardVector, velocity);
+
+		FVector rightVector = Player->GetActorRightVector();
+		dirH = FVector::DotProduct(rightVector, velocity);
+
+		isAir = Player->GetCharacterMovement()->IsFalling();
+		if (dirH != 0 || dirV != 0)
+		{
+			return true;
+		}
+	}
+	return false;
 }

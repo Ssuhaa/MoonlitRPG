@@ -32,12 +32,13 @@ protected:
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY()
 	TArray<class UInputAction*> inputArray; //πŸ¿ŒµÂ
 
-
 	TSubclassOf<class UInventoryWG> invenFactory;
+	UPROPERTY()
 	class UInventoryWG* inventory;
-	
+	UPROPERTY()
 	class ASH_Player* Player;
 
 	void AddItemToinven(FIteminfo Getiteminfo, int32 Amont);

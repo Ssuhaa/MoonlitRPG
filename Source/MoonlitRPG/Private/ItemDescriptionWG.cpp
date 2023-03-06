@@ -7,17 +7,7 @@
 
 void UItemDescriptionWG::SetDescription(FInvenItem iteminfo)
 {	
-	if(ItemImage != nullptr)
-	{
-		ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
-	}
-	if (ItemName != nullptr)
-	{
-		ItemName->SetText(FText::FromString(iteminfo.iteminfomation.ItemName));
-	}
-	if (Description != nullptr)
-	{
-		Description->SetText(FText::FromString(iteminfo.iteminfomation.itemDescription));
-	}
-
+	ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
+	ItemName->SetText(FText::FromString(iteminfo.iteminfomation.ItemName));
+	Description->SetText(FText::FromString(iteminfo.iteminfomation.itemDescription));
 }

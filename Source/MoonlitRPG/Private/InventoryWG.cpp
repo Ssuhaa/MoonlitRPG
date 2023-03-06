@@ -63,10 +63,10 @@ void UInventoryWG::RemoveWidget()
 
 void UInventoryWG::AddWidget()
 {
-	AddToViewport();
 	Setinventory();
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	AddToViewport();
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void UInventoryWG::ItemSlotClicked(FInvenItem currSelectItem)
@@ -145,6 +145,8 @@ void UInventoryWG::Setinventory()
 	Overlay_ItemInfo->ClearChildren();
 
 	FText currslotName;
+	Money_Text->SetText(FText::AsNumber(InvenComp->Money));
+	Text_Count->SetText(FText::AsNumber(InvenComp->CountItem()));
 
 	switch (currinventype)
 	{	
@@ -177,13 +179,4 @@ void UInventoryWG::Setinventory()
 		}
 	}
 
-	if (Money_Text != nullptr)
-	{
-		Money_Text->SetText(FText::FromString(FString::FromInt(InvenComp->Money)));
-	}
-
-	if (Text_Count != nullptr)
-	{
-		Text_Count->SetText(FText::FromString(FString::FromInt(InvenComp->CountItem())));
-	}
 }

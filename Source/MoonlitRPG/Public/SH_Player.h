@@ -39,6 +39,7 @@ protected:
 
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
 
+	UPROPERTY()
 	class UInputAction* fkey;
 	void interactionObject();
 
@@ -51,7 +52,6 @@ public:
 	class UInventoryComponent* InvenComp;
 
 	EPlayerState ChracterState = Idle;
+	UPROPERTY()
 	class UPlayerMainWG* MainHUD;
-
-	bool isPlayerMove();
 };
