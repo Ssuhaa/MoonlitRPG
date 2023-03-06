@@ -31,14 +31,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAir = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAttack = false;
+
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
 	UFUNCTION()
 	void AnimNotify_NextCombo();
 	UFUNCTION()
-	void AnimNotify_PushEnemy_1();
+	void AnimNotify_IntensiveAttack();
 	UFUNCTION()
-	void AnimNotify_PushEnemy_2();
+	void AnimNotify_SpecialAttack();
 
 	UFUNCTION()
 	void AnimNotify_DashEnd();	

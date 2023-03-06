@@ -289,7 +289,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 	}
 
 	case EEnemyState::Die:
-		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+//		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		break;
 	}
 }

@@ -52,26 +52,15 @@ protected:
 	void CommonAttack();
 	void intensiveAttack();
 	void SpecialAttack();
-	bool CanAttack(float attackRadius, float attackLength);
 
 	UPROPERTY()
 	class ASH_Player* player;
-	UPROPERTY()
-	class AEnemyBase* Target;
 	UPROPERTY()
 	class AHitObjectBase* HitObject;
 
 	UPROPERTY(EditAnywhere, Category = Montage)
 	class UAnimMontage* attackMontage;
-	UPROPERTY(EditAnywhere, Category = Montage)
-	class UAnimMontage* combo1Montage;
-	UPROPERTY(EditAnywhere, Category = Montage)
-	class UAnimMontage* combo2Montage;
 
-
-	FDamageRange commonRange = {EDamageType::Common, 50, 80, 1, 0};
-	FDamageRange IntensiveRange = {EDamageType::Intensive, 80, 100, 1, 0 };
-	FDamageRange SpecialRange = {EDamageType::Special, 150 , 100, 5, 0};
 
 	UPROPERTY(EditAnywhere, Category = AttackValue) // 맞았을때 e 딜레이 주는거
 	float MinusDelayValue = 0.2f;
@@ -88,10 +77,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	void NextCombo();
+	FDamageRange commonRange = { EDamageType::Common, 50, 80, 1, 0 };
+	FDamageRange IntensiveRange = { EDamageType::Intensive, 80, 100, 1, 15 };
+	FDamageRange SpecialRange = { EDamageType::Special, 150 , 100, 5, 30 };
 
-	void PushEnemy(float pushForce);
+	UPROPERTY()
+	class AEnemyBase* Target;
+
+	void NextCombo();
 	void TargetCheck(FDamageRange damageRange);
+
+	FVector direction;
+	FVector force;
 
 	int32 attackCount = 0;
 	bool isAttacking = false;

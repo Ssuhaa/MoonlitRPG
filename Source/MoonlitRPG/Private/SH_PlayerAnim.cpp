@@ -49,14 +49,14 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 	Player->AttackComp->NextCombo();
 }
 
-void USH_PlayerAnim::AnimNotify_PushEnemy_1()
+void USH_PlayerAnim::AnimNotify_IntensiveAttack()
 {
-	Player->AttackComp->PushEnemy(30.0f);
+	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange);
 }
 
-void USH_PlayerAnim::AnimNotify_PushEnemy_2()
+void USH_PlayerAnim::AnimNotify_SpecialAttack()
 {
-	Player->AttackComp->PushEnemy(50.0f);
+	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange);
 }
 
 void USH_PlayerAnim::AnimNotify_DashEnd()

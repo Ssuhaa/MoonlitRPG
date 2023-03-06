@@ -130,7 +130,7 @@ void UAttackComponent::intensiveAttack()
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
-			TargetCheck(IntensiveRange);
+//			TargetCheck(IntensiveRange);
 			coolTimeRunning = true;
 			intensiveDelay = 5;
 
@@ -147,37 +147,9 @@ void UAttackComponent::SpecialAttack()
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
-			TargetCheck(SpecialRange);
+//			TargetCheck(SpecialRange);
 		}
 	}
-}
-
-// SweepTrace를 쏴서 공격할 수 있는지 없는지를 확인하는 함수
-// attackRadius는 구체 콜리전의 반지름, attackLength는 구체 콜리전의 길이
-bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
-{
-	FCollisionShape attackCollision = FCollisionShape::MakeSphere(attackRadius);
-	FCollisionQueryParams param;
-	param.AddIgnoredActor(player);
-
-	// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
-	FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
-	directionVector.Z = 0.0f;
-	player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
-
-	// 디버그 캡슐 그리기
-	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * attackLength * 0.5f;
-	float halfHeight = attackLength * 0.5f + attackRadius;
-	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * attackLength).ToQuat();
-	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
-
-	bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * attackLength, FQuat::Identity, ECC_Visibility, attackCollision, param);
-
-	if (bHits)
-	{
-		return true;
-	}
-	else return false;
 }
 
 // CanAttack 함수가 True일 때, 부딪힌 액터들을 확인하고 해당 액터들의 함수를 호출하는 함수.
@@ -185,7 +157,24 @@ bool UAttackComponent::CanAttack(float attackRadius, float attackLength)
 
 void UAttackComponent::TargetCheck(FDamageRange damageRange)
 {
-	if (CanAttack(damageRange.attackRadius, damageRange.attackLength))
+	FCollisionShape attackCollision = FCollisionShape::MakeSphere(damageRange.attackRadius);
+	FCollisionQueryParams param;
+	param.AddIgnoredActor(player);
+
+	// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
+// 	FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
+// 	directionVector.Z = 0.0f;
+// 	player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
+
+	// 디버그 캡슐 그리기
+	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength * 0.5f;
+	float halfHeight = damageRange.attackLength * 0.5f + damageRange.attackRadius;
+	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
+	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
+
+	bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_Visibility, attackCollision, param);
+
+	if (bHits)
 	{
 		for (int32 i = 0; i < hitinfos.Num(); i++)
 		{
@@ -194,24 +183,33 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				Target = Cast<AEnemyBase>(hitinfos[i].GetActor());
 				if (Target != nullptr)
 				{
-					Target->FSM->ReceiveDamage(damageRange.damage);
-
-					FVector force = -1.0f * Target->GetActorForwardVector() * damageRange.pushForce;
-					Target->GetMesh()->AddForce(force, NAME_None, true);
+//					Target->FSM->ReceiveDamage(damageRange.damage);
 
 					switch (damageRange.damageType)
 					{
 					case EDamageType::Common:
 						intensiveDelay -= 1.0f;
+						Target->FSM->ReceiveDamage(damageRange.damage);
 						break;
-					case  EDamageType::Intensive:
+					case EDamageType::Intensive:
 						specialCount += addPercent;
 						specialCount = FMath::Clamp(specialCount, 0, 100);
 						player->MainHUD->UpdateQPercent(specialCount);
+						Target->FSM->ReceiveDamage(damageRange.damage);
+
+						direction = Target->GetActorLocation()-player->GetActorLocation();
+						force = direction * damageRange.pushForce;
+						force.Z = 0;
+						Target->LaunchCharacter(force, true, true);
 						break;
 					case EDamageType::Special:
 						specialCount = 0;
 						player->MainHUD->UpdateQPercent(specialCount);
+						Target->FSM->ReceiveDamage(damageRange.damage);
+
+						direction = Target->GetActorLocation() - player->GetActorLocation();
+						force = direction * damageRange.pushForce;
+						Target->LaunchCharacter(force, true, true);
 						break;
 					}
 				}
@@ -226,12 +224,4 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 			}
 		}
 	}
-}
-
-void UAttackComponent::PushEnemy(float pushForce)
-{
-	FVector direction = Target->GetActorLocation() - player->GetActorLocation();
-	FVector force = direction * pushForce;
-
-	Target->LaunchCharacter(force, true, true);
 }
