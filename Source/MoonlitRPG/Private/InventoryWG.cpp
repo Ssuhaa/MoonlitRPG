@@ -13,6 +13,7 @@
 #include "InventorySlotWG.h"
 #include "ItemDescriptionWG.h"
 #include "inventoryUseButton.h"
+#include "AttackComponent.h"
 
 
 
@@ -38,7 +39,7 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	Button_Close->OnPressed.AddDynamic(this, &UInventoryWG::RemoveWidget);
 	Button_Consum->OnPressed.AddDynamic(this, &UInventoryWG::ClickedConsum); 
 	Button_Outfit->OnPressed.AddDynamic(this, &UInventoryWG::ClickedOutfit);
@@ -86,8 +87,13 @@ void UInventoryWG::ItemSlotClicked(FInvenItem currSelectItem)
 
 void UInventoryWG::ClickedUseButton()
 {
-	InvenComp->PlusMinusItemAmont(SelectedSlot.iteminfomation, -1);
+	if (Player != nullptr)
+	{
 	//HP 회복 호출
+		Player->AttackComp->HealPlayer(SelectedSlot.iteminfomation.HealAmount);
+	}
+	//hp 다찼을때 사용할지 예외처리
+	InvenComp->PlusMinusItemAmount(SelectedSlot.iteminfomation, -1);
 	Setinventory();
 }
 

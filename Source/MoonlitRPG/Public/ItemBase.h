@@ -37,7 +37,7 @@ struct FIteminfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 PurchasePrice = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Heal = 0;
+	int32 HealAmount = 0;
 };
 
 

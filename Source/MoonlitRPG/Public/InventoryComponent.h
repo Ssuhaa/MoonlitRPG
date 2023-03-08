@@ -16,7 +16,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FIteminfo iteminfomation;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 itemAmont;
+	int32 itemAmount;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -41,7 +41,7 @@ protected:
 	UPROPERTY()
 	class ASH_Player* Player;
 
-	void AddItemToinven(FIteminfo Getiteminfo, int32 Amont);
+	void AddItemToinven(FIteminfo Getiteminfo, int32 Amount);
 
 	void InventoryOpen();
 
@@ -53,8 +53,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FInvenItem> invenItemArr;
 
-	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amont);
-	bool PlusMinusItemAmont(FIteminfo AdditemInfo, int32 Amont);
+	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
+	bool PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
 	int32 FindItem(FIteminfo iteminfo);
 
 	int32 CountItem();

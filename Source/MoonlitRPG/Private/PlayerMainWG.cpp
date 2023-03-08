@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Animation/WidgetAnimation.h>
+#include "AttackComponent.h"
 
 
 
@@ -22,6 +23,11 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 
 	Super::NativeTick(MyGeometry,InDeltaTime);
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	if (Player != nullptr)
+	{
+		UpdateHP(Player->AttackComp->PlayerHP);
+	}
 
 	if (StaminaBar->GetPercent() == 1.0f)
 	{

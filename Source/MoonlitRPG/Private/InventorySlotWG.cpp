@@ -18,9 +18,9 @@ void UInventorySlotWG::NativeConstruct()
 void UInventorySlotWG::SetItemSlot()
 {
 	ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
-	if (iteminfo.itemAmont > 1)
+	if (iteminfo.itemAmount > 1)
 	{
-		ItemAmont->SetText(FText::FromString(FString::Printf(TEXT("%d"), iteminfo.itemAmont)));
+		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), iteminfo.itemAmount)));
 	}
 }
 

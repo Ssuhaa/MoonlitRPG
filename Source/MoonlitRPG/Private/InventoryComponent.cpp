@@ -68,45 +68,45 @@ void UInventoryComponent::InventoryOpen()
 	}
 }
 
-void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amont) //아이템 추가 함수
+void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount) //아이템 추가 함수
 {
 	int32 value = FindItem(iteminfo);
 	if (value > -1)
 	{
 		if (invenItemArr[value].iteminfomation.Stackalbe)
 		{
-			invenItemArr[value].itemAmont += Amont;
+			invenItemArr[value].itemAmount += Amount;
 		}
 	}
 	else
 	{
-		AddItemToinven(iteminfo, Amont);
+		AddItemToinven(iteminfo, Amount);
 	}
 }
 
-void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amont) 
+void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount)
 {
 	FInvenItem currGetItem;
 	currGetItem.iteminfomation = Getiteminfo;
-	currGetItem.itemAmont = Amont;
+	currGetItem.itemAmount = Amount;
 	invenItemArr.Add(currGetItem);
 }
 
-bool UInventoryComponent::PlusMinusItemAmont(FIteminfo AdditemInfo, int32 Amont) // 기존에 있는 아이템 찾는
+bool UInventoryComponent::PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount) // 기존에 있는 아이템 찾는
 {
 	int32 value = FindItem(AdditemInfo);
 	if (value > -1)
 	{
-		if (Amont < 0)
+		if (Amount < 0)
 		{
-			if (invenItemArr[value].itemAmont < Amont)
+			if (invenItemArr[value].itemAmount < Amount)
 			{
 				return false;
 			}
 			else
 			{
-				invenItemArr[value].itemAmont += Amont;
-				if (invenItemArr[value].itemAmont <= 0)
+				invenItemArr[value].itemAmount += Amount;
+				if (invenItemArr[value].itemAmount <= 0)
 				{
 					invenItemArr.RemoveAt(value);
 				}
@@ -115,8 +115,8 @@ bool UInventoryComponent::PlusMinusItemAmont(FIteminfo AdditemInfo, int32 Amont)
 		}
 		else
 		{
-			invenItemArr[value].itemAmont += Amont;
-			if (invenItemArr[value].itemAmont <= 0)
+			invenItemArr[value].itemAmount += Amount;
+			if (invenItemArr[value].itemAmount <= 0)
 			{
 				invenItemArr.RemoveAt(value);
 			}
@@ -144,7 +144,7 @@ int32 UInventoryComponent::CountItem()
 	int32 value = 0;
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
 	{
-		value += invenItemArr[i].itemAmont;
+		value += invenItemArr[i].itemAmount;
 	}
 	return value;
 }
