@@ -226,23 +226,3 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	}
 }
 
-void UAttackComponent::DamagedPlayer(int32 DamageValue)
-{
-	if (PlayerHP >= DamageValue)
-	{
-		PlayerHP -= DamageValue;
-	}
-	else // 플레이어 죽음
-	{
-
-	}
-	PlayerHP = FMath::Clamp(PlayerHP, 0, 100);
-	player->MainHUD->UpdateHP(PlayerHP);
-}
-
-void UAttackComponent::HealPlayer(int32 HealValue)
-{	
-	PlayerHP += HealValue;
-	PlayerHP = FMath::Clamp(PlayerHP, 0, 100);
-	player->MainHUD->UpdateHP(PlayerHP);
-}

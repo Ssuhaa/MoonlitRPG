@@ -90,10 +90,6 @@ public:
 	FVector direction;
 	FVector force;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
-	float PlayerHP = 100.0f;
-	void DamagedPlayer(int32 DamageValue);
-	void HealPlayer(int32 HealValue);
 
 	int32 attackCount = 0;
 	bool isAttacking = false;

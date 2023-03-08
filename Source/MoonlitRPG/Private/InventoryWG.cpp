@@ -13,7 +13,7 @@
 #include "InventorySlotWG.h"
 #include "ItemDescriptionWG.h"
 #include "inventoryUseButton.h"
-#include "AttackComponent.h"
+
 
 
 
@@ -90,7 +90,7 @@ void UInventoryWG::ClickedUseButton()
 	if (Player != nullptr)
 	{
 	//HP 회복 호출
-		Player->AttackComp->HealPlayer(SelectedSlot.iteminfomation.HealAmount);
+		Player->HealPlayer(SelectedSlot.iteminfomation.HealAmount);
 	}
 	//hp 다찼을때 사용할지 예외처리
 	InvenComp->PlusMinusItemAmount(SelectedSlot.iteminfomation, -1);

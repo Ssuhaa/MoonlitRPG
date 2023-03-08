@@ -41,8 +41,12 @@ protected:
 	class UInputAction* fkey;
 	void interactionObject();
 
-
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
+	float PlayerHP = 100.0f;
+	void DamagedPlayer(int32 DamageValue);
+	void HealPlayer(int32 HealValue);
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
