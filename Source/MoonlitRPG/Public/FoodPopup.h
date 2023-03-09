@@ -14,7 +14,7 @@ UCLASS()
 class MOONLITRPG_API UFoodPopup : public UUserWidget
 {
 	GENERATED_BODY()
-	
+	UFoodPopup(const FObjectInitializer& ObjectInitializer);
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -40,7 +40,8 @@ protected:
 
 	UPROPERTY()
 	class ASH_Player* Player;
-
+	UPROPERTY()
+	class UInventorySlotWG* SlotWG;
 	
 	UFUNCTION()
 	void OnClickedCancel();
@@ -52,6 +53,8 @@ protected:
 	void OnClickedPlus();
 	UFUNCTION()
 	void OnClickedMinus();
+	UFUNCTION()
+	void OnClickedFullPopup();
 
 	int32 CurrAmount = 1;
 
@@ -60,15 +63,22 @@ protected:
 
 	void UpdateHPBar();
 
-	int32 selectindex;
 	
-	FInvenItem iteminfo;
+	FInvenItem* iteminfo;
+	UPROPERTY()
+	class UInventorySlotWG* SelectedSlot;
+
+	TSubclassOf<class UHpFullPopup> FullPopFactory;
+	UPROPERTY()
+	class UHpFullPopup* FullPopup;
+
+	void HealCallAndUpdatePopup();
 
 public:
 
 	UPROPERTY()
 	class UInventoryWG* invenWG;
 
-	void SetFoodPop(FInvenItem selectitem);
+	void SetFoodPop(UInventorySlotWG* SelectSlot);
 	void ButtonBinding();
 };

@@ -14,6 +14,8 @@
 #include "ItemDescriptionWG.h"
 #include "inventoryUseButton.h"
 #include "FoodPopup.h"
+#include <UMG/Public/Components/ScaleBox.h>
+
 
 
 
@@ -28,7 +30,12 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 	ConstructorHelpers::FClassFinder <UinventoryUseButton> tempButton(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenUseButton.BP_InvenUseButton_C'"));
 	if (tempButton.Succeeded())
 	{
-		ButtonFactory = tempButton.Class;
+		ButtonFactory.Add(tempButton.Class) ; //0번 사용하기
+	}
+	ConstructorHelpers::FClassFinder <UinventoryUseButton> tempButton1(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenOutfitUseButton.BP_InvenOutfitUseButton_C'"));
+	if (tempButton1.Succeeded())
+	{
+		ButtonFactory.Add(tempButton1.Class); //1번 착용하기
 	}
 	ConstructorHelpers::FClassFinder <UItemDescriptionWG> tempDesrip(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_ItemDescription.BP_ItemDescription_C'"));
 	if (tempDesrip.Succeeded())
@@ -41,16 +48,19 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 		FoodPopFactory = tempfoodPop.Class;
 	}
 
-	ButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory);
+
+	ButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory[0]);
+	OutfitButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory[1]);
 	Description = CreateWidget<UItemDescriptionWG>(GetWorld(), DescriptionFactory);
 	FoodPopup = CreateWidget<UFoodPopup>(GetWorld(), FoodPopFactory);
+
 
 	for (int32 i = 0; i < 100; i++)
 	{
 		UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
 		Slots.Add(currslot);
 	}
-		
+
 }
 
 void UInventoryWG::NativeConstruct()
@@ -59,6 +69,7 @@ void UInventoryWG::NativeConstruct()
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	ButtonBinding();
 	ButtonWG->InvenWG = this;
+	OutfitButtonWG->InvenWG = this;
 	FoodPopup->invenWG = this;
 }
 
@@ -75,10 +86,11 @@ void UInventoryWG::ButtonBinding()
 		Button_Left->OnPressed.AddDynamic(this, &UInventoryWG::LeftMenu);
 
 		ButtonWG->Button_Use->OnPressed.AddDynamic(this, &UInventoryWG::ClickedUseButton);
+		OutfitButtonWG->Button_Use->OnPressed.AddDynamic(this, &UInventoryWG::ClickedOutfitButton);
 
 		FoodPopup->ButtonBinding();
-		
-		for(int32 i=0; i<Slots.Num(); i++)
+
+		for (int32 i = 0; i < Slots.Num(); i++)
 		{
 			Slots[i]->ButtonBinding();
 		}
@@ -109,16 +121,20 @@ void UInventoryWG::AddWidget()
 
 void UInventoryWG::ItemSlotClicked(int32 slotindex)
 {
-
-	Description->SetDescription(Slots[slotindex]->selectiteminfo);
-	FoodPopup->SetFoodPop(Slots[slotindex]->selectiteminfo);
-	Overlay_ItemInfo->AddChildToOverlay(Description);
-	if (Slots[slotindex]->selectiteminfo.iteminfomation.itemType == EItemType::Food)
+	Description->SetDescription(Slots[slotindex]);
+	itemDescription->AddChild(Description);
+	if (Slots[slotindex]->selectiteminfo->iteminfomation.itemType == EItemType::Food)
 	{
+		FoodPopup->SetFoodPop(Slots[slotindex]);
+		Overlay_Use->ClearChildren();
 		Overlay_Use->AddChildToOverlay(ButtonWG);
-		
+
 	}
-	//장비 착용 버튼 추가
+	if (Slots[slotindex]->selectiteminfo->iteminfomation.itemType == EItemType::Outfit)
+	{
+		Overlay_Use->ClearChildren();
+		Overlay_Use->AddChildToOverlay(OutfitButtonWG);
+	}
 }
 
 void UInventoryWG::ClickedUseButton()
@@ -126,6 +142,11 @@ void UInventoryWG::ClickedUseButton()
 	FoodPopup->AddToViewport();
 }
 
+
+void UInventoryWG::ClickedOutfitButton()
+{
+
+}
 
 void UInventoryWG::ClickedConsum()
 {
@@ -156,7 +177,7 @@ void UInventoryWG::LeftMenu()
 	index--;
 	if (index < 0)
 	{
-		index = int32(EItemType::Count)-1;
+		index = int32(EItemType::Count) - 1;
 	}
 	ChangeInven(EItemType(index));
 }
@@ -165,7 +186,7 @@ void UInventoryWG::RightMenu()
 {
 	int32 index = int32(currinventype);
 	index++;
-	if (index > int32(EItemType::Count)-1)
+	if (index > int32(EItemType::Count) - 1)
 	{
 		index = 0;
 	}
@@ -174,12 +195,10 @@ void UInventoryWG::RightMenu()
 
 void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 {
-	if (currinventype != ChangeInvenType)
-	{
-		ClearOverlay();
-		currinventype = ChangeInvenType;
-	}
+	if (currinventype == ChangeInvenType) return;
 
+	currinventype = ChangeInvenType;
+	ClearOverlay();
 	WrapBox->ClearChildren();
 	if (InvenComp->invenItemArr.IsValidIndex(0))
 	{
@@ -187,19 +206,20 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 		{
 			if (InvenComp->invenItemArr[i].iteminfomation.itemType == currinventype)
 			{
-					if (!Slots.IsValidIndex(i))
-					{
-						UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
-						Slots.Add(currslot);
-						Slots[i]->ButtonBinding();
-					}
-					Slots[i]->invenWG = this;
-					Slots[i]->Slotindex = i;
-					Slots[i]->SetItemSlot(InvenComp->invenItemArr[i]);
-					WrapBox->AddChildToWrapBox(Slots[i]);
+				if (!Slots.IsValidIndex(i))
+				{
+					UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
+					Slots.Add(currslot);
+					Slots[i]->ButtonBinding();
+				}
+				Slots[i]->invenWG = this;
+				Slots[i]->Slotindex = i;
+				Slots[i]->SetItemSlot(&InvenComp->invenItemArr[i]);
+				WrapBox->AddChildToWrapBox(Slots[i]);
 			}
 		}
 	}
+
 
 	FText currslotName;
 	switch (currinventype)
@@ -218,7 +238,6 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 		break;
 	}
 	CurrSlot_Text->SetText(currslotName);
-
 }
 
 
@@ -231,6 +250,7 @@ void UInventoryWG::Setinventory()
 
 void UInventoryWG::ClearOverlay()
 {
-	Overlay_ItemInfo->ClearChildren();
+	itemDescription->ClearChildren();
 	Overlay_Use->ClearChildren();
 }
+

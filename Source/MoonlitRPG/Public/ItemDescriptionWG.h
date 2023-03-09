@@ -15,6 +15,7 @@ class MOONLITRPG_API UItemDescriptionWG : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UItemDescriptionWG(const FObjectInitializer& ObjectInitializer);
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -23,9 +24,13 @@ protected:
 	class UTextBlock* ItemName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Description;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UImage* BG;
 
+	TArray<class UTexture2D*> BGarray;
 
 public:
-	void SetDescription(FInvenItem iteminfo);
+
+	void SetDescription(class UInventorySlotWG* SelectedSlot);
 
 };

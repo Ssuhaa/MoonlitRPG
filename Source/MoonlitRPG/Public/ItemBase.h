@@ -17,6 +17,23 @@ enum class EItemType : uint8
 	Count,
 };
 
+UENUM(BlueprintType)
+enum  class EItemgrade : uint8
+{
+	Common,
+	Rare,
+	Unique,
+	Legendary,
+};
+
+UENUM(BlueprintType)
+enum  class EWeaponType : uint8
+{
+	Sword,
+	Dagger,
+	Bow,
+};
+
 USTRUCT(BlueprintType)
 struct FIteminfo
 {
@@ -25,11 +42,13 @@ struct FIteminfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EItemType itemType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EItemgrade itemgrade = EItemgrade::Common;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ItemName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString itemDescription = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UTexture2D* itemImage = nullptr;
+	class UTexture2D* itemImage = LoadObject<UTexture2D>(nullptr, TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Empty.T_Empty'"));
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool Stackalbe = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -40,6 +59,21 @@ struct FIteminfo
 	int32 HealAmount = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FWeaponinfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EWeaponType WeaponType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Power = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Level = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FIteminfo> enhancementItem;
+
+};
 
 UCLASS()
 class MOONLITRPG_API AItemBase : public AActor

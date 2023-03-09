@@ -28,8 +28,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UWrapBox* WrapBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UOverlay* Overlay_ItemInfo;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Close;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Consum;
@@ -51,18 +49,24 @@ protected:
 	class UOverlay* Overlay_Use;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Count;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UScaleBox* itemDescription;
 
 	int32 CurrMoney = 0;
 
 	TSubclassOf<class UInventorySlotWG> SlotFactory;
-	TSubclassOf<class UinventoryUseButton> ButtonFactory;
+/*	TSubclassOf<class UinventoryUseButton> ButtonFactory;*/
 	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
 	TSubclassOf<class UFoodPopup> FoodPopFactory;
+	TArray<TSubclassOf<class UinventoryUseButton>> ButtonFactory;
+	
 
 	UPROPERTY()
 	class UFoodPopup* FoodPopup;
 	UPROPERTY()
 	class UinventoryUseButton* ButtonWG;
+	UPROPERTY()
+	class UinventoryUseButton* OutfitButtonWG;
 	UPROPERTY()
 	class UItemDescriptionWG* Description;
 
@@ -81,6 +85,10 @@ protected:
 	void LeftMenu();
 	UFUNCTION()
 	void RightMenu();
+	UFUNCTION()
+	void ClickedUseButton();
+	UFUNCTION()
+	void ClickedOutfitButton();
 
 	
 	void ButtonBinding();
@@ -88,8 +96,8 @@ protected:
 	void ChangeInven(EItemType ChangeInvenType);
 
 
-	UFUNCTION()
-	void ClickedUseButton();
+
+	
 
 
 public:
