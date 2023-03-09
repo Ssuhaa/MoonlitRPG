@@ -18,7 +18,7 @@ void AIH_EnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (int32 i = 0; i < 10; i++)
+	for (int32 i = 0; i < createNumber; i++)
 	{
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -41,25 +41,48 @@ void AIH_EnemyManager::Tick(float DeltaTime)
 
 	if (enemyArr.Num() == 0) return;
 
-	currentTime += DeltaTime;
-	
-	if (currentTime > createTime)
+	if (canSpawn)
 	{
-		float randZ = FMath::RandRange(0, 360);
-		SetActorRotation(FRotator(0, randZ, 0));
+		currentTime += DeltaTime;
 
-		float randDist = FMath::RandRange(300, 700);
-		FVector randPos = GetActorForwardVector()*randDist;
-		FVector upPos = GetActorUpVector()*90;
+		if (currentTime > createTime)
+		{
+			for (int32 i = 0; i < spawnNumber ; i++)
+			{
+				if (!enemyArr.IsValidIndex(0))
+				{
+					FActorSpawnParameters param;
+					param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		enemyArr[0]->SetActorLocation(GetActorLocation()+randPos+upPos);
-		enemyArr[0]->SetActorRotation(GetActorRotation());
-		enemyArr[0]->SetActive(true);
-		enemyArr.RemoveAt(0);
+					int32 randNum = FMath::RandRange(0, enemyFactory.Num() - 1);
+					AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
+					enemy->SetActive(false);
 
-		currentTime = 0;
+					enemyArr.Add(enemy);
+				}
 
-		createTime = FMath::RandRange(minTime, maxTime);
+				float randZ = FMath::RandRange(0, 360);
+				SetActorRotation(FRotator(0, randZ, 0));
+
+				float randDist = FMath::RandRange(300, 700);
+				FVector randPos = GetActorForwardVector()*randDist;
+				FVector upPos = GetActorUpVector()*90;
+
+				enemyArr[0]->SetActorLocation(GetActorLocation()+randPos+upPos);
+				enemyArr[0]->SetActorRotation(GetActorRotation());
+				enemyArr[0]->SetActive(true);
+
+				if (i == spawnNumber-1)
+				{
+					canSpawn = false;
+				}
+
+				enemyArr.RemoveAt(0);
+
+				createTime = FMath::RandRange(minTime, maxTime);
+			}
+			currentTime = 0;
+		}
 	}
 }
 

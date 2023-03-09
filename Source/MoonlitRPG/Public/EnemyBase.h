@@ -29,7 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* compEnemyHP;
- 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UIH_EnemyHPUI* enemyHPUI;
 

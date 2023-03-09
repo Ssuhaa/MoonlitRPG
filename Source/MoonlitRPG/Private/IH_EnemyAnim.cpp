@@ -29,7 +29,7 @@ void UIH_EnemyAnim::AnimNotify_EnemyAttack()
 	{
 		if (me->FSM->PlayerCheck())
 		{
-			me->FSM->target->DamagedPlayer(10);
+			me->FSM->target->DamagedPlayer(me->FSM->enemyDamage);
 		}
 	}
 }

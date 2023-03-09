@@ -50,6 +50,9 @@ public:
 	UPROPERTY()
 	class AAIController* ai;
 
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<class AWidgetActorBase> damageActor;
+
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	class UAnimMontage* enemyMontage;
 
@@ -76,17 +79,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
 	float maxHP = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerHP)
+	float enemyDamage = 5;
+
 	float currHP;
 	float prevHP;
 	float ratioHP;
 
-	bool bUpdateHP = false;
-	bool bDiestart = false;
-	bool bDiedone = false;
-	bool bAttackEnd = false;
+	bool bUpdateHP = false;		// HP Bar 업데이트
+	bool bDiestart = false;		// 죽음 시작 확인(true면 공격할 수 없음)
+	bool bDiedone = false;		// 죽음 끝 확인(true면 Enemy 소멸)
+	bool bAttackEnd = false;	// 공격 끝 확인(true면 움직임 가능)
 
 	FVector originPos;		// 최초 위치
 	FVector randPos;		// 랜덤 위치
+
+	int32 chaseCount = 0;
 
 public:
 	void IdleState();	// 대기 상태

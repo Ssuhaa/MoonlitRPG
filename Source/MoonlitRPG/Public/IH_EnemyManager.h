@@ -37,8 +37,20 @@ public:
 	float createTime;
 	
 	UPROPERTY(EditAnywhere, Category = DelayTime)
-	float minTime = 5;
+	float minTime = 10;
 
 	UPROPERTY(EditAnywhere, Category = DelayTime)
-	float maxTime = 10;
+	float maxTime = 15;
+
+	UPROPERTY(EditAnywhere, Category = Spawn)
+	int32 createNumber = 3;
+
+	UPROPERTY(EditAnywhere, Category = Spawn)
+	int32 spawnNumber = 5;
+
+	UPROPERTY(EditAnywhere, Category = Spawn)
+	int32 deathCount = 0;
+
+	UPROPERTY(EditAnywhere, Category = Spawn)
+	bool canSpawn = true;
 };

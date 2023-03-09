@@ -15,6 +15,8 @@
 #include "IH_EnemyManager.h"
 #include <Components/CapsuleComponent.h>
 #include <UMG/Public/Components/WidgetComponent.h>
+#include "IH_EnemyDamageUI.h"
+#include "WidgetActorBase.h"
 
 
 // Sets default values for this component's properties
@@ -132,14 +134,14 @@ void UEnemy_FSM::MoveState()
 void UEnemy_FSM::ChaseState()
 {
 	float returnDist = FVector::Distance(originPos, target->GetActorLocation());
-	float attackDist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+	float chaseDist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
 
 	if (returnDist > moveRange)
 	{
 		ChangeState(EEnemyState::Return);
 	}
 
-	if (attackDist < avoidRange)
+	if (chaseDist <= avoidRange)
 	{
 		ChangeState(EEnemyState::Avoid);
 	}
@@ -170,10 +172,23 @@ void UEnemy_FSM::AttackDelayState()
 
 	LookAtSmooth();
 
+
+	if (distance <= avoidRange && chaseCount < 3)
+	{
+		ChangeState(EEnemyState::Avoid);
+	}
+
+	if (chaseCount >= 3)
+	{
+		ChangeState(EEnemyState::Attack);
+		chaseCount = 0;
+	}
+
 	float randSec = FMath::RandRange(2, 3);
+
 	if (DelayComplete(randSec))
 	{
-		if (degree < 45.0 && distance > avoidRange && distance <= attackRange)
+		if (degree < 45.0 && distance <= attackRange)
 		{
 			ChangeState(EEnemyState::Attack);
 		}
@@ -182,33 +197,35 @@ void UEnemy_FSM::AttackDelayState()
 			ChangeState(EEnemyState::Chase);
 		}
 	}
+}
 
-	if (bAttackEnd)
+void UEnemy_FSM::ReceiveDamage(float damage)
+{
+	prevHP = currHP;
+	bUpdateHP = true;
+	ratioHP = 0;
+
+	currHP -= damage;
+	me->enemyHPUI->ReduceHP(currHP, maxHP);
+
+	if (!bDiestart)
 	{
-		if (distance > attackRange)
+		GetWorld()->SpawnActor<AWidgetActorBase>(damageActor, me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
+		if (currHP > 0)
 		{
-			ChangeState(EEnemyState::Chase);
+			ChangeState(EEnemyState::Damage);
+		}
+		else
+		{
+			ChangeState(EEnemyState::Die);
+			me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Die")));
 		}
 	}
 }
 
 void UEnemy_FSM::DamageState()
 {
-	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
-
-	if (DelayComplete(1.0))
-	{
-		if (distance <= attackRange)
-		{
-			ChangeState(EEnemyState::Avoid);
-		}
-		else if (distance < 1000)
-		{
-			UE_LOG(LogTemp,Warning,TEXT("distance : %f"), distance);
-			UE_LOG(LogTemp, Warning, TEXT("avoidRange : %f"), avoidRange);
-			ChangeState(EEnemyState::Chase);
-		}
-	}
+	ChangeState(EEnemyState::AttackDelay);
 }
 
 void UEnemy_FSM::AvoidState()
@@ -235,7 +252,7 @@ void UEnemy_FSM::AvoidState()
 			{
 				ChangeState(EEnemyState::AttackDelay);
 			}
-	 		break;
+			break;
 		}
 		case 2:
 		{
@@ -248,7 +265,6 @@ void UEnemy_FSM::AvoidState()
 			break;
 		}
 	}
-	
 }
 
 void UEnemy_FSM::DieState()
@@ -268,38 +284,21 @@ void UEnemy_FSM::DieState()
 			}
 
 			AIH_EnemyManager* manager = Cast<AIH_EnemyManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_EnemyManager::StaticClass()));
-			manager->enemyArr.Add(me);
-
+			manager->deathCount++;
 			me->SetActive(false);
+
+			if (manager->deathCount == manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
+			{
+				manager->enemyArr.Add(me);		// enemy 배열에 마지막에 죽은 enemy를 Add
+				manager->canSpawn = true;		// 다시 스폰 가능
+				manager->deathCount = 0;		// 죽인 횟수 초기화
+			}
 
 			currHP = maxHP;
 			ChangeState(EEnemyState::Idle);
 			me->StopAnimMontage(enemyMontage);
 			bDiedone = false;
 			bDiestart = false;
-		}
-	}
-}
-
-void UEnemy_FSM::ReceiveDamage(float damage)
-{
-	prevHP = currHP;
-	bUpdateHP = true;
-	ratioHP = 0;
-
-	currHP -= damage;
-	me->enemyHPUI->ReduceHP(currHP, maxHP);
-
-	if (!bDiestart)
-	{
-		if (currHP > 0)
-		{
-			ChangeState(EEnemyState::Damage);
-		}
-		else
-		{
-			ChangeState(EEnemyState::Die);
-			me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Die")));
 		}
 	}
 }
@@ -321,9 +320,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
 	if (enumPtr != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"),
-			*enumPtr->GetNameStringByIndex((int32)currState),
-			*enumPtr->GetNameStringByIndex((int32)state));
+		UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"), *enumPtr->GetNameStringByIndex((int32)currState), *enumPtr->GetNameStringByIndex((int32)state));
 	}
 
 	currState = state;
@@ -351,6 +348,8 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			me->GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 			me->compEnemyHP->SetVisibility(true);
 			bAttackEnd = false;
+			chaseCount++;
+			UE_LOG(LogTemp,Warning,TEXT("%d"), chaseCount);
 			break;
 		case EEnemyState::Attack:
 			me->compEnemyHP->SetVisibility(true);
@@ -360,7 +359,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			break;
 		case EEnemyState::Avoid:
 			me->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
-			randomIndex = FMath::RandRange(0, 1);
+			randomIndex = FMath::RandRange(0, 2);
 			randomRange = FMath::RandRange(85, 95);
 			me->compEnemyHP->SetVisibility(true);
 			break;
@@ -370,7 +369,6 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			FString randomSection = FString::Printf(TEXT("Damage%d"), randNum);
 			me->PlayAnimMontage(enemyMontage, 1.0f, FName(*randomSection));
 			me->compEnemyHP->SetVisibility(true);
-
 // 			FVector direction = target->GetActorLocation() - me->GetActorLocation();
 // 			direction.Z = 0;
 // 			FRotator rotation = FRotationMatrix::MakeFromX(direction).Rotator();
@@ -451,7 +449,7 @@ void UEnemy_FSM::LookAtSmooth()
 
 bool UEnemy_FSM::PlayerCheck()
 {
-	FCollisionShape attackCollision = FCollisionShape::MakeSphere(50);
+	FCollisionShape attackCollision = FCollisionShape::MakeSphere(10);
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(me);
 	FHitResult hitinfo;

@@ -8,6 +8,7 @@
 #include "IH_EnemyHPUI.h"
 #include <Components/CapsuleComponent.h>
 #include "ItemBase.h"
+#include "IH_EnemyDamageUI.h"
 
 AEnemyBase::AEnemyBase()
 {
