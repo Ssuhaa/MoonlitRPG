@@ -34,6 +34,7 @@ AEnemyBase::AEnemyBase()
 		compEnemyHP->SetWidgetClass(tempEnemyHP.Class);
 		compEnemyHP->SetWidgetSpace(EWidgetSpace::Screen);
 		compEnemyHP->SetRelativeLocation(FVector(0, 0, 50));
+		compEnemyHP->SetVisibility(false);
 	}
 
 	itemSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Item Spawn Position"));
@@ -75,6 +76,5 @@ void AEnemyBase::SetActive(bool bActive)
 	GetMesh()->SetActive(bActive);
 	GetMesh()->SetVisibility(bActive);
 	GetMovementComponent()->SetActive(bActive);
-	compEnemyHP->SetVisibility(bActive);
 	FSM->SetActive(bActive);
 }

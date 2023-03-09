@@ -3,6 +3,7 @@
 
 #include "IH_EnemyManager.h"
 #include "EnemyBase.h"
+#include <UMG/Public/Components/WidgetComponent.h>
 
 // Sets default values
 AIH_EnemyManager::AIH_EnemyManager()
@@ -29,7 +30,7 @@ void AIH_EnemyManager::BeginPlay()
 
 		enemyArr.Add(enemy);
 	}
-	
+
 	createTime = FMath::RandRange(minTime, maxTime);
 }
 

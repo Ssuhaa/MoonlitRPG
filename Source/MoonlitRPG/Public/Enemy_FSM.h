@@ -14,6 +14,7 @@ enum class EEnemyState : uint8
 	Chase,
 	Attack,
 	AttackDelay,
+	Avoid,
 	Damage,
 	Return,
 	Die
@@ -58,6 +59,15 @@ public:
 	float traceRange = 700.0f;		// 인지 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
+	float avoidRange = 70.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
+	float randomRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
+	int32 randomIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float attackRange = 100.0f;		// 공격 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
@@ -71,7 +81,9 @@ public:
 	float ratioHP;
 
 	bool bUpdateHP = false;
+	bool bDiestart = false;
 	bool bDiedone = false;
+	bool bAttackEnd = false;
 
 	FVector originPos;		// 최초 위치
 	FVector randPos;		// 랜덤 위치
@@ -84,6 +96,7 @@ public:
 	void AttackState();		// 공격 상태
 	void AttackDelayState();	// 공격대기 상태
 	void DamageState();		// 피격 상태
+	void AvoidState();
 	void DieState();	// 죽음 상태
 
 	void ReceiveDamage(float damage);
@@ -91,4 +104,6 @@ public:
 	void ChangeState(EEnemyState state);
 	bool IsTargetTrace();
 	void MoveToPos(FVector pos);
+	void LookAtSmooth();
+	bool PlayerCheck();
 };

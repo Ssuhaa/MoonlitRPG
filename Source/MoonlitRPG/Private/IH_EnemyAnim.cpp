@@ -3,6 +3,7 @@
 
 #include "IH_EnemyAnim.h"
 #include "EnemyBase.h"
+#include "SH_Player.h"
 
 void UIH_EnemyAnim::NativeBeginPlay()
 {
@@ -20,4 +21,20 @@ void UIH_EnemyAnim::NativeUpdateAnimation(float DeltaSeconds)
 void UIH_EnemyAnim::AnimNotify_DieEnd()
 {
 	me->FSM->bDiedone = true;
+}
+
+void UIH_EnemyAnim::AnimNotify_EnemyAttack()
+{
+	if (me->FSM->target != nullptr)
+	{
+		if (me->FSM->PlayerCheck())
+		{
+			me->FSM->target->DamagedPlayer(10);
+		}
+	}
+}
+
+void UIH_EnemyAnim::AnimNotify_EnemyAttackEnd()
+{
+	me->FSM->bAttackEnd = true;
 }
