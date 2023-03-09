@@ -67,6 +67,7 @@ void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	ChangeInven(EItemType::Consum);
 	ButtonBinding();
 	ButtonWG->InvenWG = this;
 	OutfitButtonWG->InvenWG = this;
@@ -151,7 +152,6 @@ void UInventoryWG::ClickedOutfitButton()
 void UInventoryWG::ClickedConsum()
 {
 	ChangeInven(EItemType::Consum);
-
 }
 
 void UInventoryWG::ClickedOutfit()

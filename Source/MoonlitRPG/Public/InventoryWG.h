@@ -71,7 +71,7 @@ protected:
 	class UItemDescriptionWG* Description;
 
 
-	EItemType currinventype = EItemType::Consum;
+	EItemType currinventype = EItemType::Count;
 
 	UFUNCTION()
 	void ClickedConsum();
