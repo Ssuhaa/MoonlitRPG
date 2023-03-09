@@ -18,7 +18,7 @@ void UPlayerMainWG::NativeConstruct()
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
-		UpdateHP(Player->PlayerHP);
+		UpdateHP(Player->PlayercurrHP, Player->PlayerTotalHP);
 	}
 }
 
@@ -40,6 +40,8 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		VisibleStaminaBar(true);
 	}
+
+
 }
 
 void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
@@ -47,7 +49,6 @@ void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
 	float percent = Stamina/MaxStamina;	
 	StaminaBar->SetPercent(percent);
 	StaminaBar->SetFillColorAndOpacity(FLinearColor::LerpUsingHSV(FLinearColor::Red, FLinearColor::Green, percent));
-
 }
 
 void UPlayerMainWG::UpdateEtime(float Etime)
@@ -86,9 +87,13 @@ void UPlayerMainWG::UpdateQPercent(float Qpercent)
 	}
 }
 
-void UPlayerMainWG::UpdateHP(int32 hp)
+void UPlayerMainWG::UpdateHP(float CurrHP, float TotalHP)
 {
-	Text_HP->SetText(FText::AsNumber(hp));
+
+	Text_CurrHP->SetText(FText::AsNumber(CurrHP));
+	Text_TotalHP->SetText(FText::AsNumber(TotalHP));
+	HPBar->SetPercent(CurrHP / TotalHP);
+	
 }
 
 void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)

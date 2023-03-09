@@ -9,22 +9,31 @@
 #include "ItemDescriptionWG.h"
 
 
-void UInventorySlotWG::NativeConstruct()
+
+void UInventorySlotWG::ButtonBinding()
 {
-	Super::NativeConstruct();
 	ItemButton->OnPressed.AddDynamic(this, &UInventorySlotWG::PopItemDescription);
 }
 
-void UInventorySlotWG::SetItemSlot()
+void UInventorySlotWG::SetItemSlot(FInvenItem iteminfo)
 {
+	selectiteminfo = iteminfo;
 	ItemImage->SetBrushFromTexture(iteminfo.iteminfomation.itemImage);
 	if (iteminfo.itemAmount > 1)
 	{
 		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), iteminfo.itemAmount)));
 	}
+	else if (iteminfo.itemAmount == 1)
+	{
+		ItemAmount->SetText(FText::FromString(FString(TEXT(" "))));
+	}
+	else
+	{
+		RemoveFromParent();
+	}
 }
 
 void UInventorySlotWG::PopItemDescription()
 {
-	invenWG->ItemSlotClicked(iteminfo);
+	invenWG->ItemSlotClicked(Slotindex);
 }

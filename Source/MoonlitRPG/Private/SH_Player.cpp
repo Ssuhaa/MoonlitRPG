@@ -108,23 +108,23 @@ void ASH_Player::interactionObject()
 }
 
 
-void ASH_Player::DamagedPlayer(int32 DamageValue)
+void ASH_Player::DamagedPlayer(float DamageValue)
 {
-	if (PlayerHP >= DamageValue)
+	if (PlayercurrHP >= DamageValue)
 	{
-		PlayerHP -= DamageValue;
+		PlayercurrHP -= DamageValue;
 	}
 	else // 플레이어 죽음
 	{
-
+		
 	}
-	PlayerHP = FMath::Clamp(PlayerHP, 0, 100);
-	MainHUD->UpdateHP(PlayerHP);
+	PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
+	MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);
 }
 
-void ASH_Player::HealPlayer(int32 HealValue)
+void ASH_Player::HealPlayer(float HealValue)
 {
-	PlayerHP += HealValue;
-	PlayerHP = FMath::Clamp(PlayerHP, 0, 100);
-	MainHUD->UpdateHP(PlayerHP);
+	PlayercurrHP += HealValue;
+	PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
+	MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);
 }

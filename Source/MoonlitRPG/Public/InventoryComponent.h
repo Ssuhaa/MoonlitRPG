@@ -54,7 +54,7 @@ public:
 	TArray<FInvenItem> invenItemArr;
 
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
-	bool PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
+	int32 PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
 	int32 FindItem(FIteminfo iteminfo);
 
 	int32 CountItem();

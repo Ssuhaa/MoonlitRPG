@@ -16,7 +16,7 @@ class MOONLITRPG_API UInventorySlotWG : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	virtual void NativeConstruct() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* ItemImage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -25,12 +25,15 @@ protected:
 	class UButton* ItemButton;
 	UFUNCTION()
 	void PopItemDescription();
-	
 
 public:
+
+	FInvenItem selectiteminfo;
+	void ButtonBinding();
+
+	int32 Slotindex;
 	UPROPERTY()
 	class UInventoryWG* invenWG;
-	FInvenItem iteminfo;
-	void SetItemSlot();
+	void SetItemSlot(FInvenItem iteminfo);
 
 };

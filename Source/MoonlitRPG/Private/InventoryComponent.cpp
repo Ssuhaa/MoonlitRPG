@@ -34,7 +34,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	Player = Cast<ASH_Player>(GetOwner());
-	inventory = CreateWidget<UInventoryWG>(GetWorld(), invenFactory);
+	inventory = CreateWidget<UInventoryWG>(GetWorld(),invenFactory);
 	inventory->InvenComp = this;
 }
 
@@ -92,39 +92,20 @@ void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount)
 	invenItemArr.Add(currGetItem);
 }
 
-bool UInventoryComponent::PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount) // 기존에 있는 아이템 찾는
+int32 UInventoryComponent::PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount) 
 {
 	int32 value = FindItem(AdditemInfo);
 	if (value > -1)
 	{
-		if (Amount < 0)
+		invenItemArr[value].itemAmount += Amount;
+		int32 result = invenItemArr[value].itemAmount;
+		if (invenItemArr[value].itemAmount < 1)
 		{
-			if (invenItemArr[value].itemAmount < Amount)
-			{
-				return false;
-			}
-			else
-			{
-				invenItemArr[value].itemAmount += Amount;
-				if (invenItemArr[value].itemAmount <= 0)
-				{
-					invenItemArr.RemoveAt(value);
-				}
-				return true;
-			}
+			invenItemArr.RemoveAt(value);
 		}
-		else
-		{
-			invenItemArr[value].itemAmount += Amount;
-			if (invenItemArr[value].itemAmount <= 0)
-			{
-				invenItemArr.RemoveAt(value);
-			}
-			return true;
-		}
-	
+		return result;
 	}
-	else return false;
+	return -1;
 }
 
 int32 UInventoryComponent::FindItem(FIteminfo iteminfo)

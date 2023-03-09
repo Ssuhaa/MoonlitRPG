@@ -44,9 +44,11 @@ protected:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
-	float PlayerHP = 100.0f;
-	void DamagedPlayer(int32 DamageValue);
-	void HealPlayer(int32 HealValue);
+	float PlayercurrHP = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
+	float PlayerTotalHP = 120.0f;
+	void DamagedPlayer(float DamageValue);
+	void HealPlayer(float HealValue);
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)

@@ -28,18 +28,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Q;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* Text_HP;
-
+	class UTextBlock* Text_CurrHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_TotalHP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* HPBar;
 
 	void VisibleStaminaBar(bool isUseStamina);
 
 	float currentTime = 0;
 
+	UPROPERTY()
 	class ASH_Player* Player;
 public:
 	
 	void UpdateStamina(float Stamina, float MaxStamina);
 	void UpdateEtime(float Etime);
 	void UpdateQPercent(float Qpercent);
-	void UpdateHP(int32 hp);
+	void UpdateHP(float CurrHP, float TotalHP);
 };

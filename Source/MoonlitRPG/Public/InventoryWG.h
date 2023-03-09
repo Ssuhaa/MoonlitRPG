@@ -20,7 +20,8 @@ class MOONLITRPG_API UInventoryWG : public UUserWidget
 
 protected:
 	virtual void NativeConstruct() override;
-
+	
+	UPROPERTY()
 	class ASH_Player* Player;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UScrollBox* ItemScrollBox;
@@ -51,17 +52,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Count;
 
-	UFUNCTION()
-	void Setinventory();
 	int32 CurrMoney = 0;
 
 	TSubclassOf<class UInventorySlotWG> SlotFactory;
 	TSubclassOf<class UinventoryUseButton> ButtonFactory;
 	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
+	TSubclassOf<class UFoodPopup> FoodPopFactory;
+
+	UPROPERTY()
+	class UFoodPopup* FoodPopup;
 	UPROPERTY()
 	class UinventoryUseButton* ButtonWG;
 	UPROPERTY()
 	class UItemDescriptionWG* Description;
+
 
 	EItemType currinventype = EItemType::Consum;
 
@@ -78,23 +82,34 @@ protected:
 	UFUNCTION()
 	void RightMenu();
 
-	FInvenItem SelectedSlot;
+	
+	void ButtonBinding();
 
+	void ChangeInven(EItemType ChangeInvenType);
 
-
-public:
-	UPROPERTY()
-	class UInventoryComponent* InvenComp;
-
-	UFUNCTION()
-	void AddWidget();
-	UFUNCTION()
-	void RemoveWidget();
 
 	UFUNCTION()
 	void ClickedUseButton();
 
+
+public:
+	UPROPERTY()
+	TArray<class UInventorySlotWG*> Slots;
+	UPROPERTY()
+	class UInventoryComponent* InvenComp;
+	int32 SelectedSlotindex;
+
 	UFUNCTION()
-	void ItemSlotClicked(FInvenItem currSelectItem);
+	void Setinventory();
+	UFUNCTION()
+	void AddWidget();
+	UFUNCTION()
+	void RemoveWidget();
+	UFUNCTION()
+	void ItemSlotClicked(int32 slotindex);
+
+	void ClearOverlay();
+
+
 
  };
