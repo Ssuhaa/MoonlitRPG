@@ -11,8 +11,18 @@
 #include "InventoryComponent.h"
 #include "InventoryWG.h"
 #include "InventorySlotWG.h"
+#include "HpFullPopup.h"
 
 
+UFoodPopup::UFoodPopup(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder <UHpFullPopup> tempfullPop(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_hpFull.WG_hpFull_C'"));
+	if (tempfullPop.Succeeded())
+	{
+		FullPopFactory = tempfullPop.Class;
+	}
+	FullPopup = CreateWidget<UHpFullPopup>(GetWorld(), FullPopFactory);
+}
 
 void UFoodPopup::ButtonBinding()
 {
@@ -21,17 +31,20 @@ void UFoodPopup::ButtonBinding()
 	Button_Close->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedClose);
 	Button_Plus->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedPlus);
 	Button_Minus->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedMinus);
+	
+	FullPopup->Button_Use->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedFullPopup);
+	FullPopup->ButtonBinding();
 }
 
-
-void UFoodPopup::SetFoodPop(FInvenItem selectitem)
+void UFoodPopup::SetFoodPop(UInventorySlotWG* SelectSlot)
 {
-	iteminfo = selectitem;
-	ItemImage->SetBrushFromTexture(selectitem.iteminfomation.itemImage);
+	SelectedSlot = SelectSlot;
+	iteminfo = SelectSlot->selectiteminfo;
+	ItemImage->SetBrushFromTexture(iteminfo->iteminfomation.itemImage);
+	CurrAmount = 1;
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
-
 
 void UFoodPopup::OnClickedCancel()
 {
@@ -42,20 +55,17 @@ void UFoodPopup::OnClickedUse()
 {
 	if (Player != nullptr)
 	{
-		//HP 회복 호출
-		Player->HealPlayer(iteminfo.iteminfomation.HealAmount*CurrAmount);
-		UpdateHPBar();
-		int32 result = Player->InvenComp->PlusMinusItemAmount(iteminfo.iteminfomation, - CurrAmount);
-		invenWG->Setinventory();
-		CurrAmount = 1;
-		if(result <= 0)
+		if (Player->PlayercurrHP != Player->PlayerTotalHP)
 		{
-			invenWG->ClearOverlay();
-			RemoveFromParent();
-		}
-		//hp 다찼을때 사용할지 예외처리
-	}
+			//HP 회복 호출
+			HealCallAndUpdatePopup();
 
+		}
+		else 
+		{
+			FullPopup->AddToViewport();
+		}
+	}
 }
 
 void UFoodPopup::OnClickedClose()
@@ -66,7 +76,7 @@ void UFoodPopup::OnClickedClose()
 void UFoodPopup::OnClickedPlus()
 {
 	CurrAmount++;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo.itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo->itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
@@ -74,9 +84,14 @@ void UFoodPopup::OnClickedPlus()
 void UFoodPopup::OnClickedMinus()
 {
 	CurrAmount--;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo.itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo->itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
+}
+void UFoodPopup::OnClickedFullPopup()
+{
+	HealCallAndUpdatePopup();
+	FullPopup->RemoveFromParent();
 }
 
 void UFoodPopup::UpdateHPBar()
@@ -86,7 +101,28 @@ void UFoodPopup::UpdateHPBar()
 	{
 		HP = Player->PlayercurrHP / Player->PlayerTotalHP;
 		CurrHPBar->SetPercent(HP);
-		HealHP = (iteminfo.iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
+		HealHP = (iteminfo->iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
 		HealHPBar->SetPercent(HP + HealHP);
 	}
 }
+
+void UFoodPopup::HealCallAndUpdatePopup()
+{
+	Player->HealPlayer(iteminfo->iteminfomation.HealAmount * CurrAmount);
+	UpdateHPBar();
+	int32 result = Player->InvenComp->PlusMinusItemAmount(iteminfo->iteminfomation, -CurrAmount);
+	invenWG->Setinventory();
+	if (result < 1)
+	{
+		invenWG->ClearOverlay();
+		SelectedSlot->RemoveFromParent();
+		RemoveFromParent();
+	}
+	else
+	{
+		SelectedSlot->UpdateSlot();
+		CurrAmount = 1;
+		Text_Amount->SetText(FText::AsNumber(CurrAmount));
+	}
+}
+
