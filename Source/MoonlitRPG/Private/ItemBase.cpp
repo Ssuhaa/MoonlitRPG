@@ -14,7 +14,7 @@ AItemBase::AItemBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent> (TEXT("ItemMesh"));
-	Mesh->SetupAttachment(RootComponent);
+	SetRootComponent(Mesh);
 
 }
 

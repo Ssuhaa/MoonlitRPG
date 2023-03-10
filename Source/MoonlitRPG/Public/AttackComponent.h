@@ -26,11 +26,14 @@ struct FDamageRange
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float attackLength = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float damage = 0;
+	int32 minDamage = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float pushForce  = 0;
-
+	int32 maxDamage = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float pushForce = 0;
 };
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MOONLITRPG_API UAttackComponent : public UActorComponent
 {
@@ -71,29 +74,35 @@ protected:
 	float intensiveDelay = 5;
 
 	float specialCount = 0;
-
+	int32 currDamage = 0;
 
 public:	
 	// Called every frame
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	FDamageRange commonRange = { EDamageType::Common, 50, 80, 1, 0 };
-	FDamageRange IntensiveRange = { EDamageType::Intensive, 80, 100, 1, 15 };
-	FDamageRange SpecialRange = { EDamageType::Special, 150 , 100, 5, 30 };
+	FDamageRange commonRange = { EDamageType::Common, 50, 80, 1, 2};
+	FDamageRange IntensiveRange = { EDamageType::Intensive, 80, 100, 5, 7, 15};
+	FDamageRange SpecialRange = { EDamageType::Special, 150, 100, 15, 20, 30};
 
 	UPROPERTY()
 	class AEnemyBase* Target;
 
+	UPROPERTY()
+	TArray<class AActor*> ActorArr;
+
+	UPROPERTY()
+	TArray<class AEnemyBase*> TargetArr;
+
 	void NextCombo();
+	void DamageChange(FDamageRange damageRangeType);
 	void TargetCheck(FDamageRange damageRange);
 
 	FVector direction;
 	FVector force;
 
-
 	int32 attackCount = 0;
 	bool isAttacking = false;
 	bool goToNextCombo = false;
 	bool coolTimeRunning = false;
-
+	bool iscriticAttack = false;
 };

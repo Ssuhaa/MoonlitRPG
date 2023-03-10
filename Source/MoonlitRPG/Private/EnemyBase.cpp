@@ -9,6 +9,7 @@
 #include <Components/CapsuleComponent.h>
 #include "ItemBase.h"
 #include "IH_EnemyDamageUI.h"
+#include "IH_ExclamationUI.h"
 
 AEnemyBase::AEnemyBase()
 {
@@ -40,7 +41,19 @@ AEnemyBase::AEnemyBase()
 
 	itemSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Item Spawn Position"));
 	itemSpawnPos->SetupAttachment(RootComponent);
-	itemSpawnPos->SetRelativeLocation(FVector(0, 0, 40));
+	itemSpawnPos->SetRelativeLocation(FVector(15, 0, 40));
+
+	compExclamation = CreateDefaultSubobject<UWidgetComponent>(TEXT("Exclamation Widget Component"));
+	compExclamation->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FClassFinder<UIH_ExclamationUI>tempExcla(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Exclamation.WG_Exclamation_C'"));
+	if (tempExcla.Succeeded())
+	{
+		compExclamation->SetWidgetClass(tempExcla.Class);
+		compExclamation->SetWidgetSpace(EWidgetSpace::Screen);
+		compExclamation->SetRelativeLocation(FVector(10, 0, 35));
+		compExclamation->SetVisibility(false);
+	}
 	
 	bUseControllerRotationYaw = false;
  	GetCharacterMovement()->bUseControllerDesiredRotation = true;

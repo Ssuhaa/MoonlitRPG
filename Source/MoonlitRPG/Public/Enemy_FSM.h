@@ -51,7 +51,10 @@ public:
 	class AAIController* ai;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
-	TSubclassOf<class AWidgetActorBase> damageActor;
+	TSubclassOf<class AIH_DamageActor> damageActor;
+
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	class AIH_DamageActor* damageUI;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	class UAnimMontage* enemyMontage;
@@ -77,7 +80,7 @@ public:
 	float moveRange = 2000.0f;		// 추격 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
-	float maxHP = 10;
+	float maxHP = 30;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerHP)
 	float enemyDamage = 5;
@@ -107,11 +110,12 @@ public:
 	void AvoidState();
 	void DieState();	// 죽음 상태
 
-	void ReceiveDamage(float damage);
+	void ReceiveDamage(int32 damage);
 	bool DelayComplete(float delayTime);
 	void ChangeState(EEnemyState state);
 	bool IsTargetTrace();
 	void MoveToPos(FVector pos);
 	void LookAtSmooth();
 	bool PlayerCheck();
+	void FloatingDamage();
 };

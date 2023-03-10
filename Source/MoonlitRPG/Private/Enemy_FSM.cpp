@@ -17,6 +17,7 @@
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "IH_EnemyDamageUI.h"
 #include "WidgetActorBase.h"
+#include "IH_DamageActor.h"
 
 
 // Sets default values for this component's properties
@@ -199,7 +200,7 @@ void UEnemy_FSM::AttackDelayState()
 	}
 }
 
-void UEnemy_FSM::ReceiveDamage(float damage)
+void UEnemy_FSM::ReceiveDamage(int32 damage)
 {
 	prevHP = currHP;
 	bUpdateHP = true;
@@ -210,7 +211,10 @@ void UEnemy_FSM::ReceiveDamage(float damage)
 
 	if (!bDiestart)
 	{
-		GetWorld()->SpawnActor<AWidgetActorBase>(damageActor, me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
+		float randLocX = FMath::RandRange(-15, 15);
+		damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, me->itemSpawnPos->GetComponentLocation() + me->itemSpawnPos->GetRightVector() * randLocX, me->itemSpawnPos->GetComponentRotation());
+		damageUI->UpdateDamage(damage);
+		damageUI->FloatingAnimation();
 		if (currHP > 0)
 		{
 			ChangeState(EEnemyState::Damage);
@@ -317,12 +321,6 @@ bool UEnemy_FSM::DelayComplete(float delayTime)
 
 void UEnemy_FSM::ChangeState(EEnemyState state)
 {
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"), *enumPtr->GetNameStringByIndex((int32)currState), *enumPtr->GetNameStringByIndex((int32)state));
-	}
-
 	currState = state;
 	anim->animState=state;
 	currentTime = 0;
@@ -349,7 +347,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			me->compEnemyHP->SetVisibility(true);
 			bAttackEnd = false;
 			chaseCount++;
-			UE_LOG(LogTemp,Warning,TEXT("%d"), chaseCount);
+			me->compExclamation->SetVisibility(true);
 			break;
 		case EEnemyState::Attack:
 			me->compEnemyHP->SetVisibility(true);
@@ -378,6 +376,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		case EEnemyState::Return:
 		{
 			me->compEnemyHP->SetVisibility(false);
+			me->compExclamation->SetVisibility(false);
 			break;
 		}
 		case EEnemyState::Die:
@@ -465,4 +464,10 @@ bool UEnemy_FSM::PlayerCheck()
 		}
 	}
 	return false;
+}
+
+void UEnemy_FSM::FloatingDamage()
+{
+	float randLocX = FMath::RandRange(-15, 15);
+	damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, me->itemSpawnPos->GetComponentLocation() + me->itemSpawnPos->GetRightVector() * randLocX, me->itemSpawnPos->GetComponentRotation());
 }

@@ -11,6 +11,7 @@ AWidgetActorBase::AWidgetActorBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	compWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget Component"));
+	SetRootComponent(compWidget);
 }
 
 // Called when the game starts or when spawned

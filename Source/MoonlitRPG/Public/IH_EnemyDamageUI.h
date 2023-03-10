@@ -18,6 +18,13 @@ public:
 	virtual void NativeConstruct() override;
 
 public:
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* txt_Damage;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* FloatAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* CriticAnimation;
+
 };

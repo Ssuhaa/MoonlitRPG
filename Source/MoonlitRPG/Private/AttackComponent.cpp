@@ -14,6 +14,8 @@
 #include "HitObjectBase.h"
 #include "SH_PlayerAnim.h"
 #include "PlayerMainWG.h"
+#include "IH_DamageActor.h"
+#include <UMG/Public/Components/WidgetComponent.h>
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -112,7 +114,6 @@ void UAttackComponent::CommonAttack()
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
 		TargetCheck(commonRange);
-
 	}
 	else
 	{
@@ -130,7 +131,6 @@ void UAttackComponent::intensiveAttack()
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
-//			TargetCheck(IntensiveRange);
 			coolTimeRunning = true;
 			intensiveDelay = 5;
 
@@ -147,7 +147,6 @@ void UAttackComponent::SpecialAttack()
 			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
-//			TargetCheck(SpecialRange);
 		}
 	}
 }
@@ -181,21 +180,22 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
 			{
 				Target = Cast<AEnemyBase>(hitinfos[i].GetActor());
+
 				if (Target != nullptr)
 				{
-//					Target->FSM->ReceiveDamage(damageRange.damage);
-
 					switch (damageRange.damageType)
 					{
 					case EDamageType::Common:
 						intensiveDelay -= 1.0f;
-						Target->FSM->ReceiveDamage(damageRange.damage);
+						DamageChange(commonRange);
+						Target->FSM->ReceiveDamage(currDamage);
 						break;
 					case EDamageType::Intensive:
 						specialCount += addPercent;
 						specialCount = FMath::Clamp(specialCount, 0, 100);
 						player->MainHUD->UpdateQPercent(specialCount);
-						Target->FSM->ReceiveDamage(damageRange.damage);
+						DamageChange(IntensiveRange);
+						Target->FSM->ReceiveDamage(currDamage);
 
 						direction = Target->GetActorLocation()-player->GetActorLocation();
 						force = direction * damageRange.pushForce;
@@ -205,7 +205,8 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 					case EDamageType::Special:
 						specialCount = 0;
 						player->MainHUD->UpdateQPercent(specialCount);
-						Target->FSM->ReceiveDamage(damageRange.damage);
+						DamageChange(SpecialRange);
+						Target->FSM->ReceiveDamage(currDamage);
 
 						direction = Target->GetActorLocation() - player->GetActorLocation();
 						force = direction * damageRange.pushForce;
@@ -226,3 +227,13 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	}
 }
 
+void UAttackComponent::DamageChange(FDamageRange damageRangeType)
+{
+	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
+	currDamage = FMath::RandRange(damageRangeType.minDamage, damageRangeType.maxDamage);
+
+	if (iscriticAttack)
+	{
+		currDamage *= 3;
+	}
+}

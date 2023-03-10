@@ -22,7 +22,15 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY()
+	class UIH_EnemyDamageUI* damageWidget;
+
+	UPROPERTY()
+	class ASH_Player* player;;
 
 public:
 	float currentTime = 0;
+	void UpdateDamage(float updateDamage);
+	void FloatingAnimation();
 };
