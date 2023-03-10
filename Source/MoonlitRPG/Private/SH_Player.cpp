@@ -20,14 +20,14 @@ ASH_Player::ASH_Player()
 	GetMesh()->SetRelativeLocation(FVector(0,0,-90));
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComp->bUsePawnControlRotation = false;
 
 	CamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Cam"));
 	CamComp->SetupAttachment(SpringArmComp);
 
 	MoveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("MoveComp"));
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
@@ -46,7 +46,7 @@ ASH_Player::ASH_Player()
 	ConstructorHelpers::FObjectFinder<UInputAction> tempAction(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Key_F.Key_F'"));
 	if (tempAction.Succeeded())
 	{
-		fkey = tempAction.Object; //fŰ
+		fkey = tempAction.Object; //f
 	}
 	
 }

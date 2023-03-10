@@ -17,7 +17,7 @@ UMoveComponent::UMoveComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	bAutoActivate = true;
+
 	ConstructorHelpers::FObjectFinder <UInputMappingContext> tempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/input/IMC_Player.IMC_Player'"));
 	if(tempIMC.Succeeded())
 	{
