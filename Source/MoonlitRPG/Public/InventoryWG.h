@@ -54,11 +54,8 @@ protected:
 
 	int32 CurrMoney = 0;
 
-	TSubclassOf<class UInventorySlotWG> SlotFactory;
-/*	TSubclassOf<class UinventoryUseButton> ButtonFactory;*/
-	TSubclassOf<class UItemDescriptionWG> DescriptionFactory;
-	TSubclassOf<class UFoodPopup> FoodPopFactory;
-	TArray<TSubclassOf<class UinventoryUseButton>> ButtonFactory;
+
+	TArray<TSubclassOf<class UUserWidget>> WGFactory;
 	
 
 	UPROPERTY()
@@ -69,7 +66,8 @@ protected:
 	class UinventoryUseButton* OutfitButtonWG;
 	UPROPERTY()
 	class UItemDescriptionWG* Description;
-
+	UPROPERTY()
+	class UOutfitWG* OutfitWG;
 
 	EItemType currinventype = EItemType::Count;
 
@@ -94,11 +92,6 @@ protected:
 	void ButtonBinding();
 
 	void ChangeInven(EItemType ChangeInvenType);
-
-
-
-	
-
 
 public:
 	UPROPERTY()

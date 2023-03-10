@@ -61,4 +61,6 @@ public:
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()
 	class UPlayerMainWG* MainHUD;
+
+	bool bInventoryOpen = false;
 };

@@ -14,10 +14,7 @@ class MOONLITRPG_API UinventoryUseButton : public UUserWidget
 {
 	GENERATED_BODY()
 
-
 public:
-	class UInventoryWG* InvenWG;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Use;
 };

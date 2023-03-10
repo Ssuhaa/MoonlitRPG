@@ -50,8 +50,11 @@ protected:
 
 	float currentTime = 0;
 
+	UFUNCTION()
 	void CommonAttack();
+	UFUNCTION()
 	void intensiveAttack();
+	UFUNCTION()
 	void SpecialAttack();
 
 	UPROPERTY()

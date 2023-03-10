@@ -46,6 +46,7 @@ void UFoodPopup::SetFoodPop(UInventorySlotWG* SelectSlot)
 	UpdateHPBar();
 }
 
+
 void UFoodPopup::OnClickedCancel()
 {
 	RemoveFromParent();

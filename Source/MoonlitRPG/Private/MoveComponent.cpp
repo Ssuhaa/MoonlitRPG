@@ -17,7 +17,7 @@ UMoveComponent::UMoveComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	bAutoActivate = true;
 	ConstructorHelpers::FObjectFinder <UInputMappingContext> tempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/input/IMC_Player.IMC_Player'"));
 	if(tempIMC.Succeeded())
 	{
@@ -102,18 +102,21 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* En
 
 void UMoveComponent::Horizontal(const FInputActionValue& value)
 {
+	if(Player->bInventoryOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.Y += Axis;
 }
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
 {
+	if (Player->bInventoryOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.X += Axis;
 }
 
 void UMoveComponent::Look(const FInputActionValue& value)
 {
+	if (Player->bInventoryOpen == true) return;
 	FVector2D MouseAxis = value.Get<FVector2D>();
 
 	Player->AddControllerYawInput(MouseAxis.X);
@@ -122,12 +125,14 @@ void UMoveComponent::Look(const FInputActionValue& value)
 
 void UMoveComponent::Jump()
 {
+	if (Player->bInventoryOpen == true) return;
 	Player->Jump();
 }
 
 
 void UMoveComponent::Dash()
 {
+	if (Player->bInventoryOpen == true) return;
 	if (Stamina > 30)
 	{
 		isStaminaUse = true;
