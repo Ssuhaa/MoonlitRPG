@@ -38,10 +38,10 @@ UAttackComponent::UAttackComponent()
 	{
 		inputarray.Add(tempAction2.Object);  //2¹ø QÅ°
 	}
-	ConstructorHelpers::FObjectFinder<UAnimMontage> tempAttackMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player.AMT_Player'"));
-	if (tempAttackMont.Succeeded())
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempPlayerMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player.AMT_Player'"));
+	if (tempPlayerMont.Succeeded())
 	{
-		attackMontage = tempAttackMont.Object;
+		playerMontage = tempPlayerMont.Object;
 	}
 }
 
@@ -93,12 +93,12 @@ void UAttackComponent::NextCombo()
 		{
 		case 1:
 			attackCount = 2;
-			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack1")));
+			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack1")));
 			TargetCheck(commonRange);
 			break;
 		case 2:
 			attackCount = 0;
-			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack2")));
+			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack2")));
 			TargetCheck(commonRange);
 			break;
 		}
@@ -109,7 +109,7 @@ void UAttackComponent::CommonAttack()
 {
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("Attack0")));
+		player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack0")));
 		attackCount = 1;
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
@@ -127,7 +127,7 @@ void UAttackComponent::intensiveAttack()
 	{
 		if (!coolTimeRunning)
 		{
-			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("IntensiveAttack")));
+			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("IntensiveAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 
@@ -144,7 +144,7 @@ void UAttackComponent::SpecialAttack()
 	{
 		if (specialCount == 100)
 		{
-			player->PlayAnimMontage(attackMontage, 1.0f, FName(TEXT("SpecialAttack")));
+			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
 		}

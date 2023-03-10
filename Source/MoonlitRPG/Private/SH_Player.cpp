@@ -12,6 +12,7 @@
 #include "PlayerMainWG.h"
 #include "SH_PlayerAnim.h"
 #include "InteractiveObjectBase.h"
+#include <Animation/AnimMontage.h>
 
 ASH_Player::ASH_Player()
 {
@@ -113,10 +114,14 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 	if (PlayercurrHP >= DamageValue)
 	{
 		PlayercurrHP -= DamageValue;
+
+		int32 randNum = FMath::RandRange(0, 1);
+		FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
+		PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(*sectionName));
 	}
 	else // 플레이어 죽음
 	{
-		
+		PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
 	}
 	PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
 	MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);

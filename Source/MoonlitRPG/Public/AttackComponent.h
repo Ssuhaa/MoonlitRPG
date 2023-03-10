@@ -62,10 +62,6 @@ protected:
 	UPROPERTY()
 	class AHitObjectBase* HitObject;
 
-	UPROPERTY(EditAnywhere, Category = Montage)
-	class UAnimMontage* attackMontage;
-
-
 	UPROPERTY(EditAnywhere, Category = AttackValue) // 맞았을때 e 딜레이 주는거
 	float MinusDelayValue = 0.2f;
 	UPROPERTY(EditAnywhere, Category = AttackValue) //Q 값 올라가는거
@@ -86,10 +82,10 @@ public:
 
 	UPROPERTY()
 	class AEnemyBase* Target;
-
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* playerMontage;
 	UPROPERTY()
 	TArray<class AActor*> ActorArr;
-
 	UPROPERTY()
 	TArray<class AEnemyBase*> TargetArr;
 
