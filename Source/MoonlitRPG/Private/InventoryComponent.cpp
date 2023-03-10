@@ -61,14 +61,16 @@ void UInventoryComponent::InventoryOpen()
 	if (!inventory->IsInViewport())
 	{
 		inventory->AddWidget();
+		Player->bInventoryOpen = true;
 	}
 	else
 	{
 		inventory->RemoveWidget();
+		Player->bInventoryOpen = false;
 	}
 }
 
-void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount) //아이템 추가 함수
+void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount) // 일반 아이템 추가 함수
 {
 	int32 value = FindItem(iteminfo);
 	if (value > -1)
@@ -84,11 +86,25 @@ void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount
 	}
 }
 
+void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo)
+{
+	AddItemToinven(iteminfo, weaponinfo);
+}
+
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount)
 {
 	FInvenItem currGetItem;
 	currGetItem.iteminfomation = Getiteminfo;
 	currGetItem.itemAmount = Amount;
+	invenItemArr.Add(currGetItem);
+}
+
+void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, FWeaponinfo GetWeaponinfo)
+{
+	FInvenItem currGetItem;
+	currGetItem.iteminfomation = Getiteminfo;
+	currGetItem.weaponinfomaiton = GetWeaponinfo;
+	currGetItem.itemAmount = 1;
 	invenItemArr.Add(currGetItem);
 }
 

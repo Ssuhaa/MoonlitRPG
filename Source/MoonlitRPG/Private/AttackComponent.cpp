@@ -23,6 +23,7 @@ UAttackComponent::UAttackComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	bAutoActivate = true;
 	ConstructorHelpers::FObjectFinder<UInputAction> tempAction(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Mouse_LeftClick.Mouse_LeftClick'"));
 	if (tempAction.Succeeded())
 	{
@@ -107,6 +108,7 @@ void UAttackComponent::NextCombo()
 
 void UAttackComponent::CommonAttack()
 {
+	if (player->bInventoryOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack0")));
@@ -123,6 +125,7 @@ void UAttackComponent::CommonAttack()
 
 void UAttackComponent::intensiveAttack()
 {
+	if (player->bInventoryOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		if (!coolTimeRunning)
@@ -140,6 +143,7 @@ void UAttackComponent::intensiveAttack()
 
 void UAttackComponent::SpecialAttack()
 {
+	if (player->bInventoryOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		if (specialCount == 100)

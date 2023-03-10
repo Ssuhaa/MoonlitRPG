@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "ItemBase.h"
+#include "WeaponItemBase.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -17,6 +18,8 @@ public:
 	FIteminfo iteminfomation;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 itemAmount;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FWeaponinfo weaponinfomaiton;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -42,6 +45,7 @@ protected:
 	class ASH_Player* Player;
 
 	void AddItemToinven(FIteminfo Getiteminfo, int32 Amount);
+	void AddItemToinven(FIteminfo Getiteminfo, FWeaponinfo GetWeaponinfo);
 
 	void InventoryOpen();
 
@@ -51,9 +55,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	int32 Money = 0;
 	UPROPERTY(EditAnywhere)
-	TArray<FInvenItem> invenItemArr;
+	TArray<FInvenItem>invenItemArr;
+
+
 
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
+	void CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo);
+
 	int32 PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
 	int32 FindItem(FIteminfo iteminfo);
 

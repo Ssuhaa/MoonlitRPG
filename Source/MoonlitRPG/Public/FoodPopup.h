@@ -16,7 +16,6 @@ class MOONLITRPG_API UFoodPopup : public UUserWidget
 	GENERATED_BODY()
 	UFoodPopup(const FObjectInitializer& ObjectInitializer);
 protected:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Use;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))

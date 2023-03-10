@@ -15,6 +15,7 @@
 #include "inventoryUseButton.h"
 #include "FoodPopup.h"
 #include <UMG/Public/Components/ScaleBox.h>
+#include "OutfitWG.h"
 
 
 
@@ -25,52 +26,56 @@ UInventoryWG::UInventoryWG(const FObjectInitializer& ObjectInitializer) : Super(
 	ConstructorHelpers::FClassFinder <UInventorySlotWG> tempslot(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenSlot.BP_InvenSlot_C'"));
 	if (tempslot.Succeeded())
 	{
-		SlotFactory = tempslot.Class;
+		WGFactory.Add(tempslot.Class); //0번 slot 위젯
 	}
 	ConstructorHelpers::FClassFinder <UinventoryUseButton> tempButton(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenUseButton.BP_InvenUseButton_C'"));
 	if (tempButton.Succeeded())
 	{
-		ButtonFactory.Add(tempButton.Class) ; //0번 사용하기
+		WGFactory.Add(tempButton.Class) ; //1번 사용하기 버튼 위젯
 	}
 	ConstructorHelpers::FClassFinder <UinventoryUseButton> tempButton1(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_InvenOutfitUseButton.BP_InvenOutfitUseButton_C'"));
 	if (tempButton1.Succeeded())
 	{
-		ButtonFactory.Add(tempButton1.Class); //1번 착용하기
+		WGFactory.Add(tempButton1.Class); //2번 착용하기 버튼 위젯
 	}
+
 	ConstructorHelpers::FClassFinder <UItemDescriptionWG> tempDesrip(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_ItemDescription.BP_ItemDescription_C'"));
 	if (tempDesrip.Succeeded())
 	{
-		DescriptionFactory = tempDesrip.Class;
+		WGFactory.Add(tempDesrip.Class); //3번 아이템 정보 위젯
 	}
 	ConstructorHelpers::FClassFinder <UFoodPopup> tempfoodPop(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FoodPopup.WG_FoodPopup_C'"));
 	if (tempfoodPop.Succeeded())
 	{
-		FoodPopFactory = tempfoodPop.Class;
+		WGFactory.Add(tempfoodPop.Class); //4번 음식 팝업위젯
 	}
-
-
-	ButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory[0]);
-	OutfitButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), ButtonFactory[1]);
-	Description = CreateWidget<UItemDescriptionWG>(GetWorld(), DescriptionFactory);
-	FoodPopup = CreateWidget<UFoodPopup>(GetWorld(), FoodPopFactory);
-
+	ConstructorHelpers::FClassFinder <UOutfitWG> tempOutfit(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Outfit.WG_Outfit_C'"));
+	if (tempOutfit.Succeeded())
+	{
+		WGFactory.Add(tempOutfit.Class); //5번 장비창 위젯
+	}
 
 	for (int32 i = 0; i < 100; i++)
 	{
-		UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
+		UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), WGFactory[0]);
 		Slots.Add(currslot);
 	}
+	ButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), WGFactory[1]);
+	OutfitButtonWG = CreateWidget<UinventoryUseButton>(GetWorld(), WGFactory[2]);
+	Description = CreateWidget<UItemDescriptionWG>(GetWorld(), WGFactory[3]);
+	FoodPopup = CreateWidget<UFoodPopup>(GetWorld(), WGFactory[4]);
+	OutfitWG = CreateWidget<UOutfitWG>(GetWorld(), WGFactory[5]);
 
 }
 
 void UInventoryWG::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	ChangeInven(EItemType::Consum);
 	ButtonBinding();
-	ButtonWG->InvenWG = this;
-	OutfitButtonWG->InvenWG = this;
+
 	FoodPopup->invenWG = this;
 }
 
@@ -90,6 +95,7 @@ void UInventoryWG::ButtonBinding()
 		OutfitButtonWG->Button_Use->OnPressed.AddDynamic(this, &UInventoryWG::ClickedOutfitButton);
 
 		FoodPopup->ButtonBinding();
+		OutfitWG->ButtonBinding();
 
 		for (int32 i = 0; i < Slots.Num(); i++)
 		{
@@ -103,10 +109,14 @@ void UInventoryWG::ButtonBinding()
 void UInventoryWG::RemoveWidget()
 {
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
-	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	//UGameplayStatics::SetGamePaused(GetWorld(), false);
 	if (FoodPopup->IsInViewport())
 	{
 		FoodPopup->RemoveFromParent();
+	}
+	if (OutfitWG->IsInViewport())
+	{
+		OutfitWG->RemoveFromParent();
 	}
 	RemoveFromParent();
 }
@@ -117,7 +127,7 @@ void UInventoryWG::AddWidget()
 	AddToViewport();
 	Setinventory();
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	//UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void UInventoryWG::ItemSlotClicked(int32 slotindex)
@@ -146,7 +156,7 @@ void UInventoryWG::ClickedUseButton()
 
 void UInventoryWG::ClickedOutfitButton()
 {
-
+	OutfitWG->PopupOutfit(Description);
 }
 
 void UInventoryWG::ClickedConsum()
@@ -208,7 +218,7 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 			{
 				if (!Slots.IsValidIndex(i))
 				{
-					UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), SlotFactory);
+					UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), WGFactory[0]);
 					Slots.Add(currslot);
 					Slots[i]->ButtonBinding();
 				}

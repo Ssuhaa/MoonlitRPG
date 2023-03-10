@@ -67,6 +67,7 @@ void ASH_Player::BeginPlay()
 void ASH_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

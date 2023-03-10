@@ -26,14 +26,6 @@ enum  class EItemgrade : uint8
 	Legendary,
 };
 
-UENUM(BlueprintType)
-enum  class EWeaponType : uint8
-{
-	Sword,
-	Dagger,
-	Bow,
-};
-
 USTRUCT(BlueprintType)
 struct FIteminfo
 {
@@ -59,21 +51,7 @@ struct FIteminfo
 	int32 HealAmount = 0;
 };
 
-USTRUCT(BlueprintType)
-struct FWeaponinfo
-{
-	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EWeaponType WeaponType;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Power = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Level = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FIteminfo> enhancementItem;
-
-};
 
 UCLASS()
 class MOONLITRPG_API AItemBase : public AActor
@@ -81,9 +59,9 @@ class MOONLITRPG_API AItemBase : public AActor
 	GENERATED_BODY()
 		
 	// Sets default values for this actor's properties
+protected:
 	AItemBase();
 
-protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	// Called every frame
@@ -98,5 +76,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
 	FIteminfo ItemInformation;
 
-	void GetItem();
+	virtual void GetItem();
 };
