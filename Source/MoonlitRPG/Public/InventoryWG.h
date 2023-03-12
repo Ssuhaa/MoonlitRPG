@@ -68,6 +68,8 @@ protected:
 	class UItemDescriptionWG* Description;
 	UPROPERTY()
 	class UOutfitWG* OutfitWG;
+	UPROPERTY()
+	class APreviewActor* OutfitActor;
 
 	EItemType currinventype = EItemType::Count;
 

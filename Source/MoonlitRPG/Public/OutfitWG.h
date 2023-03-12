@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "InventoryComponent.h"
 #include "OutfitWG.generated.h"
 
 /**
@@ -22,7 +23,9 @@ class MOONLITRPG_API UOutfitWG : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UOutfitWG(const FObjectInitializer& ObjectInitializer);
 protected:
+	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UScaleBox* itemDescription;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -39,6 +42,17 @@ protected:
 	class UTextBlock* Text_WeaponName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_WeaponType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* Panel_Detail;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* Panel_LevelUp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* Panel_Upgrade;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UBorder* EquipPop;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Money;
+
 
 	EEquipmentState OutfitState = EEquipmentState::Detail;
 
@@ -53,8 +67,18 @@ protected:
 	UFUNCTION()
 	void OnclickedBack();
 
+	void WearingSwitch(bool isEquip);
+
+	TSubclassOf<class UItemDescriptionWG> DescriptionWG;
+
+	UPROPERTY()
+	class UItemDescriptionWG* description;
+
+	
+	FInvenItem* SelectInveninfo;
+
 
 public:
 	void ButtonBinding();
-	void PopupOutfit(class UItemDescriptionWG* Description);
+	void SetOutfitWG(UInventorySlotWG* SelectSlot, int32* Money);
 };

@@ -5,6 +5,8 @@
 #include <UMG/Public/Components/Image.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include "InventorySlotWG.h"
+#include <UMG/Public/Components/CanvasPanel.h>
+
 
 UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -29,6 +31,7 @@ UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializ
 	{
 		BGarray.Add(tempT3.Object);	//3번 Legendary
 	}
+
 }
 
 void UItemDescriptionWG::SetDescription(UInventorySlotWG* SelectedSlot)
@@ -40,4 +43,33 @@ void UItemDescriptionWG::SetDescription(UInventorySlotWG* SelectedSlot)
 
 	int32 BGindex = int32(iteminfo->iteminfomation.itemgrade);
 	BG->SetBrushFromTexture(BGarray[BGindex], true);
+
+	if(iteminfo->weaponinfomaiton.WeaponType != EWeaponType::None)
+	{
+		Panel_Weapon->SetVisibility(ESlateVisibility::Visible);
+		int32 Typeindex = int32(iteminfo->weaponinfomaiton.WeaponType);
+		FText weaponType;
+
+		switch (Typeindex)
+		{
+		case 1:
+			weaponType = FText::FromString(TEXT("두손 검"));
+			break;
+		case 2:
+			weaponType = FText::FromString(TEXT("단 검"));
+			break;
+		case 3:
+			weaponType = FText::FromString(TEXT("활"));
+			break;
+		}
+
+		Text_WeaponType->SetText(weaponType);
+		int32 currPower = iteminfo->weaponinfomaiton.Power;
+		Text_Power->SetText(FText::AsNumber(currPower));
+	}
+	else
+	{
+		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
+	}
+
 }

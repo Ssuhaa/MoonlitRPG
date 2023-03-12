@@ -64,6 +64,8 @@ struct FWeaponinfo
 	int32 PlusPower = 3;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //등급마다 레벨업했을때 추가되는 EXP양 (3 , 5 , 10 ,20)
 	int32 PlusEXP = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool isEquip = false;
 
 
 	UPROPERTY(BlueprintReadOnly)

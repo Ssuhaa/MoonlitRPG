@@ -16,6 +16,7 @@
 #include "FoodPopup.h"
 #include <UMG/Public/Components/ScaleBox.h>
 #include "OutfitWG.h"
+#include "PreviewActor.h"
 
 
 
@@ -73,6 +74,7 @@ void UInventoryWG::NativeConstruct()
 	Super::NativeConstruct();
 
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	OutfitActor = GetWorld()->SpawnActor<APreviewActor> (APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0));
 	ChangeInven(EItemType::Consum);
 	ButtonBinding();
 
@@ -109,7 +111,6 @@ void UInventoryWG::ButtonBinding()
 void UInventoryWG::RemoveWidget()
 {
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
-	//UGameplayStatics::SetGamePaused(GetWorld(), false);
 	if (FoodPopup->IsInViewport())
 	{
 		FoodPopup->RemoveFromParent();
@@ -118,6 +119,7 @@ void UInventoryWG::RemoveWidget()
 	{
 		OutfitWG->RemoveFromParent();
 	}
+	OutfitActor->Destroy();
 	RemoveFromParent();
 }
 
@@ -127,7 +129,7 @@ void UInventoryWG::AddWidget()
 	AddToViewport();
 	Setinventory();
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-	//UGameplayStatics::SetGamePaused(GetWorld(), true);
+	
 }
 
 void UInventoryWG::ItemSlotClicked(int32 slotindex)
@@ -143,6 +145,8 @@ void UInventoryWG::ItemSlotClicked(int32 slotindex)
 	}
 	if (Slots[slotindex]->selectiteminfo->iteminfomation.itemType == EItemType::Outfit)
 	{
+		OutfitWG->SetOutfitWG(Slots[slotindex],&InvenComp->Money);
+		OutfitActor->SetPreviewMesh(Slots[slotindex]->selectiteminfo->weaponinfomaiton.Mesh);
 		Overlay_Use->ClearChildren();
 		Overlay_Use->AddChildToOverlay(OutfitButtonWG);
 	}
@@ -156,7 +160,7 @@ void UInventoryWG::ClickedUseButton()
 
 void UInventoryWG::ClickedOutfitButton()
 {
-	OutfitWG->PopupOutfit(Description);
+	OutfitWG->AddToViewport();
 }
 
 void UInventoryWG::ClickedConsum()

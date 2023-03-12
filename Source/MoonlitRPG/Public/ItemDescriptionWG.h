@@ -26,8 +26,16 @@ protected:
 	class UTextBlock* Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* BG;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* Panel_Weapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_WeaponType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Power;
 
 	TArray<class UTexture2D*> BGarray;
+
+	
 
 public:
 
