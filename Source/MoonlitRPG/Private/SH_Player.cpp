@@ -13,6 +13,9 @@
 #include "SH_PlayerAnim.h"
 #include "InteractiveObjectBase.h"
 #include <Animation/AnimMontage.h>
+#include <Components/CapsuleComponent.h>
+#include "IH_DieUI.h"
+#include "IH_LoadingUI.h"
 
 ASH_Player::ASH_Player()
 {
@@ -48,7 +51,16 @@ ASH_Player::ASH_Player()
 	{
 		fkey = tempAction.Object; //f
 	}
-	
+	ConstructorHelpers::FClassFinder<UIH_DieUI> tempdieUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
+	if (tempdieUI.Succeeded())
+	{
+		dieUIFactory = tempdieUI.Class;
+	}
+	ConstructorHelpers::FClassFinder<UIH_LoadingUI> temploadingUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Loading.WG_Loading_C'"));
+	if (temploadingUI.Succeeded())
+	{
+		loadingUIFactory = temploadingUI.Class;
+	}
 }
 
 void ASH_Player::BeginPlay()
@@ -58,10 +70,12 @@ void ASH_Player::BeginPlay()
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
 
-	APlayerController* playerCon = GetWorld()->GetFirstPlayerController();
-	playerCon->PlayerCameraManager->ViewPitchMin = -10.0f;
-	playerCon->PlayerCameraManager->ViewPitchMax = 50.0f;
+	playerCon = GetWorld()->GetFirstPlayerController();
+	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
+	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
 
+	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), dieUIFactory);
+	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), loadingUIFactory);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -112,20 +126,25 @@ void ASH_Player::interactionObject()
 
 void ASH_Player::DamagedPlayer(float DamageValue)
 {
-	if (PlayercurrHP >= DamageValue)
+	if (!AttackComp->isSpecialAttacking)
 	{
 		PlayercurrHP -= DamageValue;
-
-		int32 randNum = FMath::RandRange(0, 1);
-		FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
-		PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(*sectionName));
+		if (PlayercurrHP >= DamageValue)
+		{
+			int32 randNum = FMath::RandRange(0, 1);
+			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
+			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(*sectionName));
+			GetCharacterMovement()->DisableMovement();
+		}
+		else // 플레이어 죽음
+		{
+			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
+			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+			DisableInput(playerCon);
+		}
+		PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
+		MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);
 	}
-	else // 플레이어 죽음
-	{
-		PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
-	}
-	PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
-	MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);
 }
 
 void ASH_Player::HealPlayer(float HealValue)
@@ -133,4 +152,23 @@ void ASH_Player::HealPlayer(float HealValue)
 	PlayercurrHP += HealValue;
 	PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
 	MainHUD->UpdateHP(PlayercurrHP, PlayerTotalHP);
+}
+
+void ASH_Player::RevivePlayer()
+{
+	SetActorLocation(FVector(0, 0, 100));
+	SetActorRotation(FRotator(0, 0, 0));
+	HealPlayer(PlayerTotalHP / 3);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	EnableInput(playerCon);
+
+	UAnimInstance* currAnim = GetMesh()->GetAnimInstance();
+	if (currAnim != nullptr)
+	{
+		UAnimMontage* currMont = currAnim->GetCurrentActiveMontage();
+		if (currMont != nullptr)
+		{
+			currAnim->Montage_Stop(0, currMont);
+		}
+	}
 }

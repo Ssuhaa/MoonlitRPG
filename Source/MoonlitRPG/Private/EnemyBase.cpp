@@ -61,6 +61,7 @@ AEnemyBase::AEnemyBase()
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Enemy")));
 }
 
 void AEnemyBase::BeginPlay()

@@ -30,7 +30,7 @@ public:
 
 public:
 	UFUNCTION()
-	void AnimNotify_DieEnd();
+	void AnimNotify_EnemyDieEnd();
 	UFUNCTION()
 	void AnimNotify_EnemyAttack();
 	UFUNCTION()

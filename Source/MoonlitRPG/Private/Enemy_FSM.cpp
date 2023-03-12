@@ -61,6 +61,12 @@ void UEnemy_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if(target->bInventoryOpen)
+	{
+		ChangeState(EEnemyState::Idle);
+		return;
+	}
+
 	switch (currState)
 	{
 	case EEnemyState::Idle:
@@ -189,13 +195,20 @@ void UEnemy_FSM::AttackDelayState()
 
 	if (DelayComplete(randSec))
 	{
-		if (degree < 45.0 && distance <= attackRange)
+		if (IsTargetTrace())
 		{
-			ChangeState(EEnemyState::Attack);
+			if (degree < 45.0 && distance <= attackRange)
+			{
+				ChangeState(EEnemyState::Attack);
+			}
+			else
+			{
+				ChangeState(EEnemyState::Chase);
+			}
 		}
 		else
 		{
-			ChangeState(EEnemyState::Chase);
+			ChangeState(EEnemyState::Move);
 		}
 	}
 }
@@ -336,6 +349,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		case EEnemyState::Move:
 		{
 			me->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+			me->compEnemyHP->SetVisibility(false);
 			UNavigationSystemV1* ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 			FNavLocation loc;
 			ns->GetRandomReachablePointInRadius(originPos, 1000, loc);
