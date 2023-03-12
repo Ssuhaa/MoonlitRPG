@@ -95,15 +95,24 @@ void UAttackComponent::NextCombo()
 		case 1:
 			attackCount = 2;
 			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack1")));
-			TargetCheck(commonRange);
+			TargetCheck(CommonRange);
 			break;
 		case 2:
 			attackCount = 0;
 			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack2")));
-			TargetCheck(commonRange);
+			TargetCheck(CommonRange);
 			break;
 		}
 	}
+}
+
+void UAttackComponent::ResetAttack()
+{
+	isAttacking = false;
+	goToNextCombo = false;
+	isSpecialAttacking = false;
+	attackCount = 0;
+	player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }
 
 void UAttackComponent::CommonAttack()
@@ -115,7 +124,7 @@ void UAttackComponent::CommonAttack()
 		attackCount = 1;
 		player->GetCharacterMovement()->DisableMovement();
 		isAttacking = true;
-		TargetCheck(commonRange);
+		TargetCheck(CommonRange);
 	}
 	else
 	{
@@ -144,13 +153,14 @@ void UAttackComponent::intensiveAttack()
 void UAttackComponent::SpecialAttack()
 {
 	if (player->bInventoryOpen == true) return;
-	if (!isAttacking && !player->playerAnim->bAir)
+	if (!isAttacking && !player->playerAnim->bAir && !isSpecialAttacking)
 	{
 		if (specialCount == 100)
 		{
 			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("SpecialAttack")));
 			player->GetCharacterMovement()->DisableMovement();
 			isAttacking = true;
+			isSpecialAttacking = true;
 		}
 	}
 }
@@ -189,33 +199,51 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				{
 					switch (damageRange.damageType)
 					{
-					case EDamageType::Common:
-						intensiveDelay -= 1.0f;
-						DamageChange(commonRange);
-						Target->FSM->ReceiveDamage(currDamage);
-						break;
-					case EDamageType::Intensive:
-						specialCount += addPercent;
-						specialCount = FMath::Clamp(specialCount, 0, 100);
-						player->MainHUD->UpdateQPercent(specialCount);
-						DamageChange(IntensiveRange);
-						Target->FSM->ReceiveDamage(currDamage);
+						case EDamageType::Common:
+						{
+							intensiveDelay -= 1.0f;
+							DamageChange(CommonRange);
+							Target->FSM->ReceiveDamage(currDamage);
+							break;
+						}
+						case EDamageType::Intensive1:
+						{
+							specialCount += addPercent;
+							specialCount = FMath::Clamp(specialCount, 0, 100);
+							player->MainHUD->UpdateQPercent(specialCount);
+							DamageChange(IntensiveRange1);
+							Target->FSM->ReceiveDamage(currDamage);
+							break;
+						}
+						case EDamageType::Intensive2:
+						{
+							DamageChange(IntensiveRange2);
+							Target->FSM->ReceiveDamage(currDamage);
 
-						direction = Target->GetActorLocation()-player->GetActorLocation();
-						force = direction * damageRange.pushForce;
-						force.Z = 0;
-						Target->LaunchCharacter(force, true, true);
-						break;
-					case EDamageType::Special:
-						specialCount = 0;
-						player->MainHUD->UpdateQPercent(specialCount);
-						DamageChange(SpecialRange);
-						Target->FSM->ReceiveDamage(currDamage);
+							direction = Target->GetActorLocation()-player->GetActorLocation();
+							force = direction * damageRange.pushForce;
+							force.Z = 0;
+							Target->LaunchCharacter(force, true, true);
+							break;
+						}
+						case EDamageType::Special1:
+						{
+							DamageChange(SpecialRange1);
+							Target->FSM->ReceiveDamage(currDamage);
+							break;
+						}
+						case EDamageType::Special2:
+						{
+							specialCount = 0;
+							player->MainHUD->UpdateQPercent(specialCount);
+							DamageChange(SpecialRange2);
+							Target->FSM->ReceiveDamage(currDamage);
 
-						direction = Target->GetActorLocation() - player->GetActorLocation();
-						force = direction * damageRange.pushForce;
-						Target->LaunchCharacter(force, true, true);
-						break;
+							direction = Target->GetActorLocation() - player->GetActorLocation();
+							force = direction * damageRange.pushForce;
+							Target->LaunchCharacter(force, true, true);
+							break;
+						}
 					}
 				}
 				else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))

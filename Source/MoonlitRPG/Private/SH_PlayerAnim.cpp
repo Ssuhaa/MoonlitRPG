@@ -5,6 +5,7 @@
 #include "SH_Player.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include "AttackComponent.h"
+#include "IH_DieUI.h"
 
 void USH_PlayerAnim::NativeBeginPlay()
 {
@@ -38,10 +39,7 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
-	Player->AttackComp->isAttacking = false;
-	Player->AttackComp->goToNextCombo = false;
-	Player->AttackComp->attackCount = 0;
-	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	Player->AttackComp->ResetAttack();
 }
 
 void USH_PlayerAnim::AnimNotify_NextCombo()
@@ -49,14 +47,24 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 	Player->AttackComp->NextCombo();
 }
 
-void USH_PlayerAnim::AnimNotify_IntensiveAttack()
+void USH_PlayerAnim::AnimNotify_IntensiveAttack1()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange);
+	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange1);
 }
 
-void USH_PlayerAnim::AnimNotify_SpecialAttack()
+void USH_PlayerAnim::AnimNotify_IntensiveAttack2()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange);
+	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange2);
+}
+
+void USH_PlayerAnim::AnimNotify_SpecialAttack1()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange1);
+}
+
+void USH_PlayerAnim::AnimNotify_SpecialAttack2()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange2);
 }
 
 void USH_PlayerAnim::AnimNotify_DashEnd()
@@ -67,4 +75,15 @@ void USH_PlayerAnim::AnimNotify_DashEnd()
 void USH_PlayerAnim::AnimNotify_DashToWalk()
 {
 	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void USH_PlayerAnim::AnimNotify_DamagedEnd()
+{
+	Player->AttackComp->ResetAttack();
+}
+
+void USH_PlayerAnim::AnimNotify_DieEnd()
+{
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	Player->dieUI->AddToViewport();
 }

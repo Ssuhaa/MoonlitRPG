@@ -39,12 +39,19 @@ public:
 	UFUNCTION()
 	void AnimNotify_NextCombo();
 	UFUNCTION()
-	void AnimNotify_IntensiveAttack();
+	void AnimNotify_IntensiveAttack1();
 	UFUNCTION()
-	void AnimNotify_SpecialAttack();
-
+	void AnimNotify_IntensiveAttack2();
+	UFUNCTION()
+	void AnimNotify_SpecialAttack1();
+	UFUNCTION()
+	void AnimNotify_SpecialAttack2();
 	UFUNCTION()
 	void AnimNotify_DashEnd();	
 	UFUNCTION()
 	void AnimNotify_DashToWalk();
+	UFUNCTION()
+	void AnimNotify_DamagedEnd();
+	UFUNCTION()
+	void AnimNotify_DieEnd();
 };

@@ -133,6 +133,17 @@ void UMoveComponent::Jump()
 void UMoveComponent::Dash()
 {
 	if (Player->bInventoryOpen == true) return;
+
+// 	UAnimInstance* currAnim = Player->GetMesh()->GetAnimInstance();
+// 	if (currAnim != nullptr)
+// 	{
+// 		UAnimMontage* currMont = currAnim->GetCurrentActiveMontage();
+// 		if (currMont != nullptr)
+// 		{
+// 			currAnim->Montage_Stop(0.2, currMont);
+// 		}
+// 	}
+
 	if (Stamina > 30)
 	{
 		isStaminaUse = true;

@@ -57,7 +57,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = Stamina)
 	float Stamina = 100.0f;
 	UPROPERTY(EditAnywhere, Category = Stamina)
-	float decreaseStamina = 1.0f;
+	float decreaseStamina = 0.5f;
 
 	bool isStaminaUse = false;
 	void StaminaUpdate();

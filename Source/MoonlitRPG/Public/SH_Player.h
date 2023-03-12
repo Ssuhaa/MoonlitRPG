@@ -35,6 +35,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UMoveComponent* MoveComp;
 
+
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
 
 	UPROPERTY()
@@ -49,6 +50,7 @@ public:
 	float PlayerTotalHP = 120.0f;
 	void DamagedPlayer(float DamageValue);
 	void HealPlayer(float HealValue);
+	void RevivePlayer();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
@@ -57,7 +59,17 @@ public:
 	class UAttackComponent* AttackComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UIH_DieUI> dieUIFactory;
+	UPROPERTY(EditAnywhere)
+	class UIH_DieUI* dieUI;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UIH_LoadingUI> loadingUIFactory;
+	UPROPERTY(EditAnywhere)
+	class UIH_LoadingUI* loadingUI;
+	UPROPERTY()
+	class APlayerController* playerCon;
+	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()
 	class UPlayerMainWG* MainHUD;
