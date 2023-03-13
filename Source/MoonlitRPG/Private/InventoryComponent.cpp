@@ -61,12 +61,10 @@ void UInventoryComponent::InventoryOpen()
 	if (!inventory->IsInViewport())
 	{
 		inventory->AddWidget();
-		Player->bInventoryOpen = true;
 	}
 	else
 	{
 		inventory->RemoveWidget();
-		Player->bInventoryOpen = false;
 	}
 }
 

@@ -120,6 +120,7 @@ void UInventoryWG::RemoveWidget()
 		OutfitWG->RemoveFromParent();
 	}
 	OutfitActor->Destroy();
+	Player->bInventoryOpen = false;
 	RemoveFromParent();
 }
 
@@ -127,6 +128,7 @@ void UInventoryWG::RemoveWidget()
 void UInventoryWG::AddWidget()
 {
 	AddToViewport();
+	Player->bInventoryOpen = true;
 	Setinventory();
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 	
@@ -145,7 +147,7 @@ void UInventoryWG::ItemSlotClicked(int32 slotindex)
 	}
 	if (Slots[slotindex]->selectiteminfo->iteminfomation.itemType == EItemType::Outfit)
 	{
-		OutfitWG->SetOutfitWG(Slots[slotindex],&InvenComp->Money);
+		OutfitWG->SetOutfitWG(Slots[slotindex]);
 		OutfitActor->SetPreviewMesh(Slots[slotindex]->selectiteminfo->weaponinfomaiton.Mesh);
 		Overlay_Use->ClearChildren();
 		Overlay_Use->AddChildToOverlay(OutfitButtonWG);

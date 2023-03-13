@@ -68,7 +68,7 @@ struct FWeaponinfo
 	bool isEquip = false;
 
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	int32 Level = 1;
 	UPROPERTY(BlueprintReadOnly)
 	int32 MaxLevel = 20;
@@ -84,10 +84,11 @@ struct FWeaponinfo
 	int32 UpgradeCount = 0;
 
 public:
-	void Upgrade(int32 playerMoney,  bool isHaveAllItem)//돌파
+	void Upgrade(int32* playerMoney,  bool isHaveAllItem)//돌파
 	{
-		if (playerMoney > UpGradeMoney && isHaveAllItem == true)
+		if (*playerMoney >= UpGradeMoney)// && isHaveAllItem == true) // 추후수정 필요
 		{
+			*playerMoney -= UpGradeMoney;
 			UpgradeCount++;
 			MaxLevel += 10;
 			UpGradeMoney += 5000;
