@@ -45,13 +45,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* Panel_Detail;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UCanvasPanel* Panel_LevelUp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UCanvasPanel* Panel_Upgrade;
+	class UCanvasPanel* Panel_Reinforce;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+// 	class UCanvasPanel* Panel_LevelUp;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+// 	class UCanvasPanel* Panel_Upgrade;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* EquipPop;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Money;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+// 	class UWeaponUpgradeWG* WG_WeaponUpgrade;
 
 
 	EEquipmentState OutfitState = EEquipmentState::Detail;
@@ -68,17 +72,25 @@ protected:
 	void OnclickedBack();
 
 	void WearingSwitch(bool isEquip);
+	void ButtonSwitch(bool isMaxLevel);
+	void ReinforceSwitch(EEquipmentState state);
 
-	TSubclassOf<class UItemDescriptionWG> DescriptionWG;
-
+	TArray<TSubclassOf<class UUserWidget>> WGFactory; 
 	UPROPERTY()
 	class UItemDescriptionWG* description;
+	UPROPERTY()
+	class UWeaponUpgradeWG* UpgradeWG;
 
+	UPROPERTY()
+	class ASH_Player* player;
 	
 	FInvenItem* SelectInveninfo;
 
 
+	UFUNCTION()
+	void UpdateMoney();
+
 public:
 	void ButtonBinding();
-	void SetOutfitWG(UInventorySlotWG* SelectSlot, int32* Money);
+	void SetOutfitWG(class UInventorySlotWG* SelectSlot);
 };
