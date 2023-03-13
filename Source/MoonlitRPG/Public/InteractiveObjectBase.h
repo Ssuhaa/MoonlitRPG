@@ -39,5 +39,5 @@ public:
 	class ASH_Player* player;
 
 public:
-	void DropItem();
+	virtual void Interaction();
 };

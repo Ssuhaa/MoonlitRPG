@@ -16,6 +16,7 @@
 #include <Components/CapsuleComponent.h>
 #include "IH_DieUI.h"
 #include "IH_LoadingUI.h"
+#include "IH_WarpPoint.h"
 
 ASH_Player::ASH_Player()
 {
@@ -23,7 +24,7 @@ ASH_Player::ASH_Player()
 	GetMesh()->SetRelativeLocation(FVector(0,0,-90));
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->bUsePawnControlRotation = false;
+	SpringArmComp->bUsePawnControlRotation = true;
 
 	CamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Cam"));
 	CamComp->SetupAttachment(SpringArmComp);
@@ -118,7 +119,7 @@ void ASH_Player::interactionObject()
 		AInteractiveObjectBase* currobject = Cast<AInteractiveObjectBase>(hitinfo.GetActor());
 		if (currobject != nullptr)
 		{
-			currobject->DropItem();
+			currobject->Interaction();
 		}
 	}
 }
@@ -156,8 +157,18 @@ void ASH_Player::HealPlayer(float HealValue)
 
 void ASH_Player::RevivePlayer()
 {
-	SetActorLocation(FVector(0, 0, 100));
-	SetActorRotation(FRotator(0, 0, 0));
+	if (warpPoint == nullptr)
+	{
+		SetActorLocation(FVector(0, 0, 100));
+		SetActorRotation(FRotator(0, 0, 0));
+	}
+	else
+	{
+		SetActorLocation(warpPoint->compSpawnPos->GetComponentLocation());
+		SetActorRotation(warpPoint->compSpawnPos->GetComponentRotation());
+		dieUI->minDist = 10000;
+	}
+
 	HealPlayer(PlayerTotalHP / 3);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	EnableInput(playerCon);

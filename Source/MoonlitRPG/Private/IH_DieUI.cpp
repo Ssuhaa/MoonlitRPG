@@ -7,6 +7,7 @@
 #include "SH_Player.h"
 #include <GameFramework/PlayerController.h>
 #include "IH_LoadingUI.h"
+#include "IH_WarpPoint.h"
 
 void UIH_DieUI::NativeConstruct()
 {
@@ -24,15 +25,16 @@ void UIH_DieUI::NativeConstruct()
 void UIH_DieUI::ReviveButton()
 {
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::PlayerRevive,10.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive,10.0f, false);
 	player->loadingUI->AddToViewport();
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	RemoveFromParent();
 }
 
-void UIH_DieUI::PlayerRevive()
+void UIH_DieUI::CallRevive()
 {
 	player->loadingUI->PlayAnimationReverse(player->loadingUI->LoadingAnim);
+	FindWarpPoint();
 	player->RevivePlayer();
 
 	FTimerHandle timer;
@@ -44,5 +46,28 @@ void UIH_DieUI::LoadingRemove()
 	if (player->loadingUI != nullptr)
 	{
 		player->loadingUI->RemoveFromParent();
+	}
+}
+
+void UIH_DieUI::FindWarpPoint()
+{
+	TArray<AActor*> actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), actors);
+
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		if (actors[i]->GetName().Contains(TEXT("WarpPoint")))
+		{
+			AIH_WarpPoint* warpPointActor = Cast<AIH_WarpPoint>(actors[i]);
+			if (warpPointActor->bsavePoint && warpPointActor != nullptr)
+			{
+				float distance = FVector::Distance(warpPointActor->GetActorLocation(), player->GetActorLocation());
+				if (minDist > distance)
+				{
+					minDist = distance;
+					player->warpPoint = warpPointActor;
+				}
+			}
+		}
 	}
 }

@@ -27,10 +27,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	class ASH_Player* player;
 
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> warpPointArray;
+
+	UPROPERTY(EditAnywhere)
+	float minDist = 10000;
+
 public:
 	UFUNCTION()
 	void ReviveButton();
 
-	void PlayerRevive();
+	void CallRevive();
 	void LoadingRemove();
+	void FindWarpPoint();
 };

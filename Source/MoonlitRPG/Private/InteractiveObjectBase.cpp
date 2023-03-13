@@ -64,7 +64,7 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 	}
 }
 
-void AInteractiveObjectBase::DropItem()
+void AInteractiveObjectBase::Interaction()
 {
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));

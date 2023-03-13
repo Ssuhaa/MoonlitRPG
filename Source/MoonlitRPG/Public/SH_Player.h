@@ -69,6 +69,8 @@ public:
 	class UIH_LoadingUI* loadingUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
+	UPROPERTY()
+	class AIH_WarpPoint* warpPoint = nullptr;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()
