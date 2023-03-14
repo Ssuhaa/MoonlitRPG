@@ -41,6 +41,8 @@ protected:
 	UPROPERTY()
 	class ASH_Player* Player;
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UVerticalBox* InteractionBox;
 	
 	void UpdateStamina(float Stamina, float MaxStamina);
 	void UpdateEtime(float Etime);

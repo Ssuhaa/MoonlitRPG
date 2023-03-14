@@ -38,6 +38,17 @@ public:
 
 	class ASH_Player* player;
 
+	UPROPERTY(EditAnywhere)
+	FText InteractName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UIH_InteractionUI> interactUIFactory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UIH_InteractionUI* interactionUI;
+
+	bool bInteracted = false;
+
 public:
 	virtual void Interaction();
 };

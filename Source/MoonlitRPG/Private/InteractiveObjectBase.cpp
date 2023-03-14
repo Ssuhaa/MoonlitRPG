@@ -9,6 +9,9 @@
 #include "IH_InteractionUI.h"
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
+#include <UMG/Public/Components/TextBlock.h>
+#include <UMG/Public/Components/VerticalBox.h>
+#include "PlayerMainWG.h"
 
 // Sets default values
 AInteractiveObjectBase::AInteractiveObjectBase()
@@ -31,6 +34,7 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractionUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractionUI.Succeeded())
 	{
+		interactUIFactory = tempinteractionUI.Class;
 		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
 		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
@@ -42,6 +46,9 @@ void AInteractiveObjectBase::BeginPlay()
 	Super::BeginPlay();
 
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
+	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
+//	UIH_InteractionUI* interactionUI = Cast<UIH_InteractionUI>(compInteractWidget->GetUserWidgetObject());
+	interactionUI->txt_Interaction->SetText(InteractName);
 }
 
 // Called every frame
@@ -53,15 +60,17 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
 	float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
-
-	if (degree < 180 && distance < 300)
-	{
-		compInteractWidget->SetVisibility(true);
-	}
-	else
-	{
-		compInteractWidget->SetVisibility(false);
-	}
+	
+		if (degree < 180 && distance < 300)
+		{
+			player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
+//			compInteractWidget->SetVisibility(true);
+		}
+		else
+		{
+			player->MainHUD->InteractionBox->RemoveChild(interactionUI);
+//			compInteractWidget->SetVisibility(false);
+		}
 }
 
 void AInteractiveObjectBase::Interaction()
@@ -81,6 +90,11 @@ void AInteractiveObjectBase::Interaction()
 			int32 randNum = FMath::RandRange(0, spawnItems.Num()-1);
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}
+	}
+
+	if (interactionUI != nullptr)
+	{
+		interactionUI->RemoveFromParent();
 	}
 
 	Destroy();

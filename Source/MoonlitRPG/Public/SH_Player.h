@@ -71,6 +71,8 @@ public:
 	class APlayerController* playerCon;
 	UPROPERTY()
 	class AIH_WarpPoint* warpPoint = nullptr;
+	UPROPERTY(EditAnywhere)
+	class AInteractiveObjectBase* InteractiveObjects;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()
