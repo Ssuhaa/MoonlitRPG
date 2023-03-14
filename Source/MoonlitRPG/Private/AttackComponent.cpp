@@ -230,6 +230,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				{
 					switch (damageRange.damageType)
 					{
+						// ************************************* 단검 공격
 						case EDamageType::Common:
 						{
  							intensiveDelay -= 1.0f;
@@ -263,6 +264,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 							EnemyAttack(SpecialRange2);
 							break;
 						}
+						// ************************************* 두손검 공격
 						case EDamageType::GS_Common:
 						{
 							intensiveDelay -= 1.0f;
