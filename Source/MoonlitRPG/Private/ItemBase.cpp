@@ -15,7 +15,9 @@ AItemBase::AItemBase()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent> (TEXT("ItemMesh"));
 	SetRootComponent(Mesh);
-
+	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);
 }
 
 // Called when the game starts or when spawned

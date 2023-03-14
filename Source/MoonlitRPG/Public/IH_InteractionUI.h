@@ -14,4 +14,7 @@ class MOONLITRPG_API UIH_InteractionUI : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	class UTextBlock* txt_Interaction;
 };

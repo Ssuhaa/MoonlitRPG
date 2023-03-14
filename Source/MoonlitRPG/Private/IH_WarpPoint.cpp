@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "IH_WarpPoint.h"
@@ -6,6 +6,8 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "IH_WarpActiveUI.h"
+#include "IH_InteractionUI.h"
+#include <UMG/Public/Components/TextBlock.h>
 
 AIH_WarpPoint::AIH_WarpPoint()
 {
@@ -21,6 +23,10 @@ void AIH_WarpPoint::BeginPlay()
 	Super::BeginPlay();
 
 	warpUI = CreateWidget<UIH_WarpActiveUI>(GetWorld(), warpUIFactory);
+	
+	UIH_InteractionUI* interactionUI = Cast<UIH_InteractionUI>(compInteractWidget->GetUserWidgetObject());
+	
+	interactionUI->txt_Interaction->SetText(FText::FromString(TEXT("워프 포인트")));
 }
 
 void AIH_WarpPoint::Tick(float DeltaTime)

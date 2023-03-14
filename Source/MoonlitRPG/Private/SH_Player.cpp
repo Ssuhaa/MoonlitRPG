@@ -22,6 +22,7 @@ ASH_Player::ASH_Player()
 {
 	GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
 	GetMesh()->SetRelativeLocation(FVector(0,0,-90));
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -140,7 +141,7 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 		else // 플레이어 죽음
 		{
 			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
-			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+			GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
 			DisableInput(playerCon);
 		}
 		PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
@@ -170,7 +171,7 @@ void ASH_Player::RevivePlayer()
 	}
 
 	HealPlayer(PlayerTotalHP / 3);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel2);
 	EnableInput(playerCon);
 
 	UAnimInstance* currAnim = GetMesh()->GetAnimInstance();
