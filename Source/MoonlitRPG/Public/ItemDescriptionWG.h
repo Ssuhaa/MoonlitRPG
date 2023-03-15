@@ -17,7 +17,6 @@ class MOONLITRPG_API UItemDescriptionWG : public UUserWidget
 
 	UItemDescriptionWG(const FObjectInitializer& ObjectInitializer);
 protected:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* ItemImage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -29,16 +28,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* Panel_Weapon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* Panel_Food;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_WeaponType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Power;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Heal;
 
 	TArray<class UTexture2D*> BGarray;
 
-	
+	UPROPERTY()
+	class UInventorySlotWG* SelectedSlot;
+
+	void UpdateDescription();
 
 public:
 
-	void SetDescription(class UInventorySlotWG* SelectedSlot);
+	UFUNCTION()
+	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
 
 };

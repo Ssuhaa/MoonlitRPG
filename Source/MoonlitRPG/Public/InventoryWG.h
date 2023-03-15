@@ -12,6 +12,9 @@
 /**
  * 
  */
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FSandSlot, class UInventorySlotWG*);
+
 UCLASS()
 class MOONLITRPG_API UInventoryWG : public UUserWidget
 {
@@ -20,6 +23,7 @@ class MOONLITRPG_API UInventoryWG : public UUserWidget
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	
 	UPROPERTY()
 	class ASH_Player* Player;
@@ -52,26 +56,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UScaleBox* itemDescription;
 
-	int32 CurrMoney = 0;
-
 
 	TArray<TSubclassOf<class UUserWidget>> WGFactory;
-	
-
 	UPROPERTY()
 	class UFoodPopup* FoodPopup;
 	UPROPERTY()
 	class UinventoryUseButton* ButtonWG;
 	UPROPERTY()
-	class UinventoryUseButton* OutfitButtonWG;
-	UPROPERTY()
 	class UItemDescriptionWG* Description;
 	UPROPERTY()
 	class UOutfitWG* OutfitWG;
-	UPROPERTY()
-	class APreviewActor* OutfitActor;
 
-	EItemType currinventype = EItemType::Count;
+
+	void ButtonBinding();
 
 	UFUNCTION()
 	void ClickedConsum();
@@ -88,31 +85,32 @@ protected:
 	UFUNCTION()
 	void ClickedUseButton();
 	UFUNCTION()
-	void ClickedOutfitButton();
+	void ClickedCloseButton();
 
 	
-	void ButtonBinding();
 
 	void ChangeInven(EItemType ChangeInvenType);
 
-public:
+	int32 CurrMoney = 0;
+	EItemType currinventype = EItemType::Count; //인벤토리에서 버튼들을 클릭했을때 사용.
+	EItemType SelectItemType; //인벤토리에서 아이템을 클릭했을 때 사용.
+
+
+
 	UPROPERTY()
 	TArray<class UInventorySlotWG*> Slots;
-	UPROPERTY()
-	class UInventoryComponent* InvenComp;
-	int32 SelectedSlotindex;
 
-	UFUNCTION()
+public:
 	void Setinventory();
-	UFUNCTION()
-	void AddWidget();
-	UFUNCTION()
-	void RemoveWidget();
+	void ClearInvenWGChild();
+	void RemoveInventory();
+
 	UFUNCTION()
 	void ItemSlotClicked(int32 slotindex);
 
-	void ClearOverlay();
+	UPROPERTY()
+	class UInventoryComponent* InvenComp;
 
-
+	FSandSlot SetSelectSlot;
 
  };

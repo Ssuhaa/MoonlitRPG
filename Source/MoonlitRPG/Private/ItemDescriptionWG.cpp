@@ -10,7 +10,6 @@
 
 UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
 	ConstructorHelpers::FObjectFinder <UTexture2D> tempT(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/DescriptionBG_Common.DescriptionBG_Common'"));
 	if (tempT.Succeeded())
 	{
@@ -31,12 +30,19 @@ UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializ
 	{
 		BGarray.Add(tempT3.Object);	//3번 Legendary
 	}
-
 }
 
-void UItemDescriptionWG::SetDescription(UInventorySlotWG* SelectedSlot)
+
+void UItemDescriptionWG::ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot)
+{
+	SelectedSlot = SelectSlot;
+	UpdateDescription();
+}
+
+
+void UItemDescriptionWG::UpdateDescription()
 {	
-	FInvenItem* iteminfo = SelectedSlot->selectiteminfo;
+	FInvenItem* iteminfo = SelectedSlot->invenInfo;
 	ItemImage->SetBrushFromTexture(iteminfo->iteminfomation.itemImage);
 	ItemName->SetText(FText::FromString(iteminfo->iteminfomation.ItemName));
 	Description->SetText(FText::FromString(iteminfo->iteminfomation.itemDescription));
@@ -47,6 +53,7 @@ void UItemDescriptionWG::SetDescription(UInventorySlotWG* SelectedSlot)
 	if(iteminfo->weaponinfomaiton.WeaponType != EWeaponType::None)
 	{
 		Panel_Weapon->SetVisibility(ESlateVisibility::Visible);
+		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
 		int32 Typeindex = int32(iteminfo->weaponinfomaiton.WeaponType);
 		FText weaponType;
 
@@ -69,7 +76,13 @@ void UItemDescriptionWG::SetDescription(UInventorySlotWG* SelectedSlot)
 	}
 	else
 	{
+		if (iteminfo->iteminfomation.itemType == EItemType::Food)
+		{
+			Panel_Food->SetVisibility(ESlateVisibility::Visible);
+			Text_Heal->SetText(FText::AsNumber(iteminfo->iteminfomation.HealAmount));
+		}
 		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 }
+

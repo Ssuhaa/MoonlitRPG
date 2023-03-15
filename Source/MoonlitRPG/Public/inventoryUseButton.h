@@ -14,7 +14,14 @@ class MOONLITRPG_API UinventoryUseButton : public UUserWidget
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* ButtonText;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Use;
+
+	void SetText(FString Text);
+
+
 };

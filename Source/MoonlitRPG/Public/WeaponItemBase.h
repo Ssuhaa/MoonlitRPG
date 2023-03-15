@@ -9,6 +9,8 @@
 /**
  * 
  */
+ DECLARE_MULTICAST_DELEGATE (FlevelUpDel);
+
 
 UENUM(BlueprintType)
 enum  class EWeaponType : uint8
@@ -52,8 +54,6 @@ struct FWeaponinfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 타입
 	EWeaponType WeaponType = EWeaponType::None;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기등급
-	EItemgrade itemgrade = EItemgrade::Common;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 스태딕메쉬
 	TObjectPtr<class UStaticMesh> Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 돌파에 필요한 재료 리스트
@@ -83,10 +83,11 @@ struct FWeaponinfo
 	UPROPERTY(BlueprintReadOnly)
 	int32 UpgradeCount = 0;
 
+	FlevelUpDel SendLevelUpClear;
 public:
 	void Upgrade(int32* playerMoney,  bool isHaveAllItem)//돌파
 	{
-		if (*playerMoney >= UpGradeMoney)// && isHaveAllItem == true) // 추후수정 필요
+		if (*playerMoney >= UpGradeMoney && isHaveAllItem == true) // 추후수정 필요
 		{
 			*playerMoney -= UpGradeMoney;
 			UpgradeCount++;
@@ -103,16 +104,22 @@ public:
 			MaxEXP += PlusEXP;
 			CurrEXP = CurrEXP - MaxEXP;
 			Power += PlusPower;
-
 		}
+		SendLevelUpClear.Broadcast();
 	}
 
-	void PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32 playerMoney)// 다른 무기 아이템 넣기
+	bool PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMoney)// 다른 무기 아이템 넣기
 	{
-		if (playerMoney > LevelUpMoney * TotalAmount)
+		if (*playerMoney > LevelUpMoney * TotalAmount)
 		{
+			*playerMoney -= LevelUpMoney * TotalAmount;
 			CurrEXP += TotalEXP;
+			levelUP();
+			return true;
 		}
+		SendLevelUpClear.Broadcast();
+		return false;
+		
 	}
 
 };

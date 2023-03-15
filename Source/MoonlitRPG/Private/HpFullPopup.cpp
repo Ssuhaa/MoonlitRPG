@@ -7,8 +7,14 @@
 
 void UHpFullPopup::ButtonBinding()
 {
-	Button_Cancel->OnPressed.AddDynamic(this, &UHpFullPopup::OnClickedCancel);
-	Button_Close->OnPressed.AddDynamic(this, &UHpFullPopup::OnClickedClose);
+	Button_Cancel->OnPressed.AddUniqueDynamic(this, &UHpFullPopup::OnClickedCancel);
+	Button_Close->OnPressed.AddUniqueDynamic(this, &UHpFullPopup::OnClickedClose);
+}
+
+void UHpFullPopup::NativeConstruct()
+{
+	Super::NativeConstruct();
+	ButtonBinding();
 }
 
 void UHpFullPopup::OnClickedCancel()

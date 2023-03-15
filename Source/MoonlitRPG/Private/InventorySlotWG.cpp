@@ -12,7 +12,6 @@
 
 UInventorySlotWG::UInventorySlotWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	
 	ConstructorHelpers::FObjectFinder <UTexture2D> tempT(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Slot_Common.T_Slot_Common'"));
 	if (tempT.Succeeded())
 	{
@@ -35,30 +34,32 @@ UInventorySlotWG::UInventorySlotWG(const FObjectInitializer& ObjectInitializer) 
 	}
 }
 
+void UInventorySlotWG::NativeConstruct()
+{
+	Super::NativeConstruct();
+	ButtonBinding();
+}
+
 void UInventorySlotWG::ButtonBinding()
 {
-	ItemButton->OnPressed.AddDynamic(this, &UInventorySlotWG::PopItemDescription);
-}
-
-void UInventorySlotWG::SetItemSlot(FInvenItem* iteminfo)
-{
-	selectiteminfo = iteminfo;
-	UpdateSlot();
+	ItemButton->OnPressed.AddUniqueDynamic(this, &UInventorySlotWG::SlotClicked);
 }
 
 
-void UInventorySlotWG::UpdateSlot()
+void UInventorySlotWG::UpdateSlot(FInvenItem* invenData)
 {
-	ItemImage->SetBrushFromTexture(selectiteminfo->iteminfomation.itemImage);
-	int32 BGindex = int32(selectiteminfo->iteminfomation.itemgrade);
+	invenInfo = invenData;
+	ItemImage->SetBrushFromTexture(invenInfo->iteminfomation.itemImage);
+	int32 BGindex = int32(invenInfo->iteminfomation.itemgrade);
 	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
-	if (selectiteminfo->itemAmount >= 1)
+	if (invenInfo->itemAmount >= 1)
 	{
-		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), selectiteminfo->itemAmount)));
+		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), invenInfo->itemAmount)));
 	}
 }
 
-void UInventorySlotWG::PopItemDescription()
+
+void UInventorySlotWG::SlotClicked()
 {
 	invenWG->ItemSlotClicked(Slotindex);
 }

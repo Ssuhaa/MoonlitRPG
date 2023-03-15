@@ -34,22 +34,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UHorizontalBox* NeedItemList;
 
-
-	FInvenItem* Iteminfo;
+	
+	UPROPERTY()
+	class UInventorySlotWG* SelectSlot;
 	int32* PlayerMoney;
 
 	UPROPERTY()
 	class ASH_Player* player;
 
+	UFUNCTION()
+	void UpGrade();
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Upgrade;
 
-	void SetUpGradeWG(FInvenItem* selectedIteminfo);
+	UFUNCTION()
+	void SetUpGradeWG(class UInventorySlotWG* Slotdata);
 	
 	void ButtonBinding();
 
-	UFUNCTION()
-	void UpGrade();
+
 
 };

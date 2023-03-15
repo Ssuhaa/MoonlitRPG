@@ -10,6 +10,9 @@
 /**
  * 
  */
+
+ DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, class UInventorySlotWG*);
+
 UENUM(BlueprintType)
 enum class EEquipmentState : uint8
 {
@@ -26,6 +29,7 @@ class MOONLITRPG_API UOutfitWG : public UUserWidget
 	UOutfitWG(const FObjectInitializer& ObjectInitializer);
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UScaleBox* itemDescription;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -46,17 +50,13 @@ protected:
 	class UCanvasPanel* Panel_Detail;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* Panel_Reinforce;
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-// 	class UCanvasPanel* Panel_LevelUp;
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-// 	class UCanvasPanel* Panel_Upgrade;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* EquipPop;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Money;
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-// 	class UWeaponUpgradeWG* WG_WeaponUpgrade;
 
+	UPROPERTY()
+	class APreviewActor* OutfitActor;
 
 	EEquipmentState OutfitState = EEquipmentState::Detail;
 
@@ -80,17 +80,27 @@ protected:
 	class UItemDescriptionWG* description;
 	UPROPERTY()
 	class UWeaponUpgradeWG* UpgradeWG;
+	UPROPERTY()
+	class UWeaponLevelUpWG* LevelUpWG;
 
 	UPROPERTY()
 	class ASH_Player* player;
+	UPROPERTY()
+	class UInventorySlotWG* SelectedSlot;
+
+
+
+	void ButtonBinding();
+
+	FSendInvenData SendToInvenInfo;
+
 	
-	FInvenItem* SelectInveninfo;
-
-
-	UFUNCTION()
-	void UpdateMoney();
+	
+	void UpdateOutfitWG();
 
 public:
-	void ButtonBinding();
-	void SetOutfitWG(class UInventorySlotWG* SelectSlot);
+	UFUNCTION()
+	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
+	UFUNCTION()
+	void UpdateMoney();
 };

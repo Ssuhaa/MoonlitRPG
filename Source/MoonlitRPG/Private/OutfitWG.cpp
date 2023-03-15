@@ -12,6 +12,8 @@
 #include "WeaponUpgradeWG.h"
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
+#include "WeaponLevelUpWG.h"
+#include "PreviewActor.h"
 
 UOutfitWG::UOutfitWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -25,28 +27,60 @@ UOutfitWG::UOutfitWG(const FObjectInitializer& ObjectInitializer) : Super(Object
 	{
 		WGFactory.Add(tempUpgrade.Class);
 	}
+	ConstructorHelpers::FClassFinder <UWeaponLevelUpWG> tempLevelup(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_WeaponLevelUp.WG_WeaponLevelUp_C'"));
+	if (tempLevelup.Succeeded())
+	{
+		WGFactory.Add(tempLevelup.Class);
+	}
 	description = CreateWidget<UItemDescriptionWG>(GetWorld(), WGFactory[0]);
 	UpgradeWG = CreateWidget<UWeaponUpgradeWG>(GetWorld(), WGFactory[1]);
+	LevelUpWG = CreateWidget<UWeaponLevelUpWG>(GetWorld(), WGFactory[2]);
 }
 
 void UOutfitWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-	ReinforceSwitch(EEquipmentState::Detail);
+	ButtonBinding();
 	
+	OutfitActor = GetWorld()->SpawnActor<APreviewActor>(APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0));
+	OutfitActor->SetPreviewMesh(SelectedSlot->invenInfo->weaponinfomaiton.Mesh);
+
+	ReinforceSwitch(EEquipmentState::Detail);
+}
+
+void UOutfitWG::NativeDestruct()
+{
+	Super::NativeDestruct();
+	OutfitActor->Destroy();
+	SendToInvenInfo.Clear();
+
 }
 
 void UOutfitWG::ButtonBinding()
 {
-	Button_Detail->OnPressed.AddDynamic(this, &UOutfitWG::OnclickedDetail);
-	Button_LevelUp->OnPressed.AddDynamic(this, &UOutfitWG::OnclickedLevelUp);
-	Button_Upgrade->OnPressed.AddDynamic(this, &UOutfitWG::OnclickedUpgrade);
-	Button_Wearing->OnPressed.AddDynamic(this, &UOutfitWG::OnclickedWearing);
-	Button_Back->OnPressed.AddDynamic(this, &UOutfitWG::OnclickedBack);
-	UpgradeWG->ButtonBinding();
-	UpgradeWG->Button_Upgrade->OnPressed.AddDynamic(this, &UOutfitWG::UpdateMoney);
+
+	SendToInvenInfo.AddUObject(description, &UItemDescriptionWG::ReceiveSelectSlotData);
+	SendToInvenInfo.AddUObject(UpgradeWG, &UWeaponUpgradeWG::SetUpGradeWG);
+	SendToInvenInfo.AddUObject(LevelUpWG, &UWeaponLevelUpWG::ReceiveSelectSlotData);
+
+
+	SendToInvenInfo.Broadcast(SelectedSlot);
+
+	Button_Detail->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedDetail);
+	Button_LevelUp->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedLevelUp);
+	Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedUpgrade);
+	Button_Wearing->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedWearing);
+	Button_Back->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedBack);
+	UpgradeWG->Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UOutfitWG::UpdateMoney);
 }
 
+
+void UOutfitWG::ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot)
+{
+	SelectedSlot = SelectSlot;
+	SelectedSlot->invenInfo->weaponinfomaiton.SendLevelUpClear.AddUObject(this, &UOutfitWG::UpdateOutfitWG);
+	UpdateOutfitWG();
+}
 
 void UOutfitWG::OnclickedDetail()
 {
@@ -65,9 +99,11 @@ void UOutfitWG::OnclickedUpgrade()
 
 void UOutfitWG::OnclickedWearing()
 {
-	//다른 장비가 착용되었는지 확인하는 함수 필요.
-	SelectInveninfo->weaponinfomaiton.isEquip = true;
-	WearingSwitch(SelectInveninfo->weaponinfomaiton.isEquip);
+	if (player != nullptr)
+	{
+		player->InvenComp->WeaponSwitch(SelectedSlot->invenInfo);
+	}
+	WearingSwitch(SelectedSlot->invenInfo->weaponinfomaiton.isEquip);
 }
 
 void UOutfitWG::OnclickedBack()
@@ -75,17 +111,12 @@ void UOutfitWG::OnclickedBack()
 	RemoveFromParent();
 }
 
-void UOutfitWG::SetOutfitWG(class UInventorySlotWG* SelectSlot)
+void UOutfitWG::UpdateOutfitWG()
 {
-	description->SetDescription(SelectSlot);
 	itemDescription->AddChild(description);
-	UpgradeWG->SetUpGradeWG(SelectSlot->selectiteminfo);
-
-	SelectInveninfo = SelectSlot->selectiteminfo;
-
 	UpdateMoney();
 
-	int32 Typeindex = int32(SelectInveninfo->weaponinfomaiton.WeaponType);
+	int32 Typeindex = int32(SelectedSlot->invenInfo->weaponinfomaiton.WeaponType);
 	FText weaponType;
 	switch (Typeindex)
 	{
@@ -102,11 +133,11 @@ void UOutfitWG::SetOutfitWG(class UInventorySlotWG* SelectSlot)
 	}
 	Text_WeaponType->SetText(weaponType);
 
-	FText itemname = FText::FromString(SelectInveninfo->iteminfomation.ItemName);
+	FText itemname = FText::FromString(SelectedSlot->invenInfo->iteminfomation.ItemName);
 	Text_WeaponName->SetText(itemname);
 
 
-	SelectInveninfo->weaponinfomaiton.Level == SelectInveninfo->weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
+	SelectedSlot->invenInfo->weaponinfomaiton.Level == SelectedSlot->invenInfo->weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
 	
 }
 
@@ -138,24 +169,22 @@ void UOutfitWG::ButtonSwitch(bool isMaxLevel)
 	}
 }
 
-void UOutfitWG::ReinforceSwitch(EEquipmentState state)
+void UOutfitWG::ReinforceSwitch(EEquipmentState state) //강화 돌파 스위치
 {
 	OutfitState = state;
+	Panel_Reinforce->ClearChildren();
 	switch (OutfitState)
 	{
 	case EEquipmentState::Detail:
-		SelectInveninfo->weaponinfomaiton.isEquip ? WearingSwitch(true) : WearingSwitch(false);
+		SelectedSlot->invenInfo->weaponinfomaiton.isEquip ? WearingSwitch(true) : WearingSwitch(false);
 		Panel_Detail->SetVisibility(ESlateVisibility::Visible);
-		Panel_Reinforce->ClearChildren();
 		break;
 	case EEquipmentState::Upgrade:
-		Panel_Reinforce->ClearChildren();
 		Panel_Reinforce->AddChildToCanvas(UpgradeWG);
 		Panel_Detail->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case EEquipmentState::LevelUp:
-		Panel_Reinforce->ClearChildren();
-		//레벨업 위젯 필요
+		Panel_Reinforce->AddChildToCanvas(LevelUpWG);
 		Panel_Detail->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
@@ -168,7 +197,7 @@ void UOutfitWG::UpdateMoney()
 	{
 		Text_Money->SetText(FText::AsNumber(player->InvenComp->Money));
 	}
-	SelectInveninfo->weaponinfomaiton.Level == SelectInveninfo->weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
+	SelectedSlot->invenInfo->weaponinfomaiton.Level == SelectedSlot->invenInfo->weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
 	ReinforceSwitch(EEquipmentState::LevelUp);
 }
 

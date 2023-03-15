@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "InventoryComponent.h"
 #include "WeaponLevelUpWG.generated.h"
+
 
 /**
  * 
@@ -13,8 +15,10 @@ UCLASS()
 class MOONLITRPG_API UWeaponLevelUpWG : public UUserWidget
 {
 	GENERATED_BODY()
-
+	UWeaponLevelUpWG(const FObjectInitializer& ObjectInitializer);
 protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* TB_CurrLevel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -30,8 +34,47 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_LevelUp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UScrollBox* Scroll_SelectList;
+	class UProgressBar* Progress_EXP;
+
+	TArray<TSubclassOf<class UUserWidget>> WGFactory;
+	UPROPERTY() 
+	class UNeedItemSelectWG* NeedSelectWG;
+	UPROPERTY()
+	TArray<class ULevelUpSlotWG*> LevelUpSlots;
+
+	UPROPERTY()
+	class UInventorySlotWG* SelectedSlot;
 
 
-	
+	void ButtonBinding();
+
+	UFUNCTION()
+	void LevelUp();
+
+	int32 CurrUseMoney = 0;
+	int32 SetCount = 0;
+	int32 ToTalEXP = 0;
+	TArray<FIteminfo> UseItems;
+
+
+	UPROPERTY()
+	class ASH_Player* Player;
+	UPROPERTY()
+	class UOutfitWG* OutfitWG;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UHorizontalBox* SelectListBox;
+
+	UFUNCTION()
+	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
+
+	void UpdateUseMoney();
+
+	UFUNCTION()
+	void UpdateLevelUpWG();
+
+	UFUNCTION()
+	void SendUseitem();
+
 };

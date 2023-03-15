@@ -8,6 +8,7 @@
 
 void AWeaponItemBase::GetItem()
 {
+	
 
 	if (Player != nullptr)
 	{

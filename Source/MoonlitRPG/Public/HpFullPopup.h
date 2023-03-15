@@ -15,6 +15,7 @@ class MOONLITRPG_API UHpFullPopup : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Cancel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))

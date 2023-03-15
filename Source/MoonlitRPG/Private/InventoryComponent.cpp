@@ -60,11 +60,11 @@ void UInventoryComponent::InventoryOpen()
 {
 	if (!inventory->IsInViewport())
 	{
-		inventory->AddWidget();
+		inventory->AddToViewport();
 	}
 	else
 	{
-		inventory->RemoveWidget();
+		inventory->RemoveInventory();
 	}
 }
 
@@ -89,12 +89,52 @@ void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo 
 	AddItemToinven(iteminfo, weaponinfo);
 }
 
+int32 UInventoryComponent::CheckWeaponisEquip()
+{
+	for (int32 i = 0; i < invenItemArr.Num() ; i++)
+	{
+		if (invenItemArr[i].weaponinfomaiton.isEquip)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+
+EWeaponType UInventoryComponent::WhatKindOfEquipWeapon()
+{
+	int32 index = CheckWeaponisEquip();
+	if (index > -1)
+	{
+		return invenItemArr[index].weaponinfomaiton.WeaponType;
+	}
+	else
+	{
+		return EWeaponType::None;
+	}
+}
+
+
+void UInventoryComponent::WeaponSwitch(FInvenItem* ChangeItem)
+{	
+	int32 currEquip = CheckWeaponisEquip();
+	if (currEquip > -1)
+	{
+		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
+	}
+
+	ChangeItem->weaponinfomaiton.isEquip = true;
+}
+
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount)
 {
 	FInvenItem currGetItem;
 	currGetItem.iteminfomation = Getiteminfo;
 	currGetItem.itemAmount = Amount;
 	invenItemArr.Add(currGetItem);
+
 }
 
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, FWeaponinfo GetWeaponinfo)
@@ -115,6 +155,7 @@ int32 UInventoryComponent::PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amou
 		int32 result = invenItemArr[value].itemAmount;
 		if (invenItemArr[value].itemAmount < 1)
 		{
+			//invenItemArr[value].weaponinfomaiton.SendLevelUpClear.Clear();
 			invenItemArr.RemoveAt(value);
 		}
 		return result;
@@ -142,5 +183,25 @@ int32 UInventoryComponent::CountItem()
 		value += invenItemArr[i].itemAmount;
 	}
 	return value;
+}
+
+void UInventoryComponent::Test(TArray<FInvenItem*> invendata)
+{
+	for (int32 i = 0; i < invenItemArr.Num(); i++)
+	{	
+		for (int32 j = 0; j < invendata.Num(); j++)
+		{
+			if (&invenItemArr[i] == invendata[j])
+			{
+				invenItemArr[i].itemAmount += 1;
+				if (invenItemArr[i].itemAmount < 1)
+				{
+					invenItemArr.RemoveAt(i);
+				}
+				break;
+			}
+		}
+	}
+
 }
 

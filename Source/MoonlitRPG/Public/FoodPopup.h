@@ -16,6 +16,7 @@ class MOONLITRPG_API UFoodPopup : public UUserWidget
 	GENERATED_BODY()
 	UFoodPopup(const FObjectInitializer& ObjectInitializer);
 protected:
+	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Use;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -63,7 +64,7 @@ protected:
 	void UpdateHPBar();
 
 	
-	FInvenItem* iteminfo;
+	//FInvenItem* iteminfo;
 	UPROPERTY()
 	class UInventorySlotWG* SelectedSlot;
 
@@ -73,11 +74,17 @@ protected:
 
 	void HealCallAndUpdatePopup();
 
+
+	void UpdateFoodPopup();
+
 public:
 
 	UPROPERTY()
 	class UInventoryWG* invenWG;
 
-	void SetFoodPop(UInventorySlotWG* SelectSlot);
+	UFUNCTION()
+	void ReceiveSelectSlotData(UInventorySlotWG* SelectSlot);
+
+
 	void ButtonBinding();
 };

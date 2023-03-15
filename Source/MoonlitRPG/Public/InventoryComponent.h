@@ -60,10 +60,15 @@ public:
 
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo);
+	int32 CheckWeaponisEquip();
+	void WeaponSwitch(FInvenItem* ChangeItem);
+	EWeaponType WhatKindOfEquipWeapon();
 
 	int32 PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
 	int32 FindItem(FIteminfo iteminfo);
 
 	int32 CountItem();
 
+	
+	void Test(TArray<FInvenItem*> invendata);
 };

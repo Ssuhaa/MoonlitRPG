@@ -24,26 +24,48 @@ UFoodPopup::UFoodPopup(const FObjectInitializer& ObjectInitializer) : Super(Obje
 	FullPopup = CreateWidget<UHpFullPopup>(GetWorld(), FullPopFactory);
 }
 
+void UFoodPopup::NativeConstruct()
+{
+	Super::NativeConstruct();
+	ButtonBinding();
+	CurrAmount = 1;
+	Text_Amount->SetText(FText::AsNumber(CurrAmount));
+}
+
 void UFoodPopup::ButtonBinding()
 {
-	Button_Cancel->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedCancel);
-	Button_Use->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedUse);
-	Button_Close->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedClose);
-	Button_Plus->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedPlus);
-	Button_Minus->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedMinus);
+	Button_Cancel->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedCancel);
+	Button_Use->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedUse);
+	Button_Close->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedClose);
+	Button_Plus->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedPlus);
+	Button_Minus->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedMinus);
 	
-	FullPopup->Button_Use->OnPressed.AddDynamic(this, &UFoodPopup::OnClickedFullPopup);
+	FullPopup->Button_Use->OnPressed.AddUniqueDynamic(this, &UFoodPopup::OnClickedFullPopup);
 	FullPopup->ButtonBinding();
 }
 
-void UFoodPopup::SetFoodPop(UInventorySlotWG* SelectSlot)
+void UFoodPopup::ReceiveSelectSlotData(UInventorySlotWG* SelectSlot)
 {
 	SelectedSlot = SelectSlot;
-	iteminfo = SelectSlot->selectiteminfo;
-	ItemImage->SetBrushFromTexture(iteminfo->iteminfomation.itemImage);
-	CurrAmount = 1;
-	Text_Amount->SetText(FText::AsNumber(CurrAmount));
+	UpdateFoodPopup();
+}
+
+void UFoodPopup::UpdateFoodPopup()
+{
+	ItemImage->SetBrushFromTexture(SelectedSlot->invenInfo->iteminfomation.itemImage);
 	UpdateHPBar();
+}
+
+void UFoodPopup::UpdateHPBar()
+{
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	if (Player != nullptr)
+	{
+		HP = Player->PlayercurrHP / Player->PlayerTotalHP;
+		CurrHPBar->SetPercent(HP);
+		HealHP = (SelectedSlot->invenInfo->iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
+		HealHPBar->SetPercent(HP + HealHP);
+	}
 }
 
 
@@ -77,7 +99,7 @@ void UFoodPopup::OnClickedClose()
 void UFoodPopup::OnClickedPlus()
 {
 	CurrAmount++;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo->itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo->itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
@@ -85,43 +107,34 @@ void UFoodPopup::OnClickedPlus()
 void UFoodPopup::OnClickedMinus()
 {
 	CurrAmount--;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, iteminfo->itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo->itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
+
 void UFoodPopup::OnClickedFullPopup()
 {
 	HealCallAndUpdatePopup();
 	FullPopup->RemoveFromParent();
 }
 
-void UFoodPopup::UpdateHPBar()
-{
-	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-	if (Player != nullptr)
-	{
-		HP = Player->PlayercurrHP / Player->PlayerTotalHP;
-		CurrHPBar->SetPercent(HP);
-		HealHP = (iteminfo->iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
-		HealHPBar->SetPercent(HP + HealHP);
-	}
-}
+
 
 void UFoodPopup::HealCallAndUpdatePopup()
 {
-	Player->HealPlayer(iteminfo->iteminfomation.HealAmount * CurrAmount);
+	Player->HealPlayer(SelectedSlot->invenInfo->iteminfomation.HealAmount * CurrAmount);
 	UpdateHPBar();
-	int32 result = Player->InvenComp->PlusMinusItemAmount(iteminfo->iteminfomation, -CurrAmount);
+	int32 result = Player->InvenComp->PlusMinusItemAmount(SelectedSlot->invenInfo->iteminfomation, -CurrAmount);
 	invenWG->Setinventory();
 	if (result < 1)
 	{
-		invenWG->ClearOverlay();
+		invenWG->ClearInvenWGChild();
 		SelectedSlot->RemoveFromParent();
 		RemoveFromParent();
 	}
 	else
 	{
-		SelectedSlot->UpdateSlot();
+		SelectedSlot->UpdateSlot(SelectedSlot->invenInfo);
 		CurrAmount = 1;
 		Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	}
