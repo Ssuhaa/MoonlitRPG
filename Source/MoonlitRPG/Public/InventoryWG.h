@@ -92,7 +92,7 @@ protected:
 	void ChangeInven(EItemType ChangeInvenType);
 
 	int32 CurrMoney = 0;
-	EItemType currinventype = EItemType::Count; //인벤토리에서 버튼들을 클릭했을때 사용.
+	EItemType currinventype = EItemType::Consum; //인벤토리에서 버튼들을 클릭했을때 사용.
 	EItemType SelectItemType; //인벤토리에서 아이템을 클릭했을 때 사용.
 
 

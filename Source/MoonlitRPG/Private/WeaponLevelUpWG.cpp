@@ -12,6 +12,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "SH_Player.h"
 #include <UMG/Public/Components/ProgressBar.h>
+#include "InventoryWG.h"
 
 
 UWeaponLevelUpWG::UWeaponLevelUpWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -89,14 +90,16 @@ void UWeaponLevelUpWG::SendUseitem()
 	for (int32 i = 0; i < UseItems.Num(); i++)
 	{
 		Player->InvenComp->PlusMinusItemAmount(UseItems[i],-1);
+		
 	}
+	NeedSelectWG->SetNeedItemSelectWG();
+	Player->InvenComp->inventory->Setinventory();
 }
 
 void UWeaponLevelUpWG::ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot)
 {
 	SelectedSlot = SelectSlot;
 	SelectedSlot->invenInfo->weaponinfomaiton.SendLevelUpClear.AddUObject(this, &UWeaponLevelUpWG::UpdateLevelUpWG);
-	SelectedSlot->invenInfo->weaponinfomaiton.SendLevelUpClear.AddUObject(NeedSelectWG, &UNeedItemSelectWG::SetNeedItemSelectWG);
 	UpdateLevelUpWG();
 }
 

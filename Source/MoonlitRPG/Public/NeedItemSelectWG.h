@@ -22,6 +22,8 @@ protected:
 	class UWrapBox* Wrap_HadWeapon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Close;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* Text_Empty;
 
 	TSubclassOf<class UUserWidget> WGFactory;
 	UPROPERTY()
@@ -50,4 +52,6 @@ public:
 	void SelectNeedItem(FInvenItem* invenData);
 	UFUNCTION()
 	void SetNeedItemSelectWG();
+
+	void SetSlot();
 };

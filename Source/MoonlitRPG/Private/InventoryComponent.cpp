@@ -155,7 +155,6 @@ int32 UInventoryComponent::PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amou
 		int32 result = invenItemArr[value].itemAmount;
 		if (invenItemArr[value].itemAmount < 1)
 		{
-			//invenItemArr[value].weaponinfomaiton.SendLevelUpClear.Clear();
 			invenItemArr.RemoveAt(value);
 		}
 		return result;

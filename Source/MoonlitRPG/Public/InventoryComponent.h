@@ -39,8 +39,7 @@ protected:
 	TArray<class UInputAction*> inputArray; //πŸ¿ŒµÂ
 
 	TSubclassOf<class UInventoryWG> invenFactory;
-	UPROPERTY()
-	class UInventoryWG* inventory;
+
 	UPROPERTY()
 	class ASH_Player* Player;
 
@@ -56,6 +55,8 @@ public:
 	int32 Money = 0;
 	UPROPERTY(EditAnywhere)
 	TArray<FInvenItem>invenItemArr;
+	UPROPERTY()
+	class UInventoryWG* inventory;
 
 
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);

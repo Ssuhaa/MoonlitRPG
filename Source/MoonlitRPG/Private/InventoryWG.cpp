@@ -71,7 +71,6 @@ void UInventoryWG::NativeConstruct() //위젯이 뷰포트에 보여질 때
 		Player->bInventoryOpen = true;
 	}
 
-	ChangeInven(EItemType::Consum);
 	Setinventory();
 	
 	FoodPopup->invenWG = this;
@@ -111,17 +110,19 @@ void UInventoryWG::ButtonBinding()
 void UInventoryWG::ItemSlotClicked(int32 slotindex) 
 {	
 	//선택된 슬랏의 정보를 보낸다.
-	SetSelectSlot.Broadcast(Slots[slotindex]);
+	if (SetSelectSlot.IsBound())
+	{
+		SetSelectSlot.Broadcast(Slots[slotindex]);
+	}
 
 	//아이템 설명 창이 뜬다.
 	itemDescription->AddChild(Description);
 
 	//선택한 아이템의 타입에 따라 사용 버튼이 뜬다.
 	SelectItemType = Slots[slotindex]->invenInfo->iteminfomation.itemType;
+	Overlay_Use->ClearChildren();
 	switch (SelectItemType)
 	{
-	default:
-		Overlay_Use->ClearChildren();
 	case EItemType::Food:
 		ButtonWG->SetText(TEXT("사용하기"));
 		Overlay_Use->AddChildToOverlay(ButtonWG);
@@ -207,7 +208,7 @@ void UInventoryWG::Setinventory()
 
 void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 {
-	if (currinventype == ChangeInvenType) return;
+	
 
 	currinventype = ChangeInvenType;
 	ClearInvenWGChild();
