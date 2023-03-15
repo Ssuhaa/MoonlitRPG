@@ -26,17 +26,17 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	compSpawnPos->SetupAttachment(RootComponent);
 	compSpawnPos->SetRelativeLocation(FVector(0, 0, 30));
 
-	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
-	compInteractWidget->SetupAttachment(RootComponent);
-	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
-	compInteractWidget->SetVisibility(false);
+// 	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
+// 	compInteractWidget->SetupAttachment(RootComponent);
+// 	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
+// 	compInteractWidget->SetVisibility(false);
 
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractionUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractionUI.Succeeded())
 	{
 		interactUIFactory = tempinteractionUI.Class;
-		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
-		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
+// 		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
+// 		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 }
 
@@ -61,16 +61,21 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 	float degree = UKismetMathLibrary::DegAcos(dot);
 	float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
 	
-		if (degree < 180 && distance < 300)
+	if (degree < 180 && distance <= 200)
+	{
+		if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 		{
 			player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
-//			compInteractWidget->SetVisibility(true);
+//			interactionUI->PlayOpenAnim();
 		}
-		else
+	}
+	else
+	{
+		if (player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 		{
 			player->MainHUD->InteractionBox->RemoveChild(interactionUI);
-//			compInteractWidget->SetVisibility(false);
 		}
+	}
 }
 
 void AInteractiveObjectBase::Interaction()

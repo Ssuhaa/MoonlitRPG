@@ -36,4 +36,15 @@ public:
 	UPROPERTY()
 	class ASH_Player* player;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UIH_InteractionUI> interactUIFactory;
+
+	UPROPERTY(EditAnywhere)
+	class UIH_InteractionUI* interactionUI;
+
+	UPROPERTY(EditAnywhere)
+	FText NPCName;
+
+	void InteractNPC();
+	bool bTalking = false;
 };

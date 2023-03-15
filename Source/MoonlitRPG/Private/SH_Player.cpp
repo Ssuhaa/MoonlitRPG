@@ -17,6 +17,8 @@
 #include "IH_DieUI.h"
 #include "IH_LoadingUI.h"
 #include "IH_WarpPoint.h"
+#include "NPCBase.h"
+#include "MainDialogueUI.h"
 
 ASH_Player::ASH_Player()
 {
@@ -63,6 +65,11 @@ ASH_Player::ASH_Player()
 	{
 		loadingUIFactory = temploadingUI.Class;
 	}
+	ConstructorHelpers::FClassFinder<UMainDialogueUI> tempdialogueUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
+	if (tempdialogueUI.Succeeded())
+	{
+		dialogueUIFactory = tempdialogueUI.Class;
+	}
 }
 
 void ASH_Player::BeginPlay()
@@ -78,6 +85,7 @@ void ASH_Player::BeginPlay()
 
 	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), dieUIFactory);
 	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), loadingUIFactory);
+	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), dialogueUIFactory);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -122,6 +130,12 @@ void ASH_Player::interactionObject()
 		{
 			currobject->Interaction();
 		}
+
+		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
+		if (currNPC != nullptr)
+		{
+			currNPC->InteractNPC();
+		}
 	}
 }
 
@@ -141,7 +155,7 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 		else // 플레이어 죽음
 		{
 			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
-			GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
+			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 			DisableInput(playerCon);
 		}
 		PlayercurrHP = FMath::Clamp(PlayercurrHP, 0, PlayerTotalHP);
@@ -171,7 +185,7 @@ void ASH_Player::RevivePlayer()
 	}
 
 	HealPlayer(PlayerTotalHP / 3);
-	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel2);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	EnableInput(playerCon);
 
 	UAnimInstance* currAnim = GetMesh()->GetAnimInstance();

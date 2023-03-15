@@ -67,6 +67,10 @@ public:
 	TSubclassOf<class UIH_LoadingUI> loadingUIFactory;
 	UPROPERTY(EditAnywhere)
 	class UIH_LoadingUI* loadingUI;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UMainDialogueUI> dialogueUIFactory;
+	UPROPERTY(EditAnywhere)
+	class UMainDialogueUI* dialogueUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
 	UPROPERTY()

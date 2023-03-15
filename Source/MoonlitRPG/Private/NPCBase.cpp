@@ -7,6 +7,11 @@
 #include <Kismet/GameplayStatics.h>
 #include "SH_Player.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "IH_InteractionUI.h"
+#include "PlayerMainWG.h"
+#include <UMG/Public/Components/VerticalBox.h>
+#include <UMG/Public/Components/TextBlock.h>
+#include "MainDialogueUI.h"
 
 // Sets default values
 ANPCBase::ANPCBase()
@@ -19,6 +24,12 @@ ANPCBase::ANPCBase()
 	
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Compoennt"));
 	Mesh->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
+	if (tempinteractUI.Succeeded())
+	{
+		interactUIFactory = tempinteractUI.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +38,9 @@ void ANPCBase::BeginPlay()
 	Super::BeginPlay();
 	
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+
+	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
+	interactionUI->txt_Interaction->SetText(NPCName);
 }
 
 // Called every frame
@@ -34,15 +48,24 @@ void ANPCBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector forward = GetActorForwardVector();
 	FVector direction = player->GetActorLocation() - GetActorLocation();
-	float distance = direction.Length();
-	float dot = FVector::DotProduct(forward, direction.GetSafeNormal());
+	float distance = FVector::Distance(GetActorLocation(), player->GetActorLocation());
+	float dot = FVector::DotProduct(GetActorForwardVector(), direction.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
 
-	if (distance <= 500 && degree < 180)
+	if (!bTalking)
 	{
-
+		if (degree < 180 && distance <= 300)
+		{
+			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
+			{
+				player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
+			}
+		}
+		else
+		{
+			player->MainHUD->InteractionBox->RemoveChild(interactionUI);
+		}
 	}
 }
 
@@ -53,3 +76,13 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void ANPCBase::InteractNPC()
+{
+	if(interactionUI != nullptr)
+	{
+		interactionUI->RemoveFromParent();
+		bTalking = true;
+		player->dialogueUI->npc = this;
+		player->dialogueUI->AddToViewport();
+	}
+}

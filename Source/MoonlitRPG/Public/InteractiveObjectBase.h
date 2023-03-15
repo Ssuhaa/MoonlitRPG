@@ -30,8 +30,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compSpawnPos;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UWidgetComponent* compInteractWidget;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	class UWidgetComponent* compInteractWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
@@ -46,8 +46,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UIH_InteractionUI* interactionUI;
-
-	bool bInteracted = false;
 
 public:
 	virtual void Interaction();

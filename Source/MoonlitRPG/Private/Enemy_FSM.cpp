@@ -426,10 +426,6 @@ bool UEnemy_FSM::IsTargetTrace()
 			{
 				return true;
 			}
-			else if (hitinfo.GetActor()->GetName().Contains(TEXT("Enemy")))
-			{
-				ChangeState(EEnemyState::Chase);
-			}
 		}
 	}
 
