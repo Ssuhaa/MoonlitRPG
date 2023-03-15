@@ -39,6 +39,8 @@ public:
 	UFUNCTION()
 	void AnimNotify_NextCombo();
 	UFUNCTION()
+	void AnimNotify_CommonAttack();
+	UFUNCTION()
 	void AnimNotify_IntensiveAttack1();
 	UFUNCTION()
 	void AnimNotify_IntensiveAttack2();
@@ -54,4 +56,14 @@ public:
 	void AnimNotify_DamagedEnd();
 	UFUNCTION()
 	void AnimNotify_DieEnd();
+	UFUNCTION()
+	void AnimNotify_GS_CommonAttack();
+	UFUNCTION()
+	void AnimNotify_GS_IntensiveAttack1();
+	UFUNCTION()
+	void AnimNotify_GS_IntensiveAttack2();
+	UFUNCTION()
+	void AnimNotify_GS_SpecialAttack1();
+	UFUNCTION()
+	void AnimNotify_GS_SpecialAttack2();
 };

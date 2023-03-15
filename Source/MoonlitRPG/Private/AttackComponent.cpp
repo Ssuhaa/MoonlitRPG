@@ -46,7 +46,6 @@ UAttackComponent::UAttackComponent()
 	}
 }
 
-
 // Called when the game starts
 void UAttackComponent::BeginPlay()
 {
@@ -54,7 +53,6 @@ void UAttackComponent::BeginPlay()
 
 	player = Cast<ASH_Player>(GetOwner());
 }
-
 
 // Called every frame
 void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -92,16 +90,20 @@ void UAttackComponent::NextCombo()
 
 		switch (attackCount)
 		{
-		case 1:
-			attackCount = 2;
-			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack1")));
-			TargetCheck(CommonRange);
-			break;
-		case 2:
-			attackCount = 0;
-			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack2")));
-			TargetCheck(CommonRange);
-			break;
+			case 1:
+			{
+				attackCount = 0;
+				if (!bEquipGS)
+				{
+					PlayAttackMontage(playerMontage, "Attack1");
+					TargetCheck(CommonRange);
+				}
+				else
+				{
+					PlayAttackMontage(playerMontage, "GS_Attack1");
+				}
+				break;
+			}
 		}
 	}
 }
@@ -120,11 +122,16 @@ void UAttackComponent::CommonAttack()
 	if (player->bInventoryOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("Attack0")));
+		if (!bEquipGS)
+		{
+			PlayAttackMontage(playerMontage, "Attack0");
+			TargetCheck(CommonRange);
+		}
+		else
+		{
+			PlayAttackMontage(playerMontage, "GS_Attack0");
+		}
 		attackCount = 1;
-		player->GetCharacterMovement()->DisableMovement();
-		isAttacking = true;
-		TargetCheck(CommonRange);
 	}
 	else
 	{
@@ -139,13 +146,16 @@ void UAttackComponent::intensiveAttack()
 	{
 		if (!coolTimeRunning)
 		{
-			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("IntensiveAttack")));
-			player->GetCharacterMovement()->DisableMovement();
-			isAttacking = true;
-
+			if (!bEquipGS)
+			{
+				PlayAttackMontage(playerMontage, "IntensiveAttack");
+			}
+			else
+			{
+				PlayAttackMontage(playerMontage, "GS_IntensiveAttack");
+			}
 			coolTimeRunning = true;
 			intensiveDelay = 5;
-
 		}
 	}
 }
@@ -156,18 +166,39 @@ void UAttackComponent::SpecialAttack()
 	if (!isAttacking && !player->playerAnim->bAir && !isSpecialAttacking)
 	{
 		if (specialCount == 100)
-		{
-			player->PlayAnimMontage(playerMontage, 1.0f, FName(TEXT("SpecialAttack")));
-			player->GetCharacterMovement()->DisableMovement();
-			isAttacking = true;
-			isSpecialAttacking = true;
+		{	
+			if (!bEquipGS)
+			{
+				PlayAttackMontage(playerMontage, "SpecialAttack");
+			}
+			else
+			{
+				PlayAttackMontage(playerMontage, "GS_SpecialAttack");
+			}
+			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
 		}
 	}
 }
 
-// CanAttack 함수가 True일 때, 부딪힌 액터들을 확인하고 해당 액터들의 함수를 호출하는 함수.
-// attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
+void UAttackComponent::PlayAttackMontage(class UAnimMontage* montage, FString montName)		// 공격 몽타주를 재생하는 함수
+{
+	player->PlayAnimMontage(montage, 1.0f, FName(*montName));
+	player->GetCharacterMovement()->DisableMovement();
+	isAttacking = true;
+}
 
+void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage를 랜덤으로 뽑고 Enemy를 공격하는 함수
+{
+	DamageChange(damageRange);
+	Target->FSM->ReceiveDamage(currDamage);
+
+	direction = Target->GetActorLocation() - player->GetActorLocation();
+	force = direction * damageRange.pushForce;
+	force.Z = 0;
+	Target->LaunchCharacter(force, true, true);
+}
+
+// attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
 void UAttackComponent::TargetCheck(FDamageRange damageRange)
 {
 	FCollisionShape attackCollision = FCollisionShape::MakeSphere(damageRange.attackRadius);
@@ -185,7 +216,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
 	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
 
-	bool bHits = GetWorld()->SweepMultiByChannel(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_Visibility, attackCollision, param);
+	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);
 
 	if (bHits)
 	{
@@ -199,60 +230,82 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				{
 					switch (damageRange.damageType)
 					{
+						// ************************************* 단검 공격
 						case EDamageType::Common:
 						{
-							intensiveDelay -= 1.0f;
-							DamageChange(CommonRange);
-							Target->FSM->ReceiveDamage(currDamage);
+ 							intensiveDelay -= 1.0f;
+							EnemyAttack(CommonRange);
+
 							break;
 						}
 						case EDamageType::Intensive1:
 						{
-							specialCount += addPercent;
+ 							specialCount += addPercent;
 							specialCount = FMath::Clamp(specialCount, 0, 100);
 							player->MainHUD->UpdateQPercent(specialCount);
-							DamageChange(IntensiveRange1);
-							Target->FSM->ReceiveDamage(currDamage);
+
+							EnemyAttack(IntensiveRange1);
 							break;
 						}
 						case EDamageType::Intensive2:
 						{
-							DamageChange(IntensiveRange2);
-							Target->FSM->ReceiveDamage(currDamage);
-
-							direction = Target->GetActorLocation()-player->GetActorLocation();
-							force = direction * damageRange.pushForce;
-							force.Z = 0;
-							Target->LaunchCharacter(force, true, true);
+							EnemyAttack(IntensiveRange2);
 							break;
 						}
 						case EDamageType::Special1:
 						{
-							DamageChange(SpecialRange1);
-							Target->FSM->ReceiveDamage(currDamage);
+							specialCount = 0;
+							player->MainHUD->UpdateQPercent(specialCount);
+							EnemyAttack(SpecialRange1);
 							break;
 						}
 						case EDamageType::Special2:
 						{
+							EnemyAttack(SpecialRange2);
+							break;
+						}
+						// ************************************* 두손검 공격
+						case EDamageType::GS_Common:
+						{
+							intensiveDelay -= 1.0f;
+							EnemyAttack(GS_CommonRange);
+							break;
+						}
+						case EDamageType::GS_Intensive1:
+						{
+							specialCount += addPercent;
+							specialCount = FMath::Clamp(specialCount, 0, 100);
+							player->MainHUD->UpdateQPercent(specialCount);
+
+							EnemyAttack(GS_IntensiveRange1);
+							break;
+						}
+						case EDamageType::GS_Intensive2:
+						{
+							EnemyAttack(GS_IntensiveRange2);
+							break;
+						}
+						case EDamageType::GS_Special1:
+						{
 							specialCount = 0;
 							player->MainHUD->UpdateQPercent(specialCount);
-							DamageChange(SpecialRange2);
-							Target->FSM->ReceiveDamage(currDamage);
-
-							direction = Target->GetActorLocation() - player->GetActorLocation();
-							force = direction * damageRange.pushForce;
-							Target->LaunchCharacter(force, true, true);
+							EnemyAttack(GS_SpecialRange1);
+							break;
+						}
+						case EDamageType::GS_Special2:
+						{
+							EnemyAttack(GS_SpecialRange2);
 							break;
 						}
 					}
 				}
-				else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
+			}
+			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
+			{
+				HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
+				if (HitObject != nullptr)
 				{
-					HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
-					if (HitObject != nullptr)
-					{
-						HitObject->DropItem();
-					}
+					HitObject->DropItem();
 				}
 			}
 		}

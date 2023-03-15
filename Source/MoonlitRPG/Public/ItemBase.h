@@ -76,5 +76,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
 	FIteminfo ItemInformation;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UIH_InteractionUI> interactUIFactory;
+
+	UPROPERTY(EditAnywhere)
+	class UIH_InteractionUI* interactionUI;
+
 	virtual void GetItem();
+	bool bAddWidget = false;
 };

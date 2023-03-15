@@ -14,6 +14,7 @@ AHitObjectBase::AHitObjectBase()
 
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
 	SetRootComponent(compMesh);
+	compMesh->SetCollisionObjectType(ECC_GameTraceChannel1);
 
 	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Position Component"));
 	compSpawnPos->SetupAttachment(RootComponent);

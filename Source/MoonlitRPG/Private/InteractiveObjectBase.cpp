@@ -9,6 +9,9 @@
 #include "IH_InteractionUI.h"
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
+#include <UMG/Public/Components/TextBlock.h>
+#include <UMG/Public/Components/VerticalBox.h>
+#include "PlayerMainWG.h"
 
 // Sets default values
 AInteractiveObjectBase::AInteractiveObjectBase()
@@ -23,16 +26,17 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	compSpawnPos->SetupAttachment(RootComponent);
 	compSpawnPos->SetRelativeLocation(FVector(0, 0, 30));
 
-	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
-	compInteractWidget->SetupAttachment(RootComponent);
-	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
-	compInteractWidget->SetVisibility(false);
+// 	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
+// 	compInteractWidget->SetupAttachment(RootComponent);
+// 	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
+// 	compInteractWidget->SetVisibility(false);
 
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractionUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractionUI.Succeeded())
 	{
-		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
-		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		interactUIFactory = tempinteractionUI.Class;
+// 		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
+// 		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 }
 
@@ -42,6 +46,9 @@ void AInteractiveObjectBase::BeginPlay()
 	Super::BeginPlay();
 
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
+	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
+//	UIH_InteractionUI* interactionUI = Cast<UIH_InteractionUI>(compInteractWidget->GetUserWidgetObject());
+	interactionUI->txt_Interaction->SetText(InteractName);
 }
 
 // Called every frame
@@ -53,14 +60,21 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
 	float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
-
-	if (degree < 180 && distance < 300)
+	
+	if (degree < 180 && distance <= 200)
 	{
-		compInteractWidget->SetVisibility(true);
+		if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
+		{
+			player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
+//			interactionUI->PlayOpenAnim();
+		}
 	}
 	else
 	{
-		compInteractWidget->SetVisibility(false);
+		if (player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
+		{
+			player->MainHUD->InteractionBox->RemoveChild(interactionUI);
+		}
 	}
 }
 
@@ -81,6 +95,11 @@ void AInteractiveObjectBase::Interaction()
 			int32 randNum = FMath::RandRange(0, spawnItems.Num()-1);
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}
+	}
+
+	if (interactionUI != nullptr)
+	{
+		interactionUI->RemoveFromParent();
 	}
 
 	Destroy();

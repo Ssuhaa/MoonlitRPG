@@ -438,12 +438,16 @@ void UEnemy_FSM::MoveToPos(FVector pos)
 
 	if (result == EPathFollowingRequestResult::AlreadyAtGoal)
 	{
-		if (currState == EEnemyState::Move || currState == EEnemyState::Return)
+		if (currState == EEnemyState::Return)
 		{
 			ChangeState(EEnemyState::Idle);
 			currHP = maxHP;
 			me->enemyHPUI->UpdateHP(currHP, maxHP);
 			me->enemyHPUI->ReduceHP(currHP, maxHP);
+		}
+		else
+		{
+			ChangeState(EEnemyState::Idle);
 		}
 	}
 }

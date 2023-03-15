@@ -47,6 +47,11 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 	Player->AttackComp->NextCombo();
 }
 
+void USH_PlayerAnim::AnimNotify_CommonAttack()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->CommonRange);
+}
+
 void USH_PlayerAnim::AnimNotify_IntensiveAttack1()
 {
 	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange1);
@@ -86,4 +91,29 @@ void USH_PlayerAnim::AnimNotify_DieEnd()
 {
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 	Player->dieUI->AddToViewport();
+}
+
+void USH_PlayerAnim::AnimNotify_GS_CommonAttack()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->GS_CommonRange);
+}
+
+void USH_PlayerAnim::AnimNotify_GS_IntensiveAttack1()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->GS_IntensiveRange1);
+}
+
+void USH_PlayerAnim::AnimNotify_GS_IntensiveAttack2()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->GS_IntensiveRange2);
+}
+
+void USH_PlayerAnim::AnimNotify_GS_SpecialAttack1()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->GS_SpecialRange1);
+}
+
+void USH_PlayerAnim::AnimNotify_GS_SpecialAttack2()
+{
+	Player->AttackComp->TargetCheck(Player->AttackComp->GS_SpecialRange2);
 }

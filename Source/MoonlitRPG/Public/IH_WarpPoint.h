@@ -22,7 +22,7 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interaction() override;
+	virtual void Interaction() override;		// 상속하는 액터에서 바꿔쓸 수 있도록 가상함수로 선언.
 
 	UPROPERTY(EditAnywhere)
 	bool bsavePoint = false;

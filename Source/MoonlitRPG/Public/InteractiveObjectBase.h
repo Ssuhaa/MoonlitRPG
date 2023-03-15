@@ -30,13 +30,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compSpawnPos;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UWidgetComponent* compInteractWidget;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	class UWidgetComponent* compInteractWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
 
 	class ASH_Player* player;
+
+	UPROPERTY(EditAnywhere)
+	FText InteractName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UIH_InteractionUI> interactUIFactory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UIH_InteractionUI* interactionUI;
 
 public:
 	virtual void Interaction();

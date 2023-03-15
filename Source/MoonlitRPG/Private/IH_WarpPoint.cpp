@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "IH_WarpPoint.h"
@@ -6,6 +6,10 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "IH_WarpActiveUI.h"
+#include "IH_InteractionUI.h"
+#include <UMG/Public/Components/TextBlock.h>
+#include "PlayerMainWG.h"
+#include <UMG/Public/Components/VerticalBox.h>
 
 AIH_WarpPoint::AIH_WarpPoint()
 {
@@ -25,8 +29,6 @@ void AIH_WarpPoint::BeginPlay()
 
 void AIH_WarpPoint::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-	
 	FVector targetVector = player->GetActorLocation() - GetActorLocation();
 	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
@@ -34,18 +36,20 @@ void AIH_WarpPoint::Tick(float DeltaTime)
 
 	if (!bsavePoint)
 	{
-		if (degree < 180 && distance < 300)
+		if (degree < 180 && distance < 200)
 		{
-			compInteractWidget->SetVisibility(true);
+			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
+			{
+				player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
+			}
 		}
 		else
 		{
-			compInteractWidget->SetVisibility(false);
+			if (player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
+			{
+				player->MainHUD->InteractionBox->RemoveChild(interactionUI);
+			}
 		}
-	}
-	else
-	{
-		compInteractWidget->SetVisibility(false);
 	}
 }
 
@@ -58,7 +62,13 @@ void AIH_WarpPoint::Interaction()
 
 		FTimerHandle timer;
 		GetWorld()->GetTimerManager().SetTimer(timer, this, &AIH_WarpPoint::RemoveUI, 2.0f, false);
+
+		if (interactionUI != nullptr)
+		{
+			interactionUI->RemoveFromParent();
+		}
 	}
+
 }
 
 void AIH_WarpPoint::RemoveUI()

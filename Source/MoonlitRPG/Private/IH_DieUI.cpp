@@ -25,7 +25,7 @@ void UIH_DieUI::NativeConstruct()
 void UIH_DieUI::ReviveButton()
 {
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive,10.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive,5.0f, false);
 	player->loadingUI->AddToViewport();
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	RemoveFromParent();

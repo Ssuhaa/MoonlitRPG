@@ -67,10 +67,16 @@ public:
 	TSubclassOf<class UIH_LoadingUI> loadingUIFactory;
 	UPROPERTY(EditAnywhere)
 	class UIH_LoadingUI* loadingUI;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UMainDialogueUI> dialogueUIFactory;
+	UPROPERTY(EditAnywhere)
+	class UMainDialogueUI* dialogueUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
 	UPROPERTY()
 	class AIH_WarpPoint* warpPoint = nullptr;
+	UPROPERTY(EditAnywhere)
+	class AInteractiveObjectBase* InteractiveObjects;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()

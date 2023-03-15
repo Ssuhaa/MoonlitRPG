@@ -17,11 +17,14 @@
 #include "IH_DieUI.h"
 #include "IH_LoadingUI.h"
 #include "IH_WarpPoint.h"
+#include "NPCBase.h"
+#include "MainDialogueUI.h"
 
 ASH_Player::ASH_Player()
 {
 	GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
 	GetMesh()->SetRelativeLocation(FVector(0,0,-90));
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -62,6 +65,11 @@ ASH_Player::ASH_Player()
 	{
 		loadingUIFactory = temploadingUI.Class;
 	}
+	ConstructorHelpers::FClassFinder<UMainDialogueUI> tempdialogueUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
+	if (tempdialogueUI.Succeeded())
+	{
+		dialogueUIFactory = tempdialogueUI.Class;
+	}
 }
 
 void ASH_Player::BeginPlay()
@@ -78,6 +86,7 @@ void ASH_Player::BeginPlay()
 
 	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), dieUIFactory);
 	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), loadingUIFactory);
+	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), dialogueUIFactory);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -121,6 +130,12 @@ void ASH_Player::interactionObject()
 		if (currobject != nullptr)
 		{
 			currobject->Interaction();
+		}
+
+		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
+		if (currNPC != nullptr)
+		{
+			currNPC->InteractNPC();
 		}
 	}
 }
