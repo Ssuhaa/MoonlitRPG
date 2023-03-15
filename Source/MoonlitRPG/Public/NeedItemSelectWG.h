@@ -31,7 +31,7 @@ protected:
 	UPROPERTY()
 	class ASH_Player* player;
 
-	TArray<FInvenItem*> WeaponArray;
+	TArray<struct FInvenItem*> WeaponArray;
 
 	UFUNCTION()
 	void Removewidget();

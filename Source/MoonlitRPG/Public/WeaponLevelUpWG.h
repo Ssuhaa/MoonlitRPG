@@ -54,6 +54,7 @@ protected:
 	int32 CurrUseMoney = 0;
 	int32 SetCount = 0;
 	int32 ToTalEXP = 0;
+
 	TArray<FIteminfo> UseItems;
 
 
