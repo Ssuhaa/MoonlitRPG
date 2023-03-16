@@ -19,7 +19,7 @@ UNeedItemSelectWG::UNeedItemSelectWG(const FObjectInitializer& ObjectInitializer
 		WGFactory = tempWG.Class;
 	}
 
-	for (int32 i = 0; i < 100; i++)
+	for (int32 i = 0; i < 50; i++)
 	{
 		UNeedItemSlotWG* currWG = CreateWidget<UNeedItemSlotWG>(GetWorld(), WGFactory);
 		NeeditemSlots.Add(currWG);
@@ -30,9 +30,8 @@ UNeedItemSelectWG::UNeedItemSelectWG(const FObjectInitializer& ObjectInitializer
 void UNeedItemSelectWG::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	
 	SetNeedItemSelectWG();
-
 	Button_Close->OnPressed.AddUniqueDynamic(this, &UNeedItemSelectWG::Removewidget); // 다른곳 누르면 사라지게하는.. 수정필요
 
 }
@@ -44,48 +43,54 @@ void UNeedItemSelectWG::Removewidget()
 
 void UNeedItemSelectWG::SetNeedItemSelectWG()
 {
-	WeaponArray.Empty();
 	player = Cast <ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	
 	if (player != nullptr)
 	{
-		for (int32 i = 0; i < player->InvenComp->invenItemArr.Num(); i++)
-		{
-			if (&player->InvenComp->invenItemArr[i] == SelectedSlot->invenInfo) continue;
-				if (player->InvenComp->invenItemArr[i].iteminfomation.itemType == EItemType::Outfit)
-				{
-
-					WeaponArray.AddUnique(&player->InvenComp->invenItemArr[i]);
-
-				}
-			
-			
-		}
-	}
-	SetSlot();	
-}
-
-void UNeedItemSelectWG::SetSlot()
-{
-	Wrap_HadWeapon->ClearChildren();
-	if (!WeaponArray.IsEmpty())
-	{
-		Text_Empty->SetVisibility(ESlateVisibility::Hidden);
+		TArray <FInvenItem> WeaponArray = player->InvenComp->FindAllItemsType(EItemType::Outfit);
 		for (int32 i = 0; i < WeaponArray.Num(); i++)
 		{
-
-			if (!NeeditemSlots.IsValidIndex(i))
+			if (WeaponArray[i].InvenID == SelectedSlotItem.InvenID)
 			{
-				UNeedItemSlotWG* currWG = CreateWidget<UNeedItemSlotWG>(GetWorld(), WGFactory);
-				NeeditemSlots.Add(currWG);
+				WeaponArray.RemoveAt(i);
+				break;
 			}
-			NeeditemSlots[i]->UpdateSlot(WeaponArray[i]);
-			NeeditemSlots[i]->LevelUpSlots = &LevelupSlots;
-			Wrap_HadWeapon->AddChild(NeeditemSlots[i]);
 		}
+		
 
+		Wrap_HadWeapon->ClearChildren();
+		if (!WeaponArray.IsEmpty())
+		{
+			Text_Empty->SetVisibility(ESlateVisibility::Hidden);
+			for (int32 i = 0; i < WeaponArray.Num(); i++)
+			{
+
+				if (!NeeditemSlots.IsValidIndex(i))
+				{
+					UNeedItemSlotWG* currWG = CreateWidget<UNeedItemSlotWG>(GetWorld(), WGFactory);
+					NeeditemSlots.Add(currWG);
+				}
+				NeeditemSlots[i]->UpdateSlot(WeaponArray[i]);
+				NeeditemSlots[i]->NeedSelectWG = this;
+				NeeditemSlots[i]->LevelUpSlots = &LevelupSlots;
+				Wrap_HadWeapon->AddChild(NeeditemSlots[i]);
+			}
+
+		}
+		else
+		{
+			Text_Empty->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
-	else
+}
+
+void UNeedItemSelectWG::UsedItemSlotClear()
+{
+	for (int32 i = 0; i < NeeditemSlots.Num(); i++)
 	{
-		Text_Empty->SetVisibility(ESlateVisibility::Visible);
+		if (NeeditemSlots[i]->isSelect)
+		{
+			NeeditemSlots[i]->RemoveSlot();
+		}
 	}
 }

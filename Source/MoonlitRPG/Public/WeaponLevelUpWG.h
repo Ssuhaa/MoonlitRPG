@@ -42,8 +42,6 @@ protected:
 	UPROPERTY()
 	TArray<class ULevelUpSlotWG*> LevelUpSlots;
 
-	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
 
 
 	void ButtonBinding();
@@ -55,7 +53,7 @@ protected:
 	int32 SetCount = 0;
 	int32 ToTalEXP = 0;
 
-	TArray<FIteminfo> UseItems;
+	TArray<FInvenItem> UseItems;
 
 
 	UPROPERTY()
@@ -63,12 +61,14 @@ protected:
 	UPROPERTY()
 	class UOutfitWG* OutfitWG;
 
+	FInvenItem SelectedSlotItem;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UHorizontalBox* SelectListBox;
 
 	UFUNCTION()
-	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
+	void ReceiveSelectSlotData(FInvenItem SelectSlotItem);
 
 	void UpdateUseMoney();
 

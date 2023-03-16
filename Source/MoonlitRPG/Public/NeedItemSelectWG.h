@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "InventoryComponent.h"
 #include "NeedItemSelectWG.generated.h"
 
 /**
@@ -18,8 +19,7 @@ class MOONLITRPG_API UNeedItemSelectWG : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UWrapBox* Wrap_HadWeapon;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Close;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -33,25 +33,28 @@ protected:
 	UPROPERTY()
 	class ASH_Player* player;
 
-	TArray<struct FInvenItem*> WeaponArray;
+
 
 	UFUNCTION()
 	void Removewidget();
 
+	
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UWrapBox* Wrap_HadWeapon;
 
 	
-
-public:
-
-	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
+	FInvenItem SelectedSlotItem;
 
 	TArray<class ULevelUpSlotWG*> LevelupSlots;
 
 
 	void SelectNeedItem(FInvenItem* invenData);
+
+
+	void UsedItemSlotClear();
+
 	UFUNCTION()
 	void SetNeedItemSelectWG();
-
-	void SetSlot();
 };

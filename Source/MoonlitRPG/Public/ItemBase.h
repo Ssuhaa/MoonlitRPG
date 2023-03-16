@@ -42,13 +42,27 @@ struct FIteminfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UTexture2D* itemImage = LoadObject<UTexture2D>(nullptr, TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Empty.T_Empty'"));
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool Stackalbe = false;
+	bool Stackable = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 SellPrice = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 PurchasePrice = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HealAmount = 0;
+
+	bool operator==(const FIteminfo& Other) const //비교 연산자
+	{
+		return itemType == Other.itemType 
+		&& itemgrade == Other.itemgrade 
+		&& ItemName == Other.ItemName 
+		&& itemDescription == Other.itemDescription 
+		&& itemImage == Other.itemImage 
+		&& Stackable == Other.Stackable 
+		&& SellPrice == Other.SellPrice 
+		&& PurchasePrice == Other.PurchasePrice 
+		&& HealAmount == Other.HealAmount;
+	}
+
 };
 
 
@@ -75,6 +89,7 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
 	FIteminfo ItemInformation;
+	
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UIH_InteractionUI> interactUIFactory;

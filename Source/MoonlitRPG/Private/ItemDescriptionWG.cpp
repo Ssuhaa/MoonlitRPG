@@ -33,28 +33,34 @@ UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializ
 }
 
 
-void UItemDescriptionWG::ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot)
+void UItemDescriptionWG::ReceiveSelectSlotitemData(FInvenItem SelectSlotItem)
 {
-	SelectedSlot = SelectSlot;
+	SelectedSlotItem = SelectSlotItem;
 	UpdateDescription();
 }
 
 
+void UItemDescriptionWG::ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot)
+{
+	SelectedSlot = SelectSlot;
+	SelectedSlotItem = SelectedSlot->invenInfo;
+	UpdateDescription();
+}
+
 void UItemDescriptionWG::UpdateDescription()
 {	
-	FInvenItem* iteminfo = SelectedSlot->invenInfo;
-	ItemImage->SetBrushFromTexture(iteminfo->iteminfomation.itemImage);
-	ItemName->SetText(FText::FromString(iteminfo->iteminfomation.ItemName));
-	Description->SetText(FText::FromString(iteminfo->iteminfomation.itemDescription));
+	ItemImage->SetBrushFromTexture(SelectedSlotItem.iteminfomation.itemImage);
+	ItemName->SetText(FText::FromString(SelectedSlotItem.iteminfomation.ItemName));
+	Description->SetText(FText::FromString(SelectedSlotItem.iteminfomation.itemDescription));
 
-	int32 BGindex = int32(iteminfo->iteminfomation.itemgrade);
+	int32 BGindex = int32(SelectedSlotItem.iteminfomation.itemgrade);
 	BG->SetBrushFromTexture(BGarray[BGindex], true);
 
-	if(iteminfo->weaponinfomaiton.WeaponType != EWeaponType::None)
+	if(SelectedSlotItem.weaponinfomaiton.WeaponType != EWeaponType::None)
 	{
 		Panel_Weapon->SetVisibility(ESlateVisibility::Visible);
 		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
-		int32 Typeindex = int32(iteminfo->weaponinfomaiton.WeaponType);
+		int32 Typeindex = int32(SelectedSlotItem.weaponinfomaiton.WeaponType);
 		FText weaponType;
 
 		switch (Typeindex)
@@ -71,15 +77,15 @@ void UItemDescriptionWG::UpdateDescription()
 		}
 
 		Text_WeaponType->SetText(weaponType);
-		int32 currPower = iteminfo->weaponinfomaiton.Power;
+		int32 currPower = SelectedSlotItem.weaponinfomaiton.Power;
 		Text_Power->SetText(FText::AsNumber(currPower));
 	}
 	else
 	{
-		if (iteminfo->iteminfomation.itemType == EItemType::Food)
+		if (SelectedSlotItem.iteminfomation.itemType == EItemType::Food)
 		{
 			Panel_Food->SetVisibility(ESlateVisibility::Visible);
-			Text_Heal->SetText(FText::AsNumber(iteminfo->iteminfomation.HealAmount));
+			Text_Heal->SetText(FText::AsNumber(SelectedSlotItem.iteminfomation.HealAmount));
 		}
 		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
 	}

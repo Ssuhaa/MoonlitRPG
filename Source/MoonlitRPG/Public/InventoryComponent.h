@@ -20,6 +20,15 @@ public:
 	int32 itemAmount;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FWeaponinfo weaponinfomaiton;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid InvenID = FGuid::NewGuid();
+
+	bool operator==(const FInvenItem& Other) const //비교 연산자
+	{
+		return iteminfomation == Other.iteminfomation &&
+			weaponinfomaiton == Other.weaponinfomaiton &&
+			InvenID == Other.InvenID;
+	}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -59,17 +68,20 @@ public:
 	class UInventoryWG* inventory;
 
 
-	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
-	void CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo);
 	int32 CheckWeaponisEquip();
-	void WeaponSwitch(FInvenItem* ChangeItem);
+	void WeaponSwitch(FInvenItem ChangeItem);
 	EWeaponType WhatKindOfEquipWeapon();
 
-	int32 PlusMinusItemAmount(FIteminfo AdditemInfo, int32 Amount);
+	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
+	void CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo);
+
+	int32 MinusItemAmount(FInvenItem MinusInvenItem, int32 Amount);
+
 	int32 FindItem(FIteminfo iteminfo);
+	TArray<FInvenItem> FindAllItems(FIteminfo iteminfo);
+	TArray<FInvenItem> FindAllItemsType(EItemType itemType);
+	int32 FindItem(FInvenItem invenitem);
 
 	int32 CountItem();
 
-	
-	void Test(TArray<FInvenItem*> invendata);
 };

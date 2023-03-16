@@ -119,7 +119,7 @@ void UInventoryWG::ItemSlotClicked(int32 slotindex)
 	itemDescription->AddChild(Description);
 
 	//선택한 아이템의 타입에 따라 사용 버튼이 뜬다.
-	SelectItemType = Slots[slotindex]->invenInfo->iteminfomation.itemType;
+	SelectItemType = Slots[slotindex]->invenInfo.iteminfomation.itemType;
 	Overlay_Use->ClearChildren();
 	switch (SelectItemType)
 	{
@@ -208,31 +208,26 @@ void UInventoryWG::Setinventory()
 
 void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 {
-	
-
 	currinventype = ChangeInvenType;
 	ClearInvenWGChild();
+
 	WrapBox->ClearChildren();
-	
-	if (!InvenComp->invenItemArr.IsEmpty())
+	TArray<FInvenItem> FindArr = InvenComp->FindAllItemsType(currinventype);
+	if (!FindArr.IsEmpty())
 	{
-		for (int32 i = 0; i < InvenComp->invenItemArr.Num(); i++)
+		for (int32 i = 0; i < FindArr.Num(); i++)
 		{
-			if (InvenComp->invenItemArr[i].iteminfomation.itemType == currinventype)
+			if (!Slots.IsValidIndex(i)) //슬랏이 모자란다면 슬랏을 생성하자.
 			{
-				if (!Slots.IsValidIndex(i)) //슬랏이 모자란다면 슬랏을 생성하자.
-				{
-					UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), WGFactory[0]);
-					Slots.Add(currslot);
-				}
-				Slots[i]->invenWG = this;
-				Slots[i]->Slotindex = i;
-				Slots[i]->UpdateSlot(&InvenComp->invenItemArr[i]);
-				WrapBox->AddChildToWrapBox(Slots[i]);
+				UInventorySlotWG* currslot = CreateWidget<UInventorySlotWG>(GetWorld(), WGFactory[0]);
+				Slots.Add(currslot);
 			}
+			Slots[i]->invenWG = this;
+			Slots[i]->Slotindex = i;
+			Slots[i]->UpdateSlot(FindArr[i]);
+			WrapBox->AddChildToWrapBox(Slots[i]);
 		}
 	}
-
 
 	FText currslotName;
 	switch (currinventype)

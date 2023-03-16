@@ -18,14 +18,14 @@ void ULevelUpSlotWG::SlotClicked()
 	}
 }
 
-void ULevelUpSlotWG::UpdateSlot(FInvenItem* invenData)
+void ULevelUpSlotWG::UpdateSlot(FInvenItem invenData)
 {
 	invenInfo = invenData;
 	Panal_Level->SetVisibility(ESlateVisibility::Visible);
-	ItemImage->SetBrushFromTexture(invenInfo->iteminfomation.itemImage);
-	int32 BGindex = int32(invenInfo->iteminfomation.itemgrade);
+	ItemImage->SetBrushFromTexture(invenInfo.iteminfomation.itemImage);
+	int32 BGindex = int32(invenInfo.iteminfomation.itemgrade);
 	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
-	TB_WeaponLevel->SetText(FText::AsNumber(invenInfo->weaponinfomaiton.Level));
+	TB_WeaponLevel->SetText(FText::AsNumber(invenInfo.weaponinfomaiton.Level));
 	isFill = true;
 	WeaponLevelUpWG->UpdateUseMoney();
 }
@@ -36,7 +36,7 @@ void ULevelUpSlotWG::ResetSlot()
 	ItemImage->SetBrushFromTexture(resetImage);
 	SlotBG->SetBrushFromTexture(BGarray[0], true);
 	isFill =false;
-	invenInfo = nullptr;
+
 
 	WeaponLevelUpWG->SelectListBox->RemoveChild(this);
 	WeaponLevelUpWG->SelectListBox->AddChild(this);

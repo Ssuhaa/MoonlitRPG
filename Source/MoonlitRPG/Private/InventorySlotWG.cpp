@@ -46,15 +46,15 @@ void UInventorySlotWG::ButtonBinding()
 }
 
 
-void UInventorySlotWG::UpdateSlot(FInvenItem* invenData)
+void UInventorySlotWG::UpdateSlot(FInvenItem invenData)
 {
 	invenInfo = invenData;
-	ItemImage->SetBrushFromTexture(invenInfo->iteminfomation.itemImage);
-	int32 BGindex = int32(invenInfo->iteminfomation.itemgrade);
+	ItemImage->SetBrushFromTexture(invenInfo.iteminfomation.itemImage);
+	int32 BGindex = int32(invenInfo.iteminfomation.itemgrade);
 	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
-	if (invenInfo->itemAmount >= 1)
+	if (invenInfo.itemAmount >= 1)
 	{
-		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), invenInfo->itemAmount)));
+		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), invenInfo.itemAmount)));
 	}
 }
 

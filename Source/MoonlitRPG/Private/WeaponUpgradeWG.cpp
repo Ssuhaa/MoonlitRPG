@@ -23,17 +23,17 @@ void UWeaponUpgradeWG::ButtonBinding()
 	Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UWeaponUpgradeWG::UpGrade);
 }
 
-void UWeaponUpgradeWG::SetUpGradeWG(class UInventorySlotWG* Slotdata)
+void UWeaponUpgradeWG::SetUpGradeWG(FInvenItem SelectSlotItem)
 {
-	SelectSlot = Slotdata;
-	FWeaponinfo* WeaponData = &SelectSlot->invenInfo->weaponinfomaiton;
-	TB_CurrLevel->SetText(FText::AsNumber(WeaponData->Level));
-	TB_CurrLevel1->SetText(FText::AsNumber(WeaponData->Level));
-	TB_AfterMaxLevel->SetText(FText::AsNumber(WeaponData->MaxLevel + 10));
-	TB_BeforeMaxLevel->SetText(FText::AsNumber(WeaponData->MaxLevel));
-	TB_UpGradeMoney->SetText(FText::AsNumber(WeaponData->UpGradeMoney));
-	TB_CurrPower->SetText(FText::AsNumber(WeaponData->Power));
-	TB_UpgradePower->SetText(FText::AsNumber(WeaponData->Power + WeaponData->PlusPower * 9));
+	SelectedSlotItem = SelectSlotItem;
+	FWeaponinfo WeaponData = SelectedSlotItem.weaponinfomaiton;
+	TB_CurrLevel->SetText(FText::AsNumber(WeaponData.Level));
+	TB_CurrLevel1->SetText(FText::AsNumber(WeaponData.Level));
+	TB_AfterMaxLevel->SetText(FText::AsNumber(WeaponData.MaxLevel + 10));
+	TB_BeforeMaxLevel->SetText(FText::AsNumber(WeaponData.MaxLevel));
+	TB_UpGradeMoney->SetText(FText::AsNumber(WeaponData.UpGradeMoney));
+	TB_CurrPower->SetText(FText::AsNumber(WeaponData.Power));
+	TB_UpgradePower->SetText(FText::AsNumber(WeaponData.Power + WeaponData.PlusPower * 9));
 }
 
 
@@ -41,7 +41,7 @@ void UWeaponUpgradeWG::UpGrade()
 {
 	if (player != nullptr)
 	{
-		SelectSlot->invenInfo->weaponinfomaiton.Upgrade(&player->InvenComp->Money, true);
+		SelectedSlotItem.weaponinfomaiton.Upgrade(&player->InvenComp->Money, true);
 	}
-	SetUpGradeWG(SelectSlot);
+	SetUpGradeWG(SelectedSlotItem);
 }

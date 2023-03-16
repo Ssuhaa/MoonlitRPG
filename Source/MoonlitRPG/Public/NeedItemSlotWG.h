@@ -16,28 +16,29 @@ class MOONLITRPG_API UNeedItemSlotWG : public UInventorySlotWG
 	GENERATED_BODY()
 
 protected:
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* TB_WeaponLevel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* Panal_Level;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UBorder* SelectDone;
 
 	virtual void SlotClicked() override;
 
-	bool isSelect = false;
-	int32 Selectindex;
-
 	UPROPERTY()
-	class ULevelUpSlotWG* pSelect;
+	class ULevelUpSlotWG* settingSlot;
 
 
 public:
-	virtual void UpdateSlot(FInvenItem* invenData) override;
+	virtual void UpdateSlot(FInvenItem invenData) override;
+	void ResetSlot();
+	void RemoveSlot();
+
+	bool isSelect = false;
+
 
 	UPROPERTY()
 	class UNeedItemSelectWG* NeedSelectWG;
-
-
 	TArray<class ULevelUpSlotWG*>* LevelUpSlots;
 
 };

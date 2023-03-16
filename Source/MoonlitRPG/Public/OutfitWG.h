@@ -11,7 +11,7 @@
  * 
  */
 
- DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, class UInventorySlotWG*);
+ DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, FInvenItem);
 
 UENUM(BlueprintType)
 enum class EEquipmentState : uint8

@@ -36,11 +36,11 @@ protected:
 public:
 
 	int32 Slotindex;
-	FInvenItem* invenInfo;
+	FInvenItem invenInfo;
 
 	UPROPERTY()
 	class UInventoryWG* invenWG;
 
-	virtual void UpdateSlot(FInvenItem* invenData);
+	virtual void UpdateSlot(FInvenItem invenData);
 
 };

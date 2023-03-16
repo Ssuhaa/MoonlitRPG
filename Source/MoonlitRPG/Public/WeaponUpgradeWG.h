@@ -35,9 +35,11 @@ protected:
 	class UHorizontalBox* NeedItemList;
 
 	
-	UPROPERTY()
-	class UInventorySlotWG* SelectSlot;
+	
+	FInvenItem SelectedSlotItem;
+
 	int32* PlayerMoney;
+
 
 	UPROPERTY()
 	class ASH_Player* player;
@@ -50,7 +52,7 @@ public:
 	class UButton* Button_Upgrade;
 
 	UFUNCTION()
-	void SetUpGradeWG(class UInventorySlotWG* Slotdata);
+	void SetUpGradeWG(FInvenItem SelectSlotItem);
 	
 	void ButtonBinding();
 

@@ -35,6 +35,14 @@ struct FUpgradeNeedItem
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //필요 수량
 	int32 UseAmont = 0;
 
+	bool operator==(const FUpgradeNeedItem& Other) const
+	{
+		return itemgrade == Other.itemgrade &&
+			ItemName == Other.ItemName &&
+			itemImage == Other.itemImage &&
+			UseAmont == Other.UseAmont;
+	}
+
 };
 
 USTRUCT(BlueprintType)
@@ -45,6 +53,10 @@ struct FWeaponNeedItem
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) 
 	TArray<FUpgradeNeedItem> UpgradeNeedItem;// 강화는 최대 3번만 어레이 각각 3개 만들어야함.
 
+	bool operator==(const FWeaponNeedItem& Other) const
+	{
+		return UpgradeNeedItem == Other.UpgradeNeedItem;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -82,6 +94,25 @@ struct FWeaponinfo
 	int32 LevelUpMoney = 120;
 	UPROPERTY(BlueprintReadOnly)
 	int32 UpgradeCount = 0;
+
+	bool operator==(const FWeaponinfo& Other) const
+	{
+		return WeaponType == Other.WeaponType &&
+			Mesh == Other.Mesh &&
+			UpgradeItemList == Other.UpgradeItemList &&
+			Power == Other.Power &&
+			PlusPower == Other.PlusPower &&
+			PlusEXP == Other.PlusEXP &&
+			isEquip == Other.isEquip &&
+			Level == Other.Level &&
+			MaxLevel == Other.MaxLevel &&
+			CurrEXP == Other.CurrEXP &&
+			MaxEXP == Other.MaxEXP &&
+			UpGradeMoney == Other.UpGradeMoney &&
+			LevelUpMoney == Other.LevelUpMoney &&
+			UpgradeCount == Other.UpgradeCount;
+	}
+
 
 	FlevelUpDel SendLevelUpClear;
 public:

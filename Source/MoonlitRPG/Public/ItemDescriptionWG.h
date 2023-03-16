@@ -38,12 +38,18 @@ protected:
 
 	TArray<class UTexture2D*> BGarray;
 
-	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
+
+	FInvenItem SelectedSlotItem;
 
 	void UpdateDescription();
 
+	UPROPERTY()
+	class UInventorySlotWG* SelectedSlot;
+
 public:
+
+	UFUNCTION()
+	void ReceiveSelectSlotitemData(FInvenItem SelectSlotItem);
 
 	UFUNCTION()
 	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);

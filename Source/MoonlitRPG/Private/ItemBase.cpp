@@ -29,6 +29,8 @@ AItemBase::AItemBase()
 	{
 		interactUIFactory = tempinteractUI.Class;
 	}
+
+	//ItemInformation.ItemInfoID = FGuid::NewGuid();
 }
 
 // Called when the game starts or when spawned

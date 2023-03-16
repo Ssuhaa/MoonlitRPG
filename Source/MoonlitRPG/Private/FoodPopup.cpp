@@ -52,7 +52,7 @@ void UFoodPopup::ReceiveSelectSlotData(UInventorySlotWG* SelectSlot)
 
 void UFoodPopup::UpdateFoodPopup()
 {
-	ItemImage->SetBrushFromTexture(SelectedSlot->invenInfo->iteminfomation.itemImage);
+	ItemImage->SetBrushFromTexture(SelectedSlot->invenInfo.iteminfomation.itemImage);
 	UpdateHPBar();
 }
 
@@ -63,7 +63,7 @@ void UFoodPopup::UpdateHPBar()
 	{
 		HP = Player->PlayercurrHP / Player->PlayerTotalHP;
 		CurrHPBar->SetPercent(HP);
-		HealHP = (SelectedSlot->invenInfo->iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
+		HealHP = (SelectedSlot->invenInfo.iteminfomation.HealAmount * CurrAmount) / Player->PlayerTotalHP;
 		HealHPBar->SetPercent(HP + HealHP);
 	}
 }
@@ -99,7 +99,7 @@ void UFoodPopup::OnClickedClose()
 void UFoodPopup::OnClickedPlus()
 {
 	CurrAmount++;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo->itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo.itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
@@ -107,7 +107,7 @@ void UFoodPopup::OnClickedPlus()
 void UFoodPopup::OnClickedMinus()
 {
 	CurrAmount--;
-	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo->itemAmount);
+	CurrAmount = FMath::Clamp(CurrAmount, 1, SelectedSlot->invenInfo.itemAmount);
 	Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	UpdateHPBar();
 }
@@ -122,9 +122,9 @@ void UFoodPopup::OnClickedFullPopup()
 
 void UFoodPopup::HealCallAndUpdatePopup()
 {
-	Player->HealPlayer(SelectedSlot->invenInfo->iteminfomation.HealAmount * CurrAmount);
+	Player->HealPlayer(SelectedSlot->invenInfo.iteminfomation.HealAmount * CurrAmount);
 	UpdateHPBar();
-	int32 result = Player->InvenComp->PlusMinusItemAmount(SelectedSlot->invenInfo->iteminfomation, -CurrAmount);
+	int32 result = Player->InvenComp->MinusItemAmount(SelectedSlot->invenInfo, CurrAmount);
 	invenWG->Setinventory();
 	if (result < 1)
 	{
