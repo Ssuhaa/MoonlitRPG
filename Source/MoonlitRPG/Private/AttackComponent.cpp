@@ -16,6 +16,8 @@
 #include "PlayerMainWG.h"
 #include "IH_DamageActor.h"
 #include <UMG/Public/Components/WidgetComponent.h>
+#include "WeaponItemBase.h"
+#include "InventoryComponent.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -39,10 +41,25 @@ UAttackComponent::UAttackComponent()
 	{
 		inputarray.Add(tempAction2.Object);  //2번 Q키
 	}
-	ConstructorHelpers::FObjectFinder<UAnimMontage> tempPlayerMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player.AMT_Player'"));
-	if (tempPlayerMont.Succeeded())
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempDamagedMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player.AMT_Player'"));
+	if (tempDamagedMont.Succeeded())
 	{
-		playerMontage = tempPlayerMont.Object;
+		damagedMontage = tempDamagedMont.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempHandMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Hand.AMT_Hand'"));
+	if (tempHandMont.Succeeded())
+	{
+		handMontage = tempHandMont.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempDaggerMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player_Dagger.AMT_Player_Dagger'"));
+	if (tempDaggerMont.Succeeded())
+	{
+		daggerMontage = tempDaggerMont.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempSwordMont(TEXT("/Script/Engine.AnimMontage'/Game/Animation/Animations/Montage/AMT_Player_Sword.AMT_Player_Sword'"));
+	if (tempDaggerMont.Succeeded())
+	{
+		swordMontage = tempSwordMont.Object;
 	}
 }
 
@@ -92,16 +109,7 @@ void UAttackComponent::NextCombo()
 		{
 			case 1:
 			{
-				attackCount = 0;
-				if (!bEquipGS)
-				{
-					PlayAttackMontage(playerMontage, "Attack1");
-					TargetCheck(CommonRange);
-				}
-				else
-				{
-					PlayAttackMontage(playerMontage, "GS_Attack1");
-				}
+				PlayAttackMontage("Attack1");
 				break;
 			}
 		}
@@ -122,15 +130,7 @@ void UAttackComponent::CommonAttack()
 	if (player->bInventoryOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
-		if (!bEquipGS)
-		{
-			PlayAttackMontage(playerMontage, "Attack0");
-			TargetCheck(CommonRange);
-		}
-		else
-		{
-			PlayAttackMontage(playerMontage, "GS_Attack0");
-		}
+		PlayAttackMontage("Attack0");
 		attackCount = 1;
 	}
 	else
@@ -142,18 +142,12 @@ void UAttackComponent::CommonAttack()
 void UAttackComponent::intensiveAttack()
 {
 	if (player->bInventoryOpen == true) return;
+	if (currWeapon == EWeaponType::None) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		if (!coolTimeRunning)
 		{
-			if (!bEquipGS)
-			{
-				PlayAttackMontage(playerMontage, "IntensiveAttack");
-			}
-			else
-			{
-				PlayAttackMontage(playerMontage, "GS_IntensiveAttack");
-			}
+			PlayAttackMontage("IntensiveAttack");
 			coolTimeRunning = true;
 			intensiveDelay = 5;
 		}
@@ -163,28 +157,48 @@ void UAttackComponent::intensiveAttack()
 void UAttackComponent::SpecialAttack()
 {
 	if (player->bInventoryOpen == true) return;
+	if (currWeapon == EWeaponType::None) return;
 	if (!isAttacking && !player->playerAnim->bAir && !isSpecialAttacking)
 	{
 		if (specialCount == 100)
 		{	
-			if (!bEquipGS)
-			{
-				PlayAttackMontage(playerMontage, "SpecialAttack");
-			}
-			else
-			{
-				PlayAttackMontage(playerMontage, "GS_SpecialAttack");
-			}
+			PlayAttackMontage("SpecialAttack");
 			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
 		}
 	}
 }
 
-void UAttackComponent::PlayAttackMontage(class UAnimMontage* montage, FString montName)		// 공격 몽타주를 재생하는 함수
+void UAttackComponent::WeaponChange(EWeaponType changeWeapon)
 {
-	player->PlayAnimMontage(montage, 1.0f, FName(*montName));
+	currWeapon = changeWeapon;
+}
+
+void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
+{
 	player->GetCharacterMovement()->DisableMovement();
 	isAttacking = true;
+
+	player->playerAnim->currWeapon = currWeapon;
+	player->playerAnim->bChangePose = true;
+
+	switch (currWeapon)
+	{
+		case EWeaponType::None:
+		{	
+			player->PlayAnimMontage(handMontage, 1.0f, FName(*montName));
+			break;
+		}
+		case EWeaponType::Dagger:
+		{
+			player->PlayAnimMontage(daggerMontage, 1.0f, FName(*montName));
+			break;
+		}
+		case EWeaponType::Sword:
+		{
+			player->PlayAnimMontage(swordMontage, 1.0f, FName(*montName));
+			break;
+		}
+	}
 }
 
 void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage를 랜덤으로 뽑고 Enemy를 공격하는 함수
@@ -230,38 +244,43 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				{
 					switch (damageRange.damageType)
 					{
+						case EDamageType::Hand_Common:
+						{
+							EnemyAttack(CommonRange);
+							break;
+						}
 						// ************************************* 단검 공격
-						case EDamageType::Common:
+						case EDamageType::DG_Common:
 						{
  							intensiveDelay -= 1.0f;
-							EnemyAttack(CommonRange);
+							EnemyAttack(DG_CommonRange);
 
 							break;
 						}
-						case EDamageType::Intensive1:
+						case EDamageType::DG_Intensive1:
 						{
  							specialCount += addPercent;
 							specialCount = FMath::Clamp(specialCount, 0, 100);
 							player->MainHUD->UpdateQPercent(specialCount);
 
-							EnemyAttack(IntensiveRange1);
+							EnemyAttack(DG_IntensiveRange1);
 							break;
 						}
-						case EDamageType::Intensive2:
+						case EDamageType::DG_Intensive2:
 						{
-							EnemyAttack(IntensiveRange2);
+							EnemyAttack(DG_IntensiveRange2);
 							break;
 						}
-						case EDamageType::Special1:
+						case EDamageType::DG_Special1:
 						{
 							specialCount = 0;
 							player->MainHUD->UpdateQPercent(specialCount);
-							EnemyAttack(SpecialRange1);
+							EnemyAttack(DG_SpecialRange1);
 							break;
 						}
-						case EDamageType::Special2:
+						case EDamageType::DG_Special2:
 						{
-							EnemyAttack(SpecialRange2);
+							EnemyAttack(DG_SpecialRange2);
 							break;
 						}
 						// ************************************* 두손검 공격

@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = WalkSpeed)
 	float RunSpeed = 600.0f;
 	UPROPERTY(EditAnywhere, Category = WalkSpeed)
-	float DashSpeed = 1000.0f;
+	float DashSpeed = 1200.0f;
 	UPROPERTY(VisibleAnywhere, Category = WalkSpeed)
 	float CurrSpeed;
 

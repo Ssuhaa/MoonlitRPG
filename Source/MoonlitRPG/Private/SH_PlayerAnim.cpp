@@ -6,6 +6,8 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "AttackComponent.h"
 #include "IH_DieUI.h"
+#include "InventoryComponent.h"
+#include "AttackComponent.h"
 
 void USH_PlayerAnim::NativeBeginPlay()
 {
@@ -34,6 +36,55 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 		//공중에 있는지 여부 세팅
 		bAir = Player->GetCharacterMovement()->IsFalling();
+
+		if (bChangePose && currWeapon != EWeaponType::None)
+		{
+			currentTime += DeltaSeconds;
+
+			if (currentTime > 5)
+			{
+				currentTime = 0;
+				if(!bChangePose) return;
+
+				switch (currWeapon)
+				{
+					case EWeaponType::Dagger:
+					{
+						Player->PlayAnimMontage(Player->AttackComp->daggerMontage, 1.0f, FName(TEXT("Put_In")));
+						break;
+					}
+					case EWeaponType::Sword:
+					{
+						Player->PlayAnimMontage(Player->AttackComp->swordMontage, 1.0f, FName(TEXT("Put_In")));
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void USH_PlayerAnim::SwitchCheck(FDamageRange handRange, FDamageRange daggerRange, FDamageRange swordRange)
+{
+	// EWeaponType currWeapon = Player->InvenComp->WhatKindOfEquipWeapon();
+
+	switch (currWeapon)
+	{
+		case EWeaponType::None:
+		{
+			Player->AttackComp->TargetCheck(handRange);
+			break;
+		}
+		case EWeaponType::Dagger:
+		{
+			Player->AttackComp->TargetCheck(daggerRange);
+			break;
+		}
+		case EWeaponType::Sword:
+		{
+			Player->AttackComp->TargetCheck(swordRange);
+			break;
+		}
 	}
 }
 
@@ -49,27 +100,27 @@ void USH_PlayerAnim::AnimNotify_NextCombo()
 
 void USH_PlayerAnim::AnimNotify_CommonAttack()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->CommonRange);
+	SwitchCheck(Player->AttackComp->CommonRange, Player->AttackComp->DG_CommonRange, Player->AttackComp->GS_CommonRange);
 }
 
 void USH_PlayerAnim::AnimNotify_IntensiveAttack1()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange1);
+	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_IntensiveRange1, Player->AttackComp->GS_IntensiveRange1);	
 }
 
 void USH_PlayerAnim::AnimNotify_IntensiveAttack2()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->IntensiveRange2);
+	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_IntensiveRange2, Player->AttackComp->GS_IntensiveRange2);
 }
 
 void USH_PlayerAnim::AnimNotify_SpecialAttack1()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange1);
+	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_SpecialRange1, Player->AttackComp->GS_SpecialRange1);
 }
 
 void USH_PlayerAnim::AnimNotify_SpecialAttack2()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->SpecialRange2);
+	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_SpecialRange2, Player->AttackComp->GS_SpecialRange2);
 }
 
 void USH_PlayerAnim::AnimNotify_DashEnd()
@@ -93,27 +144,7 @@ void USH_PlayerAnim::AnimNotify_DieEnd()
 	Player->dieUI->AddToViewport();
 }
 
-void USH_PlayerAnim::AnimNotify_GS_CommonAttack()
+void USH_PlayerAnim::AnimNotify_Put_In_Weapon()
 {
-	Player->AttackComp->TargetCheck(Player->AttackComp->GS_CommonRange);
-}
-
-void USH_PlayerAnim::AnimNotify_GS_IntensiveAttack1()
-{
-	Player->AttackComp->TargetCheck(Player->AttackComp->GS_IntensiveRange1);
-}
-
-void USH_PlayerAnim::AnimNotify_GS_IntensiveAttack2()
-{
-	Player->AttackComp->TargetCheck(Player->AttackComp->GS_IntensiveRange2);
-}
-
-void USH_PlayerAnim::AnimNotify_GS_SpecialAttack1()
-{
-	Player->AttackComp->TargetCheck(Player->AttackComp->GS_SpecialRange1);
-}
-
-void USH_PlayerAnim::AnimNotify_GS_SpecialAttack2()
-{
-	Player->AttackComp->TargetCheck(Player->AttackComp->GS_SpecialRange2);
+	bChangePose = false;
 }

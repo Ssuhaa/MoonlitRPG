@@ -8,6 +8,7 @@
 #include "InventoryWG.h"
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
+#include "AttackComponent.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -131,12 +132,15 @@ void UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 	{
 		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
 	}
+
 	//바꾼 무기의 착용여부를 변경.
 	int32 index = FindItem(ChangeItem);
 	if (index > -1)
 	{
 		invenItemArr[index].weaponinfomaiton.isEquip = true;
 	}
+	
+	Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton.WeaponType);
 }
 
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount) //무기 이외의 것

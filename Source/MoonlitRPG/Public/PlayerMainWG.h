@@ -35,6 +35,7 @@ protected:
 	class UProgressBar* HPBar;
 
 	void VisibleStaminaBar(bool isUseStamina);
+	void VisibleSkillText(bool isHand);
 
 	float currentTime = 0;
 

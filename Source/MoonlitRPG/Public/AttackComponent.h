@@ -4,16 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "WeaponItemBase.h"
 #include "AttackComponent.generated.h"
 
 UENUM(BlueprintType)
 enum class EDamageType : uint8
 {
-	Common,
-	Intensive1,
-	Intensive2,
-	Special1,
-	Special2,
+	Hand_Common,
+	DG_Common,
+	DG_Intensive1,
+	DG_Intensive2,
+	DG_Special1,
+	DG_Special2,
 	GS_Common,
 	GS_Intensive1,
 	GS_Intensive2,
@@ -88,12 +90,13 @@ public:
 
 	//TArray<FDamageRange> damageRangeArr;
 
+	FDamageRange CommonRange = {EDamageType::Hand_Common, 50.0f, 50.0f, 1, 2};
 	// 단검 공격
-	FDamageRange CommonRange = {EDamageType::Common, 50.0f, 80.0f, 1, 2};
-	FDamageRange IntensiveRange1 = {EDamageType::Intensive1, 80.0f, 100.0f, 2, 3};
-	FDamageRange IntensiveRange2 = {EDamageType::Intensive2, 80.0f, 100.0f, 3, 5, 10.0f};
-	FDamageRange SpecialRange1 = {EDamageType::Special1, 150.0f, 100.0f, 1, 2};
-	FDamageRange SpecialRange2 = {EDamageType::Special2, 150.0f, 100.0f, 7, 10, 20.0f};
+	FDamageRange DG_CommonRange = {EDamageType::DG_Common, 50.0f, 80.0f, 1, 2};
+	FDamageRange DG_IntensiveRange1 = {EDamageType::DG_Intensive1, 80.0f, 100.0f, 2, 3};
+	FDamageRange DG_IntensiveRange2 = {EDamageType::DG_Intensive2, 80.0f, 100.0f, 3, 5, 10.0f};
+	FDamageRange DG_SpecialRange1 = {EDamageType::DG_Special1, 150.0f, 100.0f, 1, 2};
+	FDamageRange DG_SpecialRange2 = {EDamageType::DG_Special2, 150.0f, 100.0f, 7, 10, 20.0f};
 	// 두손검 공격
 	FDamageRange GS_CommonRange = {EDamageType::GS_Common, 80.0f, 80.0f, 2, 3, 1.0f};
 	FDamageRange GS_IntensiveRange1 = {EDamageType::GS_Intensive1, 100.0f, 100.0f, 3, 5};
@@ -104,18 +107,27 @@ public:
 	UPROPERTY()
 	class AEnemyBase* Target;
 	UPROPERTY(EditAnywhere, Category = Montage)
-	class UAnimMontage* playerMontage;
+	class UAnimMontage* damagedMontage;
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* handMontage;
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* daggerMontage;
+	UPROPERTY(EditAnywhere, Category = Montage)
+	class UAnimMontage* swordMontage;
 	UPROPERTY()
 	TArray<class AActor*> ActorArr;
 	UPROPERTY()
 	TArray<class AEnemyBase*> TargetArr;
+
+	EWeaponType currWeapon = EWeaponType::None;
 
 	void NextCombo();
 	void DamageChange(FDamageRange damageRangeType);
 	void TargetCheck(FDamageRange damageRange);
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);
-	void PlayAttackMontage(class UAnimMontage* montage, FString montName);
+	void PlayAttackMontage(FString montName);
+	void WeaponChange(EWeaponType changeWeapon);
 
 	FVector direction;
 	FVector force;

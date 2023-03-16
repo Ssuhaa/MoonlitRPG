@@ -36,7 +36,7 @@ void AIH_WarpPoint::Tick(float DeltaTime)
 
 	if (!bsavePoint)
 	{
-		if (degree < 180 && distance < 200)
+		if (degree < 180 && distance < 150)
 		{
 			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 			{
