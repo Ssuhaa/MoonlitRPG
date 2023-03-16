@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Animation/WidgetAnimation.h>
+#include "AttackComponent.h"
 
 
 
@@ -41,7 +42,21 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		VisibleStaminaBar(true);
 	}
 
-
+	EWeaponType currWeapon = Player->InvenComp->WhatKindOfEquipWeapon();
+	if (currWeapon != EWeaponType::None)
+	{
+		if (!Text_E->IsVisible())
+		{
+			VisibleSkillText(false);		// false일 때 Text가 보임
+		}
+	}
+	else
+	{
+		if (Text_E->IsVisible())
+		{
+			VisibleSkillText(true);
+		}
+	}
 }
 
 void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
@@ -107,4 +122,18 @@ void UPlayerMainWG::VisibleStaminaBar(bool isUseStamina)
 		StaminaBar->SetVisibility(ESlateVisibility::Hidden);
 	}
 	
+}
+
+void UPlayerMainWG::VisibleSkillText(bool isHand)
+{
+	if (isHand)
+	{
+		Text_E->SetVisibility(ESlateVisibility::Hidden);
+		Text_Q->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		Text_E->SetVisibility(ESlateVisibility::Visible);
+		Text_Q->SetVisibility(ESlateVisibility::Visible);
+	}
 }

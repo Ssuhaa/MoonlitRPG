@@ -10,6 +10,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "PlayerMainWG.h"
 #include <Animation/AnimMontage.h>
+#include "SH_PlayerAnim.h"
 
 // Sets default values for this component's properties
 UMoveComponent::UMoveComponent()
@@ -105,6 +106,7 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 	if(Player->bInventoryOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.Y += Axis;
+	Player->playerAnim->bChangePose = false;
 }
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
@@ -112,6 +114,7 @@ void UMoveComponent::Vertical(const FInputActionValue& value)
 	if (Player->bInventoryOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.X += Axis;
+	Player->playerAnim->bChangePose = false;
 }
 
 void UMoveComponent::Look(const FInputActionValue& value)
@@ -127,6 +130,7 @@ void UMoveComponent::Jump()
 {
 	if (Player->bInventoryOpen == true) return;
 	Player->Jump();
+	Player->playerAnim->bChangePose = false;
 }
 
 

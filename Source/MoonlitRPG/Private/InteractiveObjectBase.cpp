@@ -60,13 +60,12 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
 	float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
-	
-	if (degree < 180 && distance <= 200)
+
+	if (degree < 180 && distance <= 150)
 	{
 		if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 		{
 			player->MainHUD->InteractionBox->AddChildToVerticalBox(interactionUI);
-//			interactionUI->PlayOpenAnim();
 		}
 	}
 	else
@@ -82,10 +81,6 @@ void AInteractiveObjectBase::Interaction()
 {
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
-
-// 	float randDist = FMath::RandRange(10, 30);
-// 	FVector randForward = compSpawnPos->GetForwardVector()*randDist;
-// 	compSpawnPos->SetRelativeLocation(compSpawnPos->GetComponentLocation()+randForward);
 
 	if (spawnItems.IsValidIndex(0))
 	{

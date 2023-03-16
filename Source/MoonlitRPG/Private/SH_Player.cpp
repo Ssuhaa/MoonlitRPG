@@ -111,13 +111,16 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 
 void ASH_Player::interactionObject()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FKey"));
 	FHitResult hitinfo;
-	FCollisionShape interColli = FCollisionShape::MakeSphere(150.0f);
+	FCollisionShape interColli = FCollisionShape::MakeSphere(120.0f);
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(this);
 	bool bhit = GetWorld()->SweepSingleByChannel(hitinfo, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_Visibility, interColli, param);
-	DrawDebugSphere(GetWorld(), GetActorLocation(), interColli.GetSphereRadius(), 100, FColor::Red, false, 1,0, 0.5);
+
+	FVector collisionLoc = GetActorLocation();
+	collisionLoc.Z = 0;
+	DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
+
 	if (bhit)
 	{
 		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
@@ -150,12 +153,12 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 		{
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
-			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(*sectionName));
+			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(*sectionName));
 			GetCharacterMovement()->DisableMovement();
 		}
 		else // 플레이어 죽음
 		{
-			PlayAnimMontage(AttackComp->playerMontage, 1.0f, FName(TEXT("Die")));
+			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(TEXT("Die")));
 			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 			DisableInput(playerCon);
 		}

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "AttackComponent.h"
 #include "SH_PlayerAnim.generated.h"
 
 /**
@@ -26,13 +27,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float dirH = 0;
 
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAir = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bAttack = false;
+	bool bChangePose = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPutInPlay = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EWeaponType currWeapon;
+
+	float currentTime = 0;
+
+	void SwitchCheck(FDamageRange handRange, FDamageRange daggerRange, FDamageRange swordRange);
 
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
@@ -57,13 +67,5 @@ public:
 	UFUNCTION()
 	void AnimNotify_DieEnd();
 	UFUNCTION()
-	void AnimNotify_GS_CommonAttack();
-	UFUNCTION()
-	void AnimNotify_GS_IntensiveAttack1();
-	UFUNCTION()
-	void AnimNotify_GS_IntensiveAttack2();
-	UFUNCTION()
-	void AnimNotify_GS_SpecialAttack1();
-	UFUNCTION()
-	void AnimNotify_GS_SpecialAttack2();
+	void AnimNotify_Put_In_Weapon();
 };
