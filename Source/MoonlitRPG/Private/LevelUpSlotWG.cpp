@@ -3,12 +3,17 @@
 
 #include "LevelUpSlotWG.h"
 #include <UMG/Public/Components/CanvasPanel.h>
-#include "NeedItemSelectWG.h"
+#include <UMG/Public/Components/HorizontalBox.h>
+#include <UMG/Public/Components/Button.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Components/Image.h>
+#include "NeedItemSelectWG.h"
 #include "WeaponLevelUpWG.h"
-#include <UMG/Public/Components/HorizontalBox.h>
 
+void ULevelUpSlotWG::ButtonBinding()
+{
+	ItemButton->OnPressed.AddUniqueDynamic(this, &ULevelUpSlotWG::SlotClicked);
+}
 
 void ULevelUpSlotWG::SlotClicked()
 {
@@ -20,11 +25,8 @@ void ULevelUpSlotWG::SlotClicked()
 
 void ULevelUpSlotWG::UpdateSlot(FInvenItem invenData)
 {
-	invenInfo = invenData;
+	Super::UpdateSlot(invenData);
 	Panal_Level->SetVisibility(ESlateVisibility::Visible);
-	ItemImage->SetBrushFromTexture(invenInfo.iteminfomation.itemImage);
-	int32 BGindex = int32(invenInfo.iteminfomation.itemgrade);
-	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
 	TB_WeaponLevel->SetText(FText::AsNumber(invenInfo.weaponinfomaiton.Level));
 	isFill = true;
 	WeaponLevelUpWG->UpdateUseMoney();

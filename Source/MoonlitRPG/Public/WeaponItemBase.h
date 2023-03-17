@@ -116,15 +116,19 @@ struct FWeaponinfo
 
 	FlevelUpDel SendLevelUpClear;
 public:
-	void Upgrade(int32* playerMoney,  bool isHaveAllItem)//돌파
+	bool Upgrade(int32* playerMoney,  bool isHaveAllItem)//돌파
 	{
 		if (*playerMoney >= UpGradeMoney && isHaveAllItem == true) // 추후수정 필요
 		{
 			*playerMoney -= UpGradeMoney;
+			*playerMoney = FMath::Clamp(*playerMoney, 0, *playerMoney);
+
 			UpgradeCount++;
 			MaxLevel += 10;
 			UpGradeMoney += 5000;
+			return true;
 		}
+		return false;
 	}
 
 	void levelUP()//강화
@@ -141,9 +145,10 @@ public:
 
 	bool PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMoney)// 다른 무기 아이템 넣기
 	{
-		if (*playerMoney > LevelUpMoney * TotalAmount)
+		if (*playerMoney >= LevelUpMoney * TotalAmount)
 		{
 			*playerMoney -= LevelUpMoney * TotalAmount;
+			*playerMoney = FMath::Clamp(*playerMoney, 0, *playerMoney);
 			CurrEXP += TotalEXP;
 			levelUP();
 			return true;

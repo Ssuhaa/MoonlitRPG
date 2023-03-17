@@ -13,7 +13,7 @@
  * 
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FSandSlot, class UInventorySlotWG*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FSendSlot, class UInventorySlotWG*);
 
 UCLASS()
 class MOONLITRPG_API UInventoryWG : public UUserWidget
@@ -111,6 +111,6 @@ public:
 	UPROPERTY()
 	class UInventoryComponent* InvenComp;
 
-	FSandSlot SetSelectSlot;
+	FSendSlot SetSelectSlot;
 
  };

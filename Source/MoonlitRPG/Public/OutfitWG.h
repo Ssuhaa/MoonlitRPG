@@ -39,7 +39,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_LevelUp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* Button_Wearing;
+	class UButton* Button_Change;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* Button_Off;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Back;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -51,9 +53,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UCanvasPanel* Panel_Reinforce;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UBorder* EquipPop;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Money;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* TB_Wearing;
+
+
+
 
 	UPROPERTY()
 	class APreviewActor* OutfitActor;
@@ -69,9 +74,11 @@ protected:
 	UFUNCTION()
 	void OnclickedWearing();
 	UFUNCTION()
+	void OnclickedOff();
+	UFUNCTION()
 	void OnclickedBack();
 
-	void WearingSwitch(bool isEquip);
+	void WearingSwitch();
 	void ButtonSwitch(bool isMaxLevel);
 	void ReinforceSwitch(EEquipmentState state);
 
@@ -94,13 +101,15 @@ protected:
 
 	FSendInvenData SendToInvenInfo;
 
-	
-	
 	void UpdateOutfitWG();
+
+	
 
 public:
 	UFUNCTION()
 	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
 	UFUNCTION()
 	void UpdateMoney();
+
+	void ReceiveUseItem(FInvenItem ModifiedItem);
 };

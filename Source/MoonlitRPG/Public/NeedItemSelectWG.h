@@ -18,12 +18,14 @@ class MOONLITRPG_API UNeedItemSelectWG : public UUserWidget
 	UNeedItemSelectWG(const FObjectInitializer& ObjectInitializer);
 protected:
 	virtual void NativeConstruct() override;
-
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* Button_Close;
+	//virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+// 	class UButton* Button_Close;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Empty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UCanvasPanel* CanvasPanel_BG;
 
 	TSubclassOf<class UUserWidget> WGFactory;
 	UPROPERTY()
@@ -39,7 +41,6 @@ protected:
 	void Removewidget();
 
 	
-	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UWrapBox* Wrap_HadWeapon;
@@ -50,7 +51,7 @@ public:
 	TArray<class ULevelUpSlotWG*> LevelupSlots;
 
 
-	void SelectNeedItem(FInvenItem* invenData);
+
 
 
 	void UsedItemSlotClear();

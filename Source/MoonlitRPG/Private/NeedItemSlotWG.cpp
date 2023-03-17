@@ -3,14 +3,19 @@
 
 #include "NeedItemSlotWG.h"
 #include <UMG/Public/Components/TextBlock.h>
-#include <UMG/Public/Components/Image.h>
 #include <UMG/Public/Components/CanvasPanel.h>
-#include "LevelUpSlotWG.h"
-#include <UMG/Public/Components/Border.h>
-#include "NeedItemSelectWG.h"
 #include <UMG/Public/Components/WrapBox.h>
+#include <UMG/Public/Components/Border.h>
+#include <UMG/Public/Components/Button.h>
+#include "LevelUpSlotWG.h"
+#include "NeedItemSelectWG.h"
 
 
+
+void UNeedItemSlotWG::ButtonBinding()
+{
+	ItemButton->OnPressed.AddUniqueDynamic(this, &UNeedItemSlotWG::SlotClicked);
+}
 
 void UNeedItemSlotWG::SlotClicked()
 {
@@ -41,11 +46,8 @@ void UNeedItemSlotWG::SlotClicked()
 
 void UNeedItemSlotWG::UpdateSlot(FInvenItem invenData)
 {	
-	invenInfo = invenData;
-	Panal_Level->SetVisibility(ESlateVisibility::Visible);
-	ItemImage->SetBrushFromTexture(invenInfo.iteminfomation.itemImage);
-	int32 BGindex = int32(invenInfo.iteminfomation.itemgrade);
-	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
+	Super::UpdateSlot(invenData);
+
 	TB_WeaponLevel->SetText(FText::AsNumber(invenInfo.weaponinfomaiton.Level));
 }
 

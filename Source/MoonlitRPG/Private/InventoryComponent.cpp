@@ -110,22 +110,18 @@ int32 UInventoryComponent::CheckWeaponisEquip()
 	return -1;
 }
 
-
-EWeaponType UInventoryComponent::WhatKindOfEquipWeapon()
+bool UInventoryComponent::WeaponOff(FInvenItem ChangeItem)
 {
-	int32 index = CheckWeaponisEquip(); // 착용한 무기가 있는지 체크 후 
-	if (index > -1) // 인덱스가 뽑혔다면 웨폰 타입을 반환
+	int32 currEquip = FindItem(ChangeItem); //착용한 무기가 인벤토리에 존재하는지 확인
+	if (currEquip > -1) //해당 무기는 해제 시킴.
 	{
-		return invenItemArr[index].weaponinfomaiton.WeaponType;
+		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
+		return true;
 	}
-	else // 인덱스가 뽑히지 않았다면 None을 반환.
-	{
-		return EWeaponType::None;
-	}
+	return false;
 }
 
-
-void UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
+bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 {	
 	int32 currEquip = CheckWeaponisEquip(); //착용한 무기가 있는지 체크후
 	if (currEquip > -1) //해당 무기는 해제 시킴.
@@ -133,15 +129,22 @@ void UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
 	}
 
-	//바꾼 무기의 착용여부를 변경.
-	int32 index = FindItem(ChangeItem);
+	int32 index = FindItem(ChangeItem); // 바꿀 무기를 찾은 후 
 	if (index > -1)
 	{
+		//바꿀 무기의 착용여부를 변경.
 		invenItemArr[index].weaponinfomaiton.isEquip = true;
+		//플레이어 어택컴포넌트에 정보를 전달.
+		Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton);
+		
+		return true;
 	}
-	
-	Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton);
+
+	return false;
+
 }
+
+
 
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount) //무기 이외의 것
 {
@@ -179,6 +182,7 @@ int32 UInventoryComponent::MinusItemAmount(FInvenItem MinusInvenItem, int32 Amou
 	return -1;
 }
 
+
 int32 UInventoryComponent::FindItem(FIteminfo iteminfo)
 {
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
@@ -201,6 +205,19 @@ int32 UInventoryComponent::FindItem(FInvenItem invenitem)
 			return i;
 		}
 	}
+	return -1;
+}
+
+int32 UInventoryComponent::FindItem(FString ItemName)
+{
+	for (int32 i = 0; i < invenItemArr.Num(); i++)
+	{
+		if (invenItemArr[i].iteminfomation.ItemName == ItemName)
+		{
+			return i;
+		}
+	}
+
 	return -1;
 }
 

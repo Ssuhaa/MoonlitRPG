@@ -58,8 +58,7 @@ protected:
 
 	UPROPERTY()
 	class ASH_Player* Player;
-	UPROPERTY()
-	class UOutfitWG* OutfitWG;
+
 
 	FInvenItem SelectedSlotItem;
 
@@ -76,6 +75,9 @@ public:
 	void UpdateLevelUpWG();
 
 	UFUNCTION()
-	void SendUseitem();
+	void SendUseditem();
+
+	UPROPERTY()
+	class UOutfitWG* OutfitWG;
 
 };

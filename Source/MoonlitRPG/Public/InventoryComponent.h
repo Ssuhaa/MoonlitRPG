@@ -17,15 +17,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FIteminfo iteminfomation;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 itemAmount;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FWeaponinfo weaponinfomaiton;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 itemAmount;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGuid InvenID = FGuid::NewGuid();
 
 	bool operator==(const FInvenItem& Other) const //비교 연산자
 	{
-		return iteminfomation == Other.iteminfomation &&
+		return iteminfomation == Other.iteminfomation && 
 			weaponinfomaiton == Other.weaponinfomaiton &&
 			InvenID == Other.InvenID;
 	}
@@ -69,8 +69,9 @@ public:
 
 
 	int32 CheckWeaponisEquip();
-	void WeaponSwitch(FInvenItem ChangeItem);
-	EWeaponType WhatKindOfEquipWeapon();
+	bool WeaponSwitch(FInvenItem ChangeItem);
+	bool WeaponOff(FInvenItem ChangeItem);
+
 
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount);
 	void CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo);
@@ -78,9 +79,10 @@ public:
 	int32 MinusItemAmount(FInvenItem MinusInvenItem, int32 Amount);
 
 	int32 FindItem(FIteminfo iteminfo);
+	int32 FindItem(FInvenItem invenitem);
+	int32 FindItem(FString ItemName);
 	TArray<FInvenItem> FindAllItems(FIteminfo iteminfo);
 	TArray<FInvenItem> FindAllItemsType(EItemType itemType);
-	int32 FindItem(FInvenItem invenitem);
 
 	int32 CountItem();
 

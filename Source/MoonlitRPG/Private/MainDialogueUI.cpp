@@ -6,6 +6,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <UMG/Public/Components/Button.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "NPCBase.h"
 
 void UMainDialogueUI::NativeConstruct()
 {

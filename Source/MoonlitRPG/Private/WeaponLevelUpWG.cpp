@@ -85,22 +85,6 @@ void UWeaponLevelUpWG::UpdateLevelUpWG()
 }
 
 
-void UWeaponLevelUpWG::SendUseitem()
-{
-	for (int32 i = 0; i < UseItems.Num(); i++)
-	{
-		Player->InvenComp->MinusItemAmount(UseItems[i],1);
-	}
-	for (int32 i = 0; i < LevelUpSlots.Num();i++)
-	{
-		if (LevelUpSlots[i]->isFill)
-		{
-			LevelUpSlots[i]->ResetSlot();
-		}
-	}
-	NeedSelectWG->SetNeedItemSelectWG();
-	NeedSelectWG->UsedItemSlotClear();
-}
 
 void UWeaponLevelUpWG::ReceiveSelectSlotData(FInvenItem SelectSlotItem)
 {
@@ -165,10 +149,27 @@ void UWeaponLevelUpWG::LevelUp() //레벨업 버튼을 누르면 실행.
 			if (result)
 			{
 				SelectedSlotItem = Player->InvenComp->invenItemArr[index];
-				UpdateLevelUpWG();
-				SendUseitem();
+				SendUseditem();
+				OutfitWG->ReceiveUseItem(SelectedSlotItem);
 			}
 		}
 
 	}
+}
+
+void UWeaponLevelUpWG::SendUseditem()
+{
+	for (int32 i = 0; i < UseItems.Num(); i++)
+	{
+		Player->InvenComp->MinusItemAmount(UseItems[i], 1);
+	}
+	for (int32 i = 0; i < LevelUpSlots.Num(); i++)
+	{
+		if (LevelUpSlots[i]->isFill)
+		{
+			LevelUpSlots[i]->ResetSlot();
+		}
+	}
+	NeedSelectWG->SetNeedItemSelectWG();
+	NeedSelectWG->UsedItemSlotClear();
 }

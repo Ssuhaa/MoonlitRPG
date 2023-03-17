@@ -42,11 +42,13 @@ void UOutfitWG::NativeConstruct()
 {
 	Super::NativeConstruct();
 	ButtonBinding();
-	
+	ReinforceSwitch(EEquipmentState::Detail);
 	OutfitActor = GetWorld()->SpawnActor<APreviewActor>(APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0));
 	OutfitActor->SetPreviewMesh(SelectedSlot->invenInfo.weaponinfomaiton.Mesh);
 
-	ReinforceSwitch(EEquipmentState::Detail);
+	UpgradeWG->OutfitWG = this;
+	LevelUpWG->OutfitWG = this;
+
 }
 
 void UOutfitWG::NativeDestruct()
@@ -71,7 +73,8 @@ void UOutfitWG::ButtonBinding()
 	Button_Detail->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedDetail);
 	Button_LevelUp->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedLevelUp);
 	Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedUpgrade);
-	Button_Wearing->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedWearing);
+	Button_Change->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedWearing);
+	Button_Off->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedOff);
 	Button_Back->OnPressed.AddUniqueDynamic(this, &UOutfitWG::OnclickedBack);
 	UpgradeWG->Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UOutfitWG::UpdateMoney);
 }
@@ -103,9 +106,27 @@ void UOutfitWG::OnclickedWearing()
 {
 	if (player != nullptr)
 	{
-		player->InvenComp->WeaponSwitch(SelectedSlot->invenInfo);
+		bool result = player->InvenComp->WeaponSwitch(SelectedSlot->invenInfo);
+		if (result)
+		{
+			SelectedSlot->invenInfo.weaponinfomaiton.isEquip = true;
+		}
+		WearingSwitch();
 	}
-	WearingSwitch(SelectedSlot->invenInfo.weaponinfomaiton.isEquip);
+
+}
+
+void UOutfitWG::OnclickedOff()
+{
+	if (player != nullptr)
+	{
+		bool result = player->InvenComp->WeaponOff(SelectedSlot->invenInfo);
+		if (result)
+		{
+			SelectedSlot->invenInfo.weaponinfomaiton.isEquip = false;
+		}
+		WearingSwitch();
+	}
 }
 
 void UOutfitWG::OnclickedBack()
@@ -137,24 +158,6 @@ void UOutfitWG::UpdateOutfitWG()
 
 	FText itemname = FText::FromString(SelectedSlot->invenInfo.iteminfomation.ItemName);
 	Text_WeaponName->SetText(itemname);
-
-
-	SelectedSlot->invenInfo.weaponinfomaiton.Level == SelectedSlot->invenInfo.weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
-	
-}
-
-void UOutfitWG::WearingSwitch(bool isEquip)
-{
-	if (isEquip)
-	{
-		EquipPop->SetVisibility(ESlateVisibility::Visible);
-		Button_Wearing->SetVisibility(ESlateVisibility::Hidden);
-	}
-	else
-	{
-		EquipPop->SetVisibility(ESlateVisibility::Hidden);
-		Button_Wearing->SetVisibility(ESlateVisibility::Visible);
-	}
 }
 
 void UOutfitWG::ButtonSwitch(bool isMaxLevel)
@@ -163,11 +166,13 @@ void UOutfitWG::ButtonSwitch(bool isMaxLevel)
 	{
 		Button_Upgrade->SetVisibility(ESlateVisibility::Visible);
 		Button_LevelUp->SetVisibility(ESlateVisibility::Hidden);
+		ReinforceSwitch(EEquipmentState::Upgrade);
 	}
 	else
 	{
 		Button_LevelUp->SetVisibility(ESlateVisibility::Visible);
 		Button_Upgrade->SetVisibility(ESlateVisibility::Hidden);
+		ReinforceSwitch(EEquipmentState::LevelUp);
 	}
 }
 
@@ -178,8 +183,8 @@ void UOutfitWG::ReinforceSwitch(EEquipmentState state) //강화 돌파 스위치
 	switch (OutfitState)
 	{
 	case EEquipmentState::Detail:
-		SelectedSlot->invenInfo.weaponinfomaiton.isEquip ? WearingSwitch(true) : WearingSwitch(false);
 		Panel_Detail->SetVisibility(ESlateVisibility::Visible);
+		WearingSwitch();
 		break;
 	case EEquipmentState::Upgrade:
 		Panel_Reinforce->AddChildToCanvas(UpgradeWG);
@@ -192,6 +197,39 @@ void UOutfitWG::ReinforceSwitch(EEquipmentState state) //강화 돌파 스위치
 	}
 }
 
+void UOutfitWG::WearingSwitch()
+{
+	int32 value = player->InvenComp->CheckWeaponisEquip(); //착용하고 있는 아이템 체크
+	if (value > -1) //있으면
+	{
+		if (player->InvenComp->invenItemArr[value] == SelectedSlot->invenInfo) //나온것이 현재 장비창에 띄운 인포랑 같은지
+		{
+			//맞으면 해체를 활성화 시킨다.
+			// 교체을 비활성화 시킨다.
+			Button_Off->SetVisibility(ESlateVisibility::Visible);
+			Button_Change->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else
+		{
+			//아니면 교체을 활성화 시킨다.
+			//해체를 비활성화 시킨다.
+			TB_Wearing->SetText(FText::FromString(TEXT("교체")));
+			Button_Change->SetVisibility(ESlateVisibility::Visible);
+			Button_Off->SetVisibility(ESlateVisibility::Hidden);
+
+		}
+	}
+	else
+	{
+		TB_Wearing->SetText(FText::FromString(TEXT("장착")));
+		Button_Change->SetVisibility(ESlateVisibility::Visible);
+		Button_Off->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	description->ReceiveSelectSlotData(SelectedSlot);
+
+}
+
 void UOutfitWG::UpdateMoney()
 {
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
@@ -200,6 +238,12 @@ void UOutfitWG::UpdateMoney()
 		Text_Money->SetText(FText::AsNumber(player->InvenComp->Money));
 	}
 	SelectedSlot->invenInfo.weaponinfomaiton.Level == SelectedSlot->invenInfo.weaponinfomaiton.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
-	ReinforceSwitch(EEquipmentState::LevelUp);
+}
+
+void UOutfitWG::ReceiveUseItem(FInvenItem ModifiedItem)
+{
+	SelectedSlot->invenInfo = ModifiedItem;
+	SendToInvenInfo.Broadcast(SelectedSlot->invenInfo);
+	UpdateOutfitWG();
 }
 
