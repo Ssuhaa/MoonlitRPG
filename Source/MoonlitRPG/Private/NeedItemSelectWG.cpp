@@ -10,6 +10,8 @@
 #include <UMG/Public/Components/Button.h>
 #include <UMG/Public/Components/WrapBox.h>
 #include <UMG/Public/Components/TextBlock.h>
+#include <UMG/Public/Components/CanvasPanel.h>
+
 
 UNeedItemSelectWG::UNeedItemSelectWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -32,8 +34,24 @@ void UNeedItemSelectWG::NativeConstruct()
 	Super::NativeConstruct();
 	
 	SetNeedItemSelectWG();
-	Button_Close->OnPressed.AddUniqueDynamic(this, &UNeedItemSelectWG::Removewidget); // 다른곳 누르면 사라지게하는.. 수정필요
+}
 
+// 
+// FReply UNeedItemSelectWG::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+// {
+// 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+// 
+// 
+// 	Removewidget();
+// 
+// 	return FReply::Handled();
+// 
+// }
+
+void UNeedItemSelectWG::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	Removewidget();
 }
 
 void UNeedItemSelectWG::Removewidget()

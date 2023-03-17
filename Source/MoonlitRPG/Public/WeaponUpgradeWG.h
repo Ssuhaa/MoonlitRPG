@@ -14,7 +14,7 @@ UCLASS()
 class MOONLITRPG_API UWeaponUpgradeWG : public UUserWidget
 {
 	GENERATED_BODY()
-
+	UWeaponUpgradeWG(const FObjectInitializer& ObjectInitializer);
 protected:
 	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -34,11 +34,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UHorizontalBox* NeedItemList;
 
-	
-	
+	TArray<TSubclassOf<class UUserWidget>> WGFactory;
+	UPROPERTY()
+	TArray<class UUpgradeSlotWG*> UpgradeSlots;
+
 	FInvenItem SelectedSlotItem;
 
 	int32* PlayerMoney;
+
+
 
 
 	UPROPERTY()
@@ -46,6 +50,9 @@ protected:
 
 	UFUNCTION()
 	void UpGrade();
+
+	bool isHaveAllNeedItem();
+	void SendToUsedItem();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
@@ -56,6 +63,7 @@ public:
 	
 	void ButtonBinding();
 
-
+	UPROPERTY()
+	class UOutfitWG* OutfitWG;
 
 };

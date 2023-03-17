@@ -35,13 +35,17 @@ protected:
 	class UTextBlock* Text_Power;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Heal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UBorder* Border_Equip;
+
+
 
 	TArray<class UTexture2D*> BGarray;
 
 
 	FInvenItem SelectedSlotItem;
 
-	void UpdateDescription();
+
 
 	UPROPERTY()
 	class UInventorySlotWG* SelectedSlot;
@@ -53,5 +57,7 @@ public:
 
 	UFUNCTION()
 	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
+
+	void UpdateDescription();
 
 };

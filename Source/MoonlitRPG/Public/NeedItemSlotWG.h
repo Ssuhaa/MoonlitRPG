@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InventorySlotWG.h"
+#include "WidgetSlotBase.h"
 #include "NeedItemSlotWG.generated.h"
 
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class MOONLITRPG_API UNeedItemSlotWG : public UInventorySlotWG
+class MOONLITRPG_API UNeedItemSlotWG : public UWidgetSlotBase
 {
 	GENERATED_BODY()
 
@@ -19,17 +19,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* TB_WeaponLevel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UCanvasPanel* Panal_Level;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* SelectDone;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* ItemButton;
+
 
 	virtual void SlotClicked() override;
+	virtual void ButtonBinding()override;
 
 	UPROPERTY()
 	class ULevelUpSlotWG* settingSlot;
 
 
 public:
+
 	virtual void UpdateSlot(FInvenItem invenData) override;
 	void ResetSlot();
 	void RemoveSlot();

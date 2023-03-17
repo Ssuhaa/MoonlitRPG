@@ -4,28 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "WidgetSlotBase.h"
-#include "InventorySlotWG.generated.h"
+#include "UpgradeSlotWG.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOONLITRPG_API UInventorySlotWG : public UWidgetSlotBase
+class MOONLITRPG_API UUpgradeSlotWG : public UWidgetSlotBase
 {
 	GENERATED_BODY()
-
-
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* ItemAmount;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* ItemButton;
 
-	virtual void SlotClicked() override;
-	virtual void ButtonBinding() override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* TB_NeedAmount;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* TB_CurrAmount;
 
 public:
-
 	virtual void UpdateSlot(FInvenItem invenData) override;
 
+	int32 Index;
+	bool isHaveAmount = false;
+	FInvenItem UpgradeItem;
+	int32 UseAmount;
 };

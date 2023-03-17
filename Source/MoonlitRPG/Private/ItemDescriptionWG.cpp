@@ -6,6 +6,9 @@
 #include <UMG/Public/Components/TextBlock.h>
 #include "InventorySlotWG.h"
 #include <UMG/Public/Components/CanvasPanel.h>
+#include <UMG/Public/Components/Border.h>
+#include <Kismet/GameplayStatics.h>
+#include "SH_Player.h"
 
 
 UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -62,6 +65,25 @@ void UItemDescriptionWG::UpdateDescription()
 		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
 		int32 Typeindex = int32(SelectedSlotItem.weaponinfomaiton.WeaponType);
 		FText weaponType;
+		
+		ASH_Player* player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+		int32 value = player->InvenComp->CheckWeaponisEquip(); //착용하고 있는 아이템 체크
+		if (value > -1) //있으면
+		{
+			if (player->InvenComp->invenItemArr[value] == SelectedSlotItem) //나온것이 현재 장비창에 띄운 인포랑 같은지
+			{
+				Border_Equip->SetVisibility(ESlateVisibility::Visible);
+			}
+			else
+			{
+				Border_Equip->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+		else
+		{
+			Border_Equip->SetVisibility(ESlateVisibility::Hidden);
+		}
+
 
 		switch (Typeindex)
 		{

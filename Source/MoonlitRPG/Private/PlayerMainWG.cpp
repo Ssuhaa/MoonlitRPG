@@ -42,8 +42,8 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		VisibleStaminaBar(true);
 	}
 
-	EWeaponType currWeapon = Player->InvenComp->WhatKindOfEquipWeapon();
-	if (currWeapon != EWeaponType::None)
+	
+	if (Player->AttackComp->currWeapon != EWeaponType::None)
 	{
 		if (!Text_E->IsVisible())
 		{
