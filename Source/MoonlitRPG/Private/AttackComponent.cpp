@@ -168,9 +168,9 @@ void UAttackComponent::SpecialAttack()
 	}
 }
 
-void UAttackComponent::WeaponChange(EWeaponType changeWeapon)
+void UAttackComponent::WeaponChange(FWeaponinfo weaponInfo)
 {
-	currWeapon = changeWeapon;
+	currWeapon = weaponInfo.WeaponType;
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
@@ -204,12 +204,15 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재�
 void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage를 랜덤으로 뽑고 Enemy를 공격하는 함수
 {
 	DamageChange(damageRange);
-	Target->FSM->ReceiveDamage(currDamage);
+	Target->FSM->ReceiveDamage(currDamage);                                                                                                                                                           
 
-	direction = Target->GetActorLocation() - player->GetActorLocation();
-	force = direction * damageRange.pushForce;
-	force.Z = 0;
-	Target->LaunchCharacter(force, true, true);
+	if (!Target->FSM->bDiestart)
+	{
+		direction = Target->GetActorLocation() - player->GetActorLocation();
+		force = direction * damageRange.pushForce;
+		force.Z = 0;
+		Target->LaunchCharacter(force, true, true);
+	}
 }
 
 // attackRadius는 CanAttack 함수에서 사용할 구체 콜리전의 반지름, attackLength는 CanAttack 함수에서 사용할 구체 콜리전의 길이, damage는 ReceiveDamage 함수에서 사용할 데미지의 양
@@ -333,8 +336,16 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 
 void UAttackComponent::DamageChange(FDamageRange damageRangeType)
 {
+	int32 index = player->InvenComp->CheckWeaponisEquip();
+	float currPower = 0;
+
+	if (index > -1)
+	{
+		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;
+	}
+
 	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
-	currDamage = FMath::RandRange(damageRangeType.minDamage, damageRangeType.maxDamage);
+	currDamage = FMath::RandRange(damageRangeType.minDamage+int32(currPower), damageRangeType.maxDamage+int32(currPower));
 
 	if (iscriticAttack)
 	{

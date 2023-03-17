@@ -55,7 +55,7 @@ void ANPCBase::Tick(float DeltaTime)
 
 	if (!bTalking)
 	{
-		if (degree < 180 && distance <= 300)
+		if (degree < 180 && distance <= 150)
 		{
 			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 			{
@@ -81,8 +81,10 @@ void ANPCBase::InteractNPC()
 	if(interactionUI != nullptr)
 	{
 		interactionUI->RemoveFromParent();
-		bTalking = true;
-		player->dialogueUI->npc = this;
-		player->dialogueUI->AddToViewport();
 	}
+
+	bTalking = true;
+	player->dialogueUI->npc = this;
+	player->dialogueUI->AddToViewport();
+	player->dialogueUI->txt_Name->SetText(FText(NPCName));
 }

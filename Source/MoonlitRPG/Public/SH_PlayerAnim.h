@@ -67,5 +67,7 @@ public:
 	UFUNCTION()
 	void AnimNotify_DieEnd();
 	UFUNCTION()
-	void AnimNotify_Put_In_Weapon();
+	void AnimNotify_Put_In_Start();
+	UFUNCTION()
+	void AnimNotify_Put_In_End();
 };

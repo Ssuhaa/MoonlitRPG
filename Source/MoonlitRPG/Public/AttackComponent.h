@@ -90,19 +90,19 @@ public:
 
 	//TArray<FDamageRange> damageRangeArr;
 
-	FDamageRange CommonRange = {EDamageType::Hand_Common, 50.0f, 50.0f, 1, 2};
+	FDamageRange CommonRange = {EDamageType::Hand_Common, 50.0f, 50.0f, 2, 3};
 	// 단검 공격
-	FDamageRange DG_CommonRange = {EDamageType::DG_Common, 50.0f, 80.0f, 1, 2};
-	FDamageRange DG_IntensiveRange1 = {EDamageType::DG_Intensive1, 80.0f, 100.0f, 2, 3};
-	FDamageRange DG_IntensiveRange2 = {EDamageType::DG_Intensive2, 80.0f, 100.0f, 3, 5, 10.0f};
-	FDamageRange DG_SpecialRange1 = {EDamageType::DG_Special1, 150.0f, 100.0f, 1, 2};
-	FDamageRange DG_SpecialRange2 = {EDamageType::DG_Special2, 150.0f, 100.0f, 7, 10, 20.0f};
+	FDamageRange DG_CommonRange = {EDamageType::DG_Common, 50.0f, 80.0f, 5, 6};
+	FDamageRange DG_IntensiveRange1 = {EDamageType::DG_Intensive1, 80.0f, 100.0f, 8, 10};
+	FDamageRange DG_IntensiveRange2 = {EDamageType::DG_Intensive2, 80.0f, 100.0f, 10, 12, 10.0f};
+	FDamageRange DG_SpecialRange1 = {EDamageType::DG_Special1, 150.0f, 100.0f, 5, 6};
+	FDamageRange DG_SpecialRange2 = {EDamageType::DG_Special2, 150.0f, 100.0f, 15, 20, 20.0f};
 	// 두손검 공격
-	FDamageRange GS_CommonRange = {EDamageType::GS_Common, 80.0f, 80.0f, 2, 3, 1.0f};
-	FDamageRange GS_IntensiveRange1 = {EDamageType::GS_Intensive1, 100.0f, 100.0f, 3, 5};
-	FDamageRange GS_IntensiveRange2 = { EDamageType::GS_Intensive2, 100.0f, 100.0f, 3, 5, 5.0f };
-	FDamageRange GS_SpecialRange1 = {EDamageType::GS_Special1, 150.0f, 100.0f, 10, 12, 5.0f};
-	FDamageRange GS_SpecialRange2 = {EDamageType::GS_Special2, 100.0f, 100.0f, 5, 7};
+	FDamageRange GS_CommonRange = {EDamageType::GS_Common, 80.0f, 80.0f, 8, 10, 1.0f};
+	FDamageRange GS_IntensiveRange1 = {EDamageType::GS_Intensive1, 100.0f, 100.0f, 10, 12};
+	FDamageRange GS_IntensiveRange2 = { EDamageType::GS_Intensive2, 100.0f, 100.0f, 13, 15, 5.0f };
+	FDamageRange GS_SpecialRange1 = {EDamageType::GS_Special1, 150.0f, 100.0f, 20, 25, 5.0f};
+	FDamageRange GS_SpecialRange2 = {EDamageType::GS_Special2, 100.0f, 100.0f, 13, 15};
 
 	UPROPERTY()
 	class AEnemyBase* Target;
@@ -127,8 +127,8 @@ public:
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);
 	void PlayAttackMontage(FString montName);
-	void WeaponChange(EWeaponType changeWeapon);
-
+	void WeaponChange(FWeaponinfo weaponInfo);
+	
 	FVector direction;
 	FVector force;
 
@@ -138,7 +138,4 @@ public:
 	bool goToNextCombo = false;
 	bool coolTimeRunning = false;
 	bool iscriticAttack = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bEquipGS = false;		// 임시 변수(두손검 몽타주 테스트)
 };

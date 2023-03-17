@@ -63,7 +63,8 @@ void UEnemy_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 
 	if(target->bInventoryOpen)
 	{
-		ChangeState(EEnemyState::Idle);
+		anim->animState = EEnemyState::Idle;
+		ai->StopMovement();
 		return;
 	}
 
@@ -357,12 +358,14 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			break;
 		}
 		case EEnemyState::Chase:
+		{
 			me->GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 			me->compEnemyHP->SetVisibility(true);
 			bAttackEnd = false;
 			chaseCount++;
 			me->compExclamation->SetVisibility(true);
 			break;
+		}
 		case EEnemyState::Attack:
 			me->compEnemyHP->SetVisibility(true);
 			break;
@@ -370,11 +373,13 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			me->compEnemyHP->SetVisibility(true);
 			break;
 		case EEnemyState::Avoid:
+		{
 			me->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 			randomIndex = FMath::RandRange(0, 2);
 			randomRange = FMath::RandRange(85, 95);
 			me->compEnemyHP->SetVisibility(true);
 			break;
+		}
 		case EEnemyState::Damage:
 		{
 			int32 randNum = FMath::RandRange(0, 1);

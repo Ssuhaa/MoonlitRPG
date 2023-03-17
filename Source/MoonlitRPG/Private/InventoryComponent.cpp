@@ -140,7 +140,7 @@ void UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 		invenItemArr[index].weaponinfomaiton.isEquip = true;
 	}
 	
-	Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton.WeaponType);
+	Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton);
 }
 
 void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount) //무기 이외의 것

@@ -25,6 +25,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* compRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* compMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -35,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<class AItemBase*> spawnItemArr;
 
 	class ASH_Player* player;
 

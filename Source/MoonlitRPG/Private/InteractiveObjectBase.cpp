@@ -19,8 +19,11 @@ AInteractiveObjectBase::AInteractiveObjectBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	compRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
+	SetRootComponent(compRoot);
+
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
-	SetRootComponent(compMesh);
+	compMesh->SetupAttachment(RootComponent);
 
 	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Position Component"));
 	compSpawnPos->SetupAttachment(RootComponent);
@@ -84,11 +87,12 @@ void AInteractiveObjectBase::Interaction()
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		int32 randAmount = FMath::RandRange(3, 5);
+		int32 randAmount = FMath::RandRange(3, 5);		// °³¼ö ·£´ý»Ì±â
+
 		for (int32 i = 1; i <= randAmount; i++)
 		{
-			int32 randNum = FMath::RandRange(0, spawnItems.Num()-1);
-			GetWorld()->SpawnActor<AItemBase>(spawnItems[randNum], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+			int32 randIndex = FMath::RandRange(0, spawnItems.Num()-1);		// ¹è¿­ ¿ä¼Ò ·£´ý»Ì±â
+			GetWorld()->SpawnActor<AItemBase>(spawnItems[randIndex], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}
 	}
 

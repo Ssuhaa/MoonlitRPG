@@ -44,18 +44,20 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 			if (currentTime > 5)
 			{
 				currentTime = 0;
-				if(!bChangePose) return;
+				if(Player->AttackComp->isAttacking) return;
 
 				switch (currWeapon)
 				{
 					case EWeaponType::Dagger:
 					{
 						Player->PlayAnimMontage(Player->AttackComp->daggerMontage, 1.0f, FName(TEXT("Put_In")));
+						UE_LOG(LogTemp, Warning, TEXT("Put In"));
 						break;
 					}
 					case EWeaponType::Sword:
 					{
 						Player->PlayAnimMontage(Player->AttackComp->swordMontage, 1.0f, FName(TEXT("Put_In")));
+						UE_LOG(LogTemp, Warning, TEXT("Put In"));
 						break;
 					}
 				}
@@ -144,7 +146,13 @@ void USH_PlayerAnim::AnimNotify_DieEnd()
 	Player->dieUI->AddToViewport();
 }
 
-void USH_PlayerAnim::AnimNotify_Put_In_Weapon()
+void USH_PlayerAnim::AnimNotify_Put_In_Start()
 {
 	bChangePose = false;
+	Player->GetCharacterMovement()->DisableMovement();
+}
+
+void USH_PlayerAnim::AnimNotify_Put_In_End()
+{
+	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }

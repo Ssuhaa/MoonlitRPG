@@ -20,6 +20,12 @@ public:
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* btn_Close;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* txt_Name;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* DialogueOpenAnim;
 	
 	UPROPERTY(EditAnywhere)
 	class ASH_Player* player;

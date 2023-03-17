@@ -16,13 +16,19 @@ void UMainDialogueUI::NativeConstruct()
 	player->playerCon->bShowMouseCursor = true;
 	
 	btn_Close->OnPressed.AddUniqueDynamic(this, &UMainDialogueUI::CloseButton);
+
+	PlayAnimation(DialogueOpenAnim);
 }
 
 void UMainDialogueUI::CloseButton()
 {
-	npc->bTalking = false;
-	npc = nullptr;
-	player->EnableInput(player->playerCon);
+	if (npc != nullptr)
+	{
+		npc->bTalking = false;
+		npc = nullptr;
+	}
+
 	player->playerCon->bShowMouseCursor = false;
+	player->EnableInput(player->playerCon);
 	RemoveFromParent();
 }
