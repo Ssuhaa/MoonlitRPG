@@ -19,6 +19,7 @@
 #include "IH_WarpPoint.h"
 #include "NPCBase.h"
 #include "MainDialogueUI.h"
+#include "IH_WarningUI.h"
 
 ASH_Player::ASH_Player()
 {
@@ -58,17 +59,22 @@ ASH_Player::ASH_Player()
 	ConstructorHelpers::FClassFinder<UIH_DieUI> tempdieUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
 	if (tempdieUI.Succeeded())
 	{
-		dieUIFactory = tempdieUI.Class;
+		UIFactory.Add(tempdieUI.Class);
 	}
 	ConstructorHelpers::FClassFinder<UIH_LoadingUI> temploadingUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Loading.WG_Loading_C'"));
 	if (temploadingUI.Succeeded())
 	{
-		loadingUIFactory = temploadingUI.Class;
+		UIFactory.Add(temploadingUI.Class);
 	}
 	ConstructorHelpers::FClassFinder<UMainDialogueUI> tempdialogueUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
 	if (tempdialogueUI.Succeeded())
 	{
-		dialogueUIFactory = tempdialogueUI.Class;
+		UIFactory.Add(tempdialogueUI.Class);
+	}
+	ConstructorHelpers::FClassFinder<UIH_WarningUI> tempwarningUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
+	if (tempwarningUI.Succeeded())
+	{
+		UIFactory.Add(tempwarningUI.Class);
 	}
 }
 
@@ -84,9 +90,10 @@ void ASH_Player::BeginPlay()
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
 
-	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), dieUIFactory);
-	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), loadingUIFactory);
-	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), dialogueUIFactory);
+	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), UIFactory[0]);
+	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
+	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
+	warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -140,6 +147,7 @@ void ASH_Player::interactionObject()
 		if (currNPC != nullptr)
 		{
 			currNPC->InteractNPC();
+			warningUI->AddToViewport();
 		}
 	}
 }

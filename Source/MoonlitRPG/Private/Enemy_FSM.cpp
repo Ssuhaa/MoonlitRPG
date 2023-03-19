@@ -18,6 +18,8 @@
 #include "IH_EnemyDamageUI.h"
 #include "WidgetActorBase.h"
 #include "IH_DamageActor.h"
+#include "MainDialogueUI.h"
+#include "NPCBase.h"
 
 
 // Sets default values for this component's properties
@@ -60,11 +62,18 @@ void UEnemy_FSM::BeginPlay()
 void UEnemy_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if(target->bInventoryOpen)
+	
+	if(target->bInventoryOpen || target->dialogueUI->npc != nullptr)
 	{
-		anim->animState = EEnemyState::Idle;
-		ai->StopMovement();
+		if (currHP <= 0)
+		{
+			ChangeState(EEnemyState::Die);
+		}
+		else
+		{ 
+			ChangeState(EEnemyState::Idle);
+		}
+
 		return;
 	}
 
@@ -144,6 +153,7 @@ void UEnemy_FSM::ChaseState()
 	float returnDist = FVector::Distance(originPos, target->GetActorLocation());
 	float chaseDist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
 
+
 	if (returnDist > moveRange)
 	{
 		ChangeState(EEnemyState::Return);
@@ -180,16 +190,16 @@ void UEnemy_FSM::AttackDelayState()
 
 	LookAtSmooth();
 
-
-	if (distance <= avoidRange && chaseCount < 3)
+	if (distance <= avoidRange && avoidCount < 3)
 	{
 		ChangeState(EEnemyState::Avoid);
 	}
 
-	if (chaseCount >= 3)
+	if (chaseCount > 3 || avoidCount > 3)
 	{
 		ChangeState(EEnemyState::Attack);
 		chaseCount = 0;
+		avoidCount = 0;
 	}
 
 	float randSec = FMath::RandRange(2, 3);
@@ -293,7 +303,7 @@ void UEnemy_FSM::DieState()
 		{
 			if (me->spawnItems.IsValidIndex(0))		// spawnItem 배열의 첫번째 요소가 있을 때
 			{
-				int32 randAmount = FMath::RandRange(1, 3);
+				int32 randAmount = FMath::RandRange(1, 2);
 				for (int32 i = 1; i <= randAmount; i++)
 				{
 					int32 itemNum = FMath::RandRange(0, me->spawnItems.Num()-1);
@@ -361,31 +371,36 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		{
 			me->GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 			me->compEnemyHP->SetVisibility(true);
+			me->compExclamation->SetVisibility(true);
 			bAttackEnd = false;
 			chaseCount++;
-			me->compExclamation->SetVisibility(true);
 			break;
 		}
 		case EEnemyState::Attack:
+		{
 			me->compEnemyHP->SetVisibility(true);
 			break;
+		}
 		case EEnemyState::AttackDelay:
+		{
 			me->compEnemyHP->SetVisibility(true);
 			break;
+		}
 		case EEnemyState::Avoid:
 		{
 			me->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
-			randomIndex = FMath::RandRange(0, 2);
-			randomRange = FMath::RandRange(85, 95);
 			me->compEnemyHP->SetVisibility(true);
+			randomIndex = FMath::RandRange(0, 2);
+			randomRange = FMath::RandRange(120, 130);
+			avoidCount++;
 			break;
 		}
 		case EEnemyState::Damage:
 		{
+			me->compEnemyHP->SetVisibility(true);
 			int32 randNum = FMath::RandRange(0, 1);
 			FString randomSection = FString::Printf(TEXT("Damage%d"), randNum);
 			me->PlayAnimMontage(enemyMontage, 1.0f, FName(*randomSection));
-			me->compEnemyHP->SetVisibility(true);
 // 			FVector direction = target->GetActorLocation() - me->GetActorLocation();
 // 			direction.Z = 0;
 // 			FRotator rotation = FRotationMatrix::MakeFromX(direction).Rotator();
@@ -399,9 +414,11 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			break;
 		}
 		case EEnemyState::Die:
-			bDiestart = true;
+		{
 			me->compEnemyHP->SetVisibility(false);
+			bDiestart = true;
 			break;
+		}
 		}
 	}
 }
@@ -476,7 +493,7 @@ bool UEnemy_FSM::PlayerCheck()
 	param.AddIgnoredActor(me);
 	FHitResult hitinfo;
 
-	bool bHit = GetWorld()->SweepSingleByChannel(hitinfo, me->GetActorLocation(), me->GetActorLocation()+me->GetActorForwardVector()*80, FQuat::Identity,
+	bool bHit = GetWorld()->SweepSingleByChannel(hitinfo, me->GetActorLocation(), me->GetActorLocation()+me->GetActorForwardVector()*100, FQuat::Identity,
 	ECC_Visibility, attackCollision, param);
 
 	if (bHit)

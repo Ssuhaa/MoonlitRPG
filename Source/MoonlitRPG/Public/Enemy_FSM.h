@@ -65,7 +65,7 @@ public:
 	float traceRange = 700.0f;		// 인지 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
-	float avoidRange = 70.0f;
+	float avoidRange = 90.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float randomRange;
@@ -74,7 +74,7 @@ public:
 	int32 randomIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
-	float attackRange = 100.0f;		// 공격 범위
+	float attackRange = 135.0f;		// 공격 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float moveRange = 2000.0f;		// 추격 범위
@@ -98,6 +98,7 @@ public:
 	FVector randPos;		// 랜덤 위치
 
 	int32 chaseCount = 0;
+	int32 avoidCount = 0;
 
 public:
 	void IdleState();	// 대기 상태

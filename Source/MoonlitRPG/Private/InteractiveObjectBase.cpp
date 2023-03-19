@@ -50,9 +50,11 @@ void AInteractiveObjectBase::BeginPlay()
 	Super::BeginPlay();
 
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
+
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
 //	UIH_InteractionUI* interactionUI = Cast<UIH_InteractionUI>(compInteractWidget->GetUserWidgetObject());
 	interactionUI->txt_Interaction->SetText(InteractName);
+	originPos = compSpawnPos->GetComponentLocation();
 }
 
 // Called every frame
@@ -83,17 +85,16 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 
 void AInteractiveObjectBase::Interaction()
 {
-	float randZ = FMath::RandRange(0, 360);
-	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
-
-	float randDist = FMath::RandRange(0, 50);
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		int32 randAmount = FMath::RandRange(3, 5);		// °³¼ö ·£´ý»Ì±â
+		int32 randAmount = FMath::RandRange(2, 4);		// °³¼ö ·£´ý»Ì±â
 
 		for (int32 i = 1; i <= randAmount; i++)
 		{
+			float randZ = FMath::RandRange(0, 360);
+			compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
+
 			int32 randIndex = FMath::RandRange(0, spawnItems.Num()-1);		// ¹è¿­ ¿ä¼Ò ·£´ý»Ì±â
 			GetWorld()->SpawnActor<AItemBase>(spawnItems[randIndex], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}

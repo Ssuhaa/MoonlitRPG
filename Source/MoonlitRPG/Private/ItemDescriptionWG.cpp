@@ -109,6 +109,10 @@ void UItemDescriptionWG::UpdateDescription()
 			Panel_Food->SetVisibility(ESlateVisibility::Visible);
 			Text_Heal->SetText(FText::AsNumber(SelectedSlotItem.iteminfomation.HealAmount));
 		}
+		else
+		{
+			Panel_Food->SetVisibility(ESlateVisibility::Hidden);
+		}
 		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
 	}
 

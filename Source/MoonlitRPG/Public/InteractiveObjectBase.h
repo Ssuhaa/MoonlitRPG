@@ -53,6 +53,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UIH_InteractionUI* interactionUI;
 
+	FVector originPos;
+
 public:
 	virtual void Interaction();
 };

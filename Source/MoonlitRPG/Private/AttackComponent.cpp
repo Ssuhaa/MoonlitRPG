@@ -206,7 +206,7 @@ void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage¸¦ ·£´ýÀ¸·
 	DamageChange(damageRange);
 	Target->FSM->ReceiveDamage(currDamage);                                                                                                                                                           
 
-	if (!Target->FSM->bDiestart)
+	if (Target->FSM->currHP > 0)
 	{
 		direction = Target->GetActorLocation() - player->GetActorLocation();
 		force = direction * damageRange.pushForce;

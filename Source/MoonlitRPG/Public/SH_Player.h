@@ -37,7 +37,7 @@ protected:
 
 
 	TSubclassOf<class UPlayerMainWG> MainWGFactory;
-
+	
 	UPROPERTY()
 	class UInputAction* fkey;
 	void interactionObject();
@@ -59,18 +59,17 @@ public:
 	class UAttackComponent* AttackComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;
+
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UIH_DieUI> dieUIFactory;
+	TArray<TSubclassOf<class UUserWidget>> UIFactory;
 	UPROPERTY(EditAnywhere)
 	class UIH_DieUI* dieUI;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UIH_LoadingUI> loadingUIFactory;
-	UPROPERTY(EditAnywhere)
 	class UIH_LoadingUI* loadingUI;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UMainDialogueUI> dialogueUIFactory;
-	UPROPERTY(EditAnywhere)
 	class UMainDialogueUI* dialogueUI;
+	UPROPERTY(EditAnywhere)
+	class UIH_WarningUI* warningUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
 	UPROPERTY()
@@ -83,4 +82,5 @@ public:
 	class UPlayerMainWG* MainHUD;
 
 	bool bInventoryOpen = false;
+	bool bFighting = false;
 };
