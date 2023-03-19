@@ -20,6 +20,9 @@ AItemBase::AItemBase()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent> (TEXT("ItemMesh"));
 	SetRootComponent(Mesh);
+	Mesh->SetRelativeLocation(FVector(0));
+	Mesh->SetSimulatePhysics(true);
+	Mesh->SetCollisionObjectType(ECC_GameTraceChannel3);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);

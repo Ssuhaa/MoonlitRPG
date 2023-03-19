@@ -41,7 +41,7 @@ void AHitObjectBase::DropItem()
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
 
-	float randDist = FMath::RandRange(60, 100);
+	float randDist = FMath::RandRange(130, 150);
 	FVector randForward = compSpawnPos->GetForwardVector() * randDist;
 	compSpawnPos->SetRelativeLocation(originSpawnPos + randForward);
 

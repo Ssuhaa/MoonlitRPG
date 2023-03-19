@@ -21,6 +21,7 @@ ANPCBase::ANPCBase()
 
 	capsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
 	SetRootComponent(capsuleComp);
+	capsuleComp->SetCollisionObjectType(ECC_GameTraceChannel3);
 	
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Compoennt"));
 	Mesh->SetupAttachment(RootComponent);

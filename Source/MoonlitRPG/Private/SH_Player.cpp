@@ -115,7 +115,7 @@ void ASH_Player::interactionObject()
 	FCollisionShape interColli = FCollisionShape::MakeSphere(120.0f);
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(this);
-	bool bhit = GetWorld()->SweepSingleByChannel(hitinfo, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_Visibility, interColli, param);
+	bool bhit = GetWorld()->SweepSingleByObjectType(hitinfo, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_GameTraceChannel3, interColli, param);
 
 	FVector collisionLoc = GetActorLocation();
 	collisionLoc.Z = 0;
@@ -123,6 +123,7 @@ void ASH_Player::interactionObject()
 
 	if (bhit)
 	{
+		
 		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
 		if (curritem != nullptr)
 		{

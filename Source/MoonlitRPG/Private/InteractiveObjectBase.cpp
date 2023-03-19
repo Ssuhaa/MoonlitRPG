@@ -24,10 +24,11 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
 	compMesh->SetupAttachment(RootComponent);
+	compMesh->SetCollisionObjectType(ECC_GameTraceChannel3);
 
 	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Position Component"));
 	compSpawnPos->SetupAttachment(RootComponent);
-	compSpawnPos->SetRelativeLocation(FVector(0, 0, 30));
+	compSpawnPos->SetRelativeLocation(FVector(0, 0, 50));
 
 // 	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
 // 	compInteractWidget->SetupAttachment(RootComponent);
@@ -84,6 +85,8 @@ void AInteractiveObjectBase::Interaction()
 {
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
+
+	float randDist = FMath::RandRange(0, 50);
 
 	if (spawnItems.IsValidIndex(0))
 	{
