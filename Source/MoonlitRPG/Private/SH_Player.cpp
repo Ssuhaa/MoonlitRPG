@@ -101,7 +101,7 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent != nullptr)
 	{
-		EnhancedInputComponent->BindAction(fkey, ETriggerEvent::Triggered, this, &ASH_Player::interactionObject);
+		EnhancedInputComponent->BindAction(fkey, ETriggerEvent::Triggered, this, &ASH_Player::interactionObject); //F키
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
@@ -119,7 +119,7 @@ void ASH_Player::interactionObject()
 
 	FVector collisionLoc = GetActorLocation();
 	collisionLoc.Z = 0;
-	DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
+	//DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
 
 	if (bhit)
 	{
