@@ -62,7 +62,6 @@ struct FIteminfo
 		&& PurchasePrice == Other.PurchasePrice 
 		&& HealAmount == Other.HealAmount;
 	}
-
 };
 
 

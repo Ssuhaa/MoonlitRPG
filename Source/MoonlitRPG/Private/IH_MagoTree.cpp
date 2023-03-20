@@ -24,5 +24,5 @@ void AIH_MagoTree::BeginPlay()
 void AIH_MagoTree::Interaction()
 {
 	dialogueUI->AddToViewport();
-	dialogueUI->txt_Name->SetText(FText(InteractName));
+	dialogueUI->Name->SetText(FText(InteractName));
 }
