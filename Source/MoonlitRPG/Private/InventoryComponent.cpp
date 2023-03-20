@@ -117,6 +117,7 @@ bool UInventoryComponent::WeaponOff(FInvenItem ChangeItem)
 	{
 		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
 		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[0]);
+		Player->AttackComp->WeaponChange(EWeaponType::None);
 		return true;
 	}
 	return false;
@@ -136,7 +137,7 @@ bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 		//바꿀 무기의 착용여부를 변경.
 		invenItemArr[index].weaponinfomaiton.isEquip = true;
 		//플레이어 어택컴포넌트에 정보를 전달.
-		Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton);
+		Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton.WeaponType);
 		int32 MeshNum = int32(invenItemArr[index].weaponinfomaiton.WeaponType);
 		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[MeshNum]);
 		return true;

@@ -18,9 +18,12 @@ protected:
 	virtual void NativeConstruct() override;
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_SelectLog;
+
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Click;
+
+
 	void SetText(FString Text);
 
 	int32 NextIndex;

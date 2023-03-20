@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -51,11 +51,14 @@ public:
 	void SetDialogue(int32 Next);
 
 
+
 public:
+
 	bool ReadCSVFile(FString CVSName);
 	void OnClikedNextButton(int32 Nextindex);
 
 	TArray<FString> CsvRows;
+	TArray<FString> CsvColumns;
 	FString Text;
 	FString Select1;
 	FString Select2;
@@ -64,4 +67,6 @@ public:
 	int32 Next1;
 	int32 Next2;
 	int32 Next3;
+
+	FString PlayerName = TEXT("익현");
 };
