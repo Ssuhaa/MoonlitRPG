@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf <class AItemBase>> spawnItems;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf <class AItemBase>> spawnMoney;
+
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compExclamation;
 

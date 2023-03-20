@@ -147,7 +147,7 @@ void ASH_Player::interactionObject()
 		if (currNPC != nullptr)
 		{
 			currNPC->InteractNPC();
-			warningUI->AddToViewport();
+//			warningUI->AddToViewport();
 		}
 	}
 }
