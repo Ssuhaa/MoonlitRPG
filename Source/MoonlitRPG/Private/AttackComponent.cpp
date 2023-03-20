@@ -231,9 +231,10 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength * 0.5f;
 	float halfHeight = damageRange.attackLength * 0.5f + damageRange.attackRadius;
 	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
-	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
+	// DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
 
-	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(), player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);
+	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(),
+	player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);
 
 	if (bHits)
 	{
