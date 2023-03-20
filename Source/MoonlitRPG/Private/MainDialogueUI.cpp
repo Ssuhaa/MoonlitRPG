@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MainDialogueUI.h"
@@ -32,6 +32,7 @@ UMainDialogueUI::UMainDialogueUI(const FObjectInitializer& ObjectInitializer) : 
 void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	ReadCSVFile(TEXT("Dialogue"));
 
 	
@@ -91,11 +92,15 @@ bool UMainDialogueUI::ReadCSVFile(FString CVSName)
 
 void UMainDialogueUI::SetDialogue(int32 Next)
 {
-	TArray<FString> CsvColumns;
-
+	
 	if (CsvRows.IsValidIndex(Next))
 	{
-		CsvRows[Next].ParseIntoArray(CsvColumns, TEXT(",")); //ÄŞ¸¶¸¦ ±âÁØÀ¸·Î ´Ü¾î¸¦ ²÷¾î¼­ CSV¿­¿¡ ´ã¾Æ¶ó.
+		CsvRows[Next].ParseIntoArray(CsvColumns, TEXT(",")); //ì½¤ë§ˆë¥¼ ê¸°ì¤€ìœ¼ë¡œ ë‹¨ì–´ë¥¼ ëŠì–´ì„œ CSVì—´ì— ë‹´ì•„ë¼.
+	}
+	else
+	{
+		CloseButton();
+		return;
 	}
 
 	VB_Choices->ClearChildren();
@@ -109,26 +114,27 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		Pointer->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	//ÀÌ¸§[0], ³»¿ë[1], ¼±ÅÃÁö1[2], Next1[3], ¼±ÅÃÁö2[4], Next2[5], ¼±ÅÃÁö3[6], Next3[7]
+	//ì´ë¦„[0], ë‚´ìš©[1], ì„ íƒì§€1[2], Next1[3], ì„ íƒì§€2[4], Next2[5], ì„ íƒì§€3[6], Next3[7]
 	for (int32 i = 0; i < CsvColumns.Num(); i++)
 	{
+		CsvColumns[i].ReplaceInline(TEXT("{@}"), *PlayerName);
 		switch (i)
 		{
-		case 0: // ÀÌ¸§ ¼¼ÆÃ
+		case 0: // ì´ë¦„ ì„¸íŒ…
 			CharacterName = CsvColumns[0];
 			Name->SetText(FText::FromString(CharacterName));
 			break;
-		case 1: //³»¿ë ¼¼ÆÃ
+		case 1: //ë‚´ìš© ì„¸íŒ…
 			Text = CsvColumns[1];
 			Dialogue->SetText(FText::FromString(Text));
 			break;
-		case 2: //¼±ÅÃÁö ¼¼ÆÃÀ» ÇÑ ÈÄ ½ºÅ©·Ñ¿¡ Â÷ÀÏµå ½ÃÅ´.
+		case 2: //ì„ íƒì§€ ì„¸íŒ…ì„ í•œ í›„ ìŠ¤í¬ë¡¤ì— ì°¨ì¼ë“œ ì‹œí‚´.
 			Select1 = CsvColumns[2];
 			Buttons[0]->SetText(Select1);
 			Buttons[0]->DialogueWG = this;
 			VB_Choices->AddChild(Buttons[0]);
 			break;
-		case 3: //½ºÆ®¸µÀ» ¼ıÀÚ·Î ¹Ù²ã¼­ Next¿¡ ÀúÀå.
+		case 3: //ìŠ¤íŠ¸ë§ì„ ìˆ«ìë¡œ ë°”ê¿”ì„œ Nextì— ì €ì¥.
 			Next1 = FCString::Atoi(*CsvColumns[3]);
 			Buttons[0]->NextIndex = Next1;
 			break;
@@ -160,5 +166,5 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 void UMainDialogueUI::OnClikedNextButton(int32 Nextindex)
 {
 	CurrNext = Nextindex;
-	SetDialogue(Nextindex); //ROW, ÇàÀ» ÁöÁ¤ÇØ¼­ ´ëÈ­ ¼¼ÆÃ.
+	SetDialogue(Nextindex); //ROW, í–‰ì„ ì§€ì •í•´ì„œ ëŒ€í™” ì„¸íŒ….
 }

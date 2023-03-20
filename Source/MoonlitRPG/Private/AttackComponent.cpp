@@ -168,9 +168,9 @@ void UAttackComponent::SpecialAttack()
 	}
 }
 
-void UAttackComponent::WeaponChange(FWeaponinfo weaponInfo)
+void UAttackComponent::WeaponChange(EWeaponType weaponType)
 {
-	currWeapon = weaponInfo.WeaponType;
+	currWeapon = weaponType;
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수

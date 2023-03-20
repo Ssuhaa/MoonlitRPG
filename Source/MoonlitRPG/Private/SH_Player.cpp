@@ -26,6 +26,7 @@ ASH_Player::ASH_Player()
 {
 	GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
 	GetMesh()->SetRelativeLocation(FVector(0,0,-90));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);

@@ -127,7 +127,7 @@ public:
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);
 	void PlayAttackMontage(FString montName);
-	void WeaponChange(FWeaponinfo weaponInfo);
+	void WeaponChange(EWeaponType weaponType);
 	
 	FVector direction;
 	FVector force;
