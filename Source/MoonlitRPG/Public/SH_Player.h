@@ -60,6 +60,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;
 
+
+
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class UUserWidget>> UIFactory;
 	UPROPERTY(EditAnywhere)
@@ -83,4 +85,7 @@ public:
 
 	bool bInventoryOpen = false;
 	bool bFighting = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class USkeletalMesh*> PlayerMesh;
 };

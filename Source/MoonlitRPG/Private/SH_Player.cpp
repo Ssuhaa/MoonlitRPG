@@ -20,6 +20,7 @@
 #include "NPCBase.h"
 #include "MainDialogueUI.h"
 #include "IH_WarningUI.h"
+#include <Engine/SkeletalMesh.h>
 
 ASH_Player::ASH_Player()
 {
@@ -76,7 +77,29 @@ ASH_Player::ASH_Player()
 	{
 		UIFactory.Add(tempwarningUI.Class);
 	}
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh1(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter.SK_SdCharacter'"));
+	if(tempMesh1.Succeeded())
+	{
+		PlayerMesh.Add(tempMesh1.Object);
+	}	
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));
+	if(tempMesh2.Succeeded())
+	{
+		PlayerMesh.Add(tempMesh2.Object);
+	}	
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh3(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WTD.SK_SdCharacter_WTD'"));
+	if(tempMesh3.Succeeded())
+	{
+		PlayerMesh.Add(tempMesh3.Object);
+	}	
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh4(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_LS_fishingrob.SK_SdCharacter_LS_fishingrob'"));
+	if(tempMesh4.Succeeded())
+	{
+		PlayerMesh.Add(tempMesh4.Object);
+	}
 }
+
 
 void ASH_Player::BeginPlay()
 {

@@ -82,7 +82,9 @@ void UFoodPopup::OnClickedUse()
 		{
 			//HP 회복 호출
 			HealCallAndUpdatePopup();
-
+			CurrAmount = 1;
+			Text_Amount->SetText(FText::AsNumber(CurrAmount));
+			UpdateHPBar();
 		}
 		else 
 		{
@@ -123,7 +125,6 @@ void UFoodPopup::OnClickedFullPopup()
 void UFoodPopup::HealCallAndUpdatePopup()
 {
 	Player->HealPlayer(SelectedSlot->invenInfo.iteminfomation.HealAmount * CurrAmount);
-	UpdateHPBar();
 	int32 result = Player->InvenComp->MinusItemAmount(SelectedSlot->invenInfo, CurrAmount);
 	invenWG->Setinventory();
 	if (result < 1)
@@ -135,8 +136,6 @@ void UFoodPopup::HealCallAndUpdatePopup()
 	else
 	{
 		SelectedSlot->UpdateSlot(SelectedSlot->invenInfo);
-		CurrAmount = 1;
-		Text_Amount->SetText(FText::AsNumber(CurrAmount));
 	}
 }
 
