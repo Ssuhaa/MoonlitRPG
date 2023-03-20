@@ -100,7 +100,7 @@ void AInteractiveObjectBase::Interaction()
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		int32 randAmount = FMath::RandRange(1, 2);		// °³¼ö ·£´ý»Ì±â
+		int32 randAmount = FMath::RandRange(3, 4);		// °³¼ö ·£´ý»Ì±â
 
 		for (int32 i = 1; i <= randAmount; i++)
 		{

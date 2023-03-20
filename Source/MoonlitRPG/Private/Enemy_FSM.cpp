@@ -202,7 +202,7 @@ void UEnemy_FSM::AttackDelayState()
 		avoidCount = 0;
 	}
 
-	float randSec = FMath::RandRange(2, 3);
+	float randSec = FMath::RandRange(3, 7);
 
 	if (DelayComplete(randSec))
 	{
