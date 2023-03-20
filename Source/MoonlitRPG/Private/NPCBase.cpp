@@ -87,5 +87,5 @@ void ANPCBase::InteractNPC()
 	bTalking = true;
 	player->dialogueUI->npc = this;
 	player->dialogueUI->AddToViewport();
-	player->dialogueUI->txt_Name->SetText(FText(NPCName));
+	player->dialogueUI->Name->SetText(FText(NPCName));
 }

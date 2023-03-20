@@ -13,17 +13,25 @@ UCLASS()
 class MOONLITRPG_API UMainDialogueUI : public UUserWidget
 {
 	GENERATED_BODY()
-	
+	UMainDialogueUI(const FObjectInitializer& ObjectInitializer);
 public:
 	virtual void NativeConstruct() override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* btn_Close;
-
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* txt_Name;
+	class UTextBlock* Name;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Dialogue;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Pointer;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* VB_Choices;
 
+
+	UPROPERTY(EditAnywhere, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* PointerAnim;
 	UPROPERTY(EditAnywhere, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* DialogueOpenAnim;
 	
@@ -35,4 +43,25 @@ public:
 
 	UFUNCTION()
 	void CloseButton();
+
+	TSubclassOf<class UDialogueButtonWG> buttonFactory;
+	TArray<class UDialogueButtonWG*> Buttons;
+
+	int32 CurrNext = 0;
+	void SetDialogue(int32 Next);
+
+
+public:
+	bool ReadCSVFile(FString CVSName);
+	void OnClikedNextButton(int32 Nextindex);
+
+	TArray<FString> CsvRows;
+	FString Text;
+	FString Select1;
+	FString Select2;
+	FString Select3;
+	FString CharacterName;
+	int32 Next1;
+	int32 Next2;
+	int32 Next3;
 };
