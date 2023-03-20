@@ -215,7 +215,7 @@ void ASH_Player::RevivePlayer()
 	}
 	else
 	{
-		SetActorLocation(warpPoint->compSpawnPos->GetComponentLocation());
+		SetActorLocation(warpPoint->compSpawnPos->GetComponentLocation()+warpPoint->compSpawnPos->GetUpVector()*45);
 		SetActorRotation(warpPoint->compSpawnPos->GetComponentRotation());
 		dieUI->minDist = 10000;
 	}

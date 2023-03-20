@@ -40,7 +40,7 @@ public:
 	TArray<TSubclassOf<class AItemBase>> spawnItems;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<TSubclassOf<class AItemBase>> spawnMoney;
+	TArray<TSubclassOf<class AMoney>> spawnMoney;
 
 	class ASH_Player* player;
 

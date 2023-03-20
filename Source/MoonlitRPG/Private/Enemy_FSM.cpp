@@ -306,7 +306,7 @@ void UEnemy_FSM::DieState()
 				int32 randMoney = FMath::RandRange(2,3);
 				for (int32 i = 1; i <= randMoney; i++)
 				{
-					GetWorld()->SpawnActor<AItemBase>(me->spawnMoney[0], me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
+					GetWorld()->SpawnActor<AMoney>(me->spawnMoney[0], me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
 				}
 			}
 

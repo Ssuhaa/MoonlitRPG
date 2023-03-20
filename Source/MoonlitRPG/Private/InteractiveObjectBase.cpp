@@ -94,7 +94,7 @@ void AInteractiveObjectBase::Interaction()
 			float randZ = FMath::RandRange(0, 360);
 			compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
 
-			GetWorld()->SpawnActor<AItemBase>(spawnMoney[0], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+			GetWorld()->SpawnActor<AMoney>(spawnMoney[0], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 		}
 	}
 

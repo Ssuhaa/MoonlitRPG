@@ -22,12 +22,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 public:
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* compMesh;
+	
 	UPROPERTY(EditAnywhere)
 	int32 minMoney = 50;
 
 	UPROPERTY(EditAnywhere)
 	int32 maxMoney = 150;
 
+	UPROPERTY()
+	class ASH_Player* player;
+
+	UPROPERTY()
+	float power = 5;
+
+	float currTime = 0;
 };
