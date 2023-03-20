@@ -85,10 +85,22 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 
 void AInteractiveObjectBase::Interaction()
 {
+	if (spawnMoney.IsValidIndex(0))
+	{
+		int32 randCoin = FMath::RandRange(2, 3);
+
+		for (int32 i = 1; i <= randCoin; i++)
+		{
+			float randZ = FMath::RandRange(0, 360);
+			compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
+
+			GetWorld()->SpawnActor<AItemBase>(spawnMoney[0], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+		}
+	}
 
 	if (spawnItems.IsValidIndex(0))
 	{
-		int32 randAmount = FMath::RandRange(2, 4);		// °³¼ö ·£´ý»Ì±â
+		int32 randAmount = FMath::RandRange(1, 2);		// °³¼ö ·£´ý»Ì±â
 
 		for (int32 i = 1; i <= randAmount; i++)
 		{

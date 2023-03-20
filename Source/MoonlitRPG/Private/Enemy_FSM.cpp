@@ -301,6 +301,15 @@ void UEnemy_FSM::DieState()
 	{
 		if (DelayComplete(2.0))
 		{
+			if (me->spawnMoney.IsValidIndex(0))
+			{
+				int32 randMoney = FMath::RandRange(2,3);
+				for (int32 i = 1; i <= randMoney; i++)
+				{
+					GetWorld()->SpawnActor<AItemBase>(me->spawnMoney[0], me->itemSpawnPos->GetComponentLocation(), me->itemSpawnPos->GetComponentRotation());
+				}
+			}
+
 			if (me->spawnItems.IsValidIndex(0))		// spawnItem 배열의 첫번째 요소가 있을 때
 			{
 				int32 randAmount = FMath::RandRange(1, 2);
@@ -391,7 +400,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 			me->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 			me->compEnemyHP->SetVisibility(true);
 			randomIndex = FMath::RandRange(0, 2);
-			randomRange = FMath::RandRange(120, 130);
+			randomRange = FMath::RandRange(85, 95);
 			avoidCount++;
 			break;
 		}
