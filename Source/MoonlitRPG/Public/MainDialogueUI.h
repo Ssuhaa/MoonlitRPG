@@ -45,6 +45,8 @@ public:
 	void CloseButton();
 
 	TSubclassOf<class UDialogueButtonWG> buttonFactory;
+
+	UPROPERTY()
 	TArray<class UDialogueButtonWG*> Buttons;
 
 	int32 CurrNext = 0;
@@ -55,6 +57,7 @@ public:
 public:
 
 	bool ReadCSVFile(FString CVSName);
+	UFUNCTION()
 	void OnClikedNextButton(int32 Nextindex);
 
 	TArray<FString> CsvRows;
