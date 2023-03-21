@@ -18,12 +18,12 @@ UItemDescriptionWG::UItemDescriptionWG(const FObjectInitializer& ObjectInitializ
 	{
 		BGarray.Add(tempT.Object); //0번 Common
 	}
-	ConstructorHelpers::FObjectFinder <UTexture2D> tempT1(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/DescriptionBG_RA.DescriptionBG_RA'"));
+	ConstructorHelpers::FObjectFinder <UTexture2D> tempT1(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/DescriptionBG_Rare.DescriptionBG_Rare'"));
 	if (tempT1.Succeeded())
 	{
 		BGarray.Add(tempT1.Object);	//1번 Rare
 	}
-	ConstructorHelpers::FObjectFinder <UTexture2D> tempT2(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/DescriptionUinque_Rare.DescriptionUinque_Rare'"));
+	ConstructorHelpers::FObjectFinder <UTexture2D> tempT2(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/DescriptionBG_Uinque.DescriptionBG_Uinque'"));
 	if (tempT2.Succeeded())
 	{
 		BGarray.Add(tempT2.Object); //2번 Uinque
