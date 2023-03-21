@@ -33,8 +33,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compSpawnPos;
 
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-// 	class UWidgetComponent* compInteractWidget;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* interactionImg;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AItemBase>> spawnItems;

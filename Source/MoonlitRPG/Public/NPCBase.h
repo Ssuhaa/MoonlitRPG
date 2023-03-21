@@ -43,6 +43,9 @@ public:
 	class UIH_InteractionUI* interactionUI;
 
 	UPROPERTY(EditAnywhere)
+	class UTexture2D* interactionImg;
+
+	UPROPERTY(EditAnywhere)
 	FText NPCName;
 
 	void InteractNPC();

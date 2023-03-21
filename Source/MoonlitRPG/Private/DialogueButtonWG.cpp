@@ -4,6 +4,7 @@
 #include "DialogueButtonWG.h"
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Components/Button.h>
+#include "MainDialogueUI.h"
 
 void UDialogueButtonWG::NativeConstruct()
 {

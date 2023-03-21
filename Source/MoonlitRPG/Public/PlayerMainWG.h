@@ -44,6 +44,8 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UVerticalBox* InteractionBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UVerticalBox* ItemGetBox;
 	
 	void UpdateStamina(float Stamina, float MaxStamina);
 	void UpdateEtime(float Etime);

@@ -1,10 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Money.h"
 #include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
 #include "InventoryComponent.h"
+#include "IH_GetItemUI.h"
+#include "PlayerMainWG.h"
+#include <UMG/Public/Components/VerticalBox.h>
+#include <UMG/Public/Components/TextBlock.h>
+#include <UMG/Public/Components/Image.h>
 
 // Sets default values
 AMoney::AMoney()
@@ -14,6 +19,18 @@ AMoney::AMoney()
 
 	compMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(compMesh);
+
+	ConstructorHelpers::FClassFinder<UIH_GetItemUI>tempgetUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_GetItem.WG_GetItem_C'"));
+	if (tempgetUI.Succeeded())
+	{
+		getitemUIFactory = tempgetUI.Class;
+	}
+
+	ConstructorHelpers::FObjectFinder<UTexture2D>temptexture(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/UI_money.UI_money'"));
+	if (temptexture.Succeeded())
+	{
+		coinImage = temptexture.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +39,10 @@ void AMoney::BeginPlay()
 	Super::BeginPlay();
 	
 	compMesh->SetSimulatePhysics(true);
+	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+
+	getItemUI = CreateWidget<UIH_GetItemUI>(GetWorld(), getitemUIFactory);
+	getItemUI->img_Get->SetBrushFromTexture(coinImage);
 }
 
 // Called every frame
@@ -38,28 +59,41 @@ void AMoney::Tick(float DeltaTime)
 			compMesh->SetSimulatePhysics(false);
 		}
 
-		FVector P0 = GetActorLocation();
-		FVector V = player->GetActorLocation() - GetActorLocation();
-		FVector Vt = V * DeltaTime * power;
-		FVector P = P0 + Vt;
+		value += DeltaTime * 0.01;
+
+		if (value > 1)
+		{
+			value = 1;
+		}
+
+		float currSpeed = FMath::Lerp(startSpeed, targetSpeed, value);
+
+		FVector Vt = (player->GetActorLocation() - GetActorLocation()) * currSpeed * DeltaTime;
+		FVector P = GetActorLocation() + Vt;
 	
 		SetActorLocation(P);
+
+		float distance = FVector::Distance(player->GetActorLocation(), GetActorLocation());
+
+		if (distance < 50)
+		{
+			GetMoney(minMoney, maxMoney);
+		}
 	}
 }
 
-void AMoney::NotifyActorBeginOverlap(AActor* OtherActor)
+void AMoney::GetMoney(int32 min, int32 max)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
+	int32 randMoney = FMath::RandRange(min, max);
+	player->InvenComp->Money += randMoney;
+	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("문 x %d"), randMoney)));
 
-	if (OtherActor != this)
+	int32 widgetCount = player->MainHUD->ItemGetBox->GetChildrenCount();
+
+	if (widgetCount < 7)
 	{
-		player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-
-		if (OtherActor == player)
-		{
-			int32 randMoney = FMath::RandRange(minMoney, maxMoney);
-			player->InvenComp->Money += randMoney;
-			Destroy();
-		}
+		player->MainHUD->ItemGetBox->AddChild(getItemUI);
 	}
+
+	Destroy();
 }

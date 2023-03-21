@@ -123,6 +123,7 @@ public:
 
 	void NextCombo();
 	void DamageChange(FDamageRange damageRangeType);
+	void SkillDamageChange(FDamageRange damageRangeType);
 	void TargetCheck(FDamageRange damageRange);
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);
@@ -133,6 +134,7 @@ public:
 	FVector force;
 
 	int32 attackCount = 0;
+	float skillPercent = 1.0f;
 	bool isAttacking = false;
 	bool isSpecialAttacking = false;
 	bool goToNextCombo = false;

@@ -12,6 +12,7 @@
 #include <UMG/Public/Components/VerticalBox.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include "MainDialogueUI.h"
+#include <UMG/Public/Components/Image.h>
 
 // Sets default values
 ANPCBase::ANPCBase()
@@ -42,6 +43,7 @@ void ANPCBase::BeginPlay()
 
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
 	interactionUI->txt_Interaction->SetText(NPCName);
+	interactionUI->img_Interact->SetBrushFromTexture(interactionImg);
 }
 
 // Called every frame

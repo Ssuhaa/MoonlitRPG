@@ -4,36 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "IH_InteractionUI.generated.h"
+#include "IH_GetItemUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOONLITRPG_API UIH_InteractionUI : public UUserWidget
+class MOONLITRPG_API UIH_GetItemUI : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
+protected:
 	virtual void NativeConstruct() override;
-
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ItemGetAnim;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget))
-	class UTextBlock* txt_Interaction;
+	class UOverlay* overlay_Get;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UImage* img_Interact;
+	class UTextBlock* txt_ItemName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidgetAnim), Transient)
-	class UWidgetAnimation* OpenAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UImage* img_Get;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
-	class UWidgetAnimation* PointerAnim;
-
-	bool bAnimPlay = false;
-
-public:
-	void PlayOpenAnim();
+	float currTime = 0;
 };

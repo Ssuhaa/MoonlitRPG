@@ -204,6 +204,27 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재�
 void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage를 랜덤으로 뽑고 Enemy를 공격하는 함수
 {
 	DamageChange(damageRange);
+
+	switch (damageRange.damageType)
+	{
+		case EDamageType::DG_Intensive1:
+		case EDamageType::GS_Intensive1:
+		skillPercent = FMath::RandRange(1.3f, 1.4f);
+		break;
+		case EDamageType::DG_Intensive2:
+		case EDamageType::GS_Intensive2:
+		skillPercent = FMath::RandRange(1.5f, 1.6f);
+		break;
+		case EDamageType::DG_Special1:
+		skillPercent = FMath::RandRange(1.6f, 1.7f);
+		break;
+		case EDamageType::GS_Special1:
+		skillPercent = FMath::RandRange(2.0f, 2.2f);
+		break;
+	}
+
+	currDamage *= skillPercent;
+
 	Target->FSM->ReceiveDamage(currDamage);                                                                                                                                                           
 
 	if (Target->FSM->currHP > 0)
@@ -326,7 +347,8 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Hit")))
 			{
 				HitObject = Cast<AHitObjectBase>(hitinfos[i].GetActor());
-				if (HitObject != nullptr)
+
+				if (currWeapon != EWeaponType::None &&  HitObject != nullptr)
 				{
 					HitObject->DropItem();
 				}
@@ -340,15 +362,40 @@ void UAttackComponent::DamageChange(FDamageRange damageRangeType)
 	int32 index = player->InvenComp->CheckWeaponisEquip();
 	float currPower = 0;
 
-	if (index > -1)
+	if (index > -1)	// 무기를 착용하고 있으면
 	{
-		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;
+		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;	// 해당 무기의 공격력을 저장한다.
 	}
 
-	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
+	// 무기의 공격력만큼 더한 값을 데미지로 뽑는다.
 	currDamage = FMath::RandRange(damageRangeType.minDamage+int32(currPower), damageRangeType.maxDamage+int32(currPower));
+	float randPercent = FMath::RandRange(0.7f, 1.0f);
+	currDamage*=randPercent;	// 0.7~1.0배가 현재 공격력이 된다.
 
-	if (iscriticAttack)
+	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
+	if (iscriticAttack)		// 20% 이하일 때 크리티컬 데미지를 입힌다.
+	{
+		currDamage *= 3;
+	}
+}
+
+void UAttackComponent::SkillDamageChange(FDamageRange damageRangeType)
+{
+	int32 index = player->InvenComp->CheckWeaponisEquip();
+	float currPower = 0;
+
+	if (index > -1)	// 무기를 착용하고 있으면
+	{
+		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;	// 해당 무기의 공격력을 저장한다.
+	}
+
+	// 무기의 공격력만큼 더한 값을 데미지로 뽑는다.
+	currDamage = FMath::RandRange(damageRangeType.minDamage + int32(currPower), damageRangeType.maxDamage + int32(currPower));
+	float randPercent = FMath::RandRange(1.2f, 1.3f);
+	currDamage *= randPercent;	// 0.7~1.0배가 현재 공격력이 된다.
+
+	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
+	if (iscriticAttack)		// 20% 이하일 때 크리티컬 데미지를 입힌다.
 	{
 		currDamage *= 3;
 	}

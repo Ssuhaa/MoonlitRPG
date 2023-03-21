@@ -12,6 +12,7 @@
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Components/VerticalBox.h>
 #include "PlayerMainWG.h"
+#include <UMG/Public/Components/Image.h>
 
 // Sets default values
 AInteractiveObjectBase::AInteractiveObjectBase()
@@ -30,17 +31,10 @@ AInteractiveObjectBase::AInteractiveObjectBase()
 	compSpawnPos->SetupAttachment(RootComponent);
 	compSpawnPos->SetRelativeLocation(FVector(0, 0, 50));
 
-// 	compInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interact Widget Component"));
-// 	compInteractWidget->SetupAttachment(RootComponent);
-// 	compInteractWidget->SetRelativeLocation(FVector(0, 0, 50));
-// 	compInteractWidget->SetVisibility(false);
-
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractionUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractionUI.Succeeded())
 	{
 		interactUIFactory = tempinteractionUI.Class;
-// 		compInteractWidget->SetWidgetClass(tempinteractionUI.Class);
-// 		compInteractWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	}
 }
 
@@ -52,8 +46,8 @@ void AInteractiveObjectBase::BeginPlay()
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
 
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
-//	UIH_InteractionUI* interactionUI = Cast<UIH_InteractionUI>(compInteractWidget->GetUserWidgetObject());
 	interactionUI->txt_Interaction->SetText(InteractName);
+	interactionUI->img_Interact->SetBrushFromTexture(interactionImg);
 	originPos = compSpawnPos->GetComponentLocation();
 }
 
