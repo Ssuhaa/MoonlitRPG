@@ -12,7 +12,7 @@ UWidgetSlotBase::UWidgetSlotBase(const FObjectInitializer& ObjectInitializer) : 
 	{
 		BGarray.Add(tempT.Object); //0¹ø Common
 	}
-	ConstructorHelpers::FObjectFinder <UTexture2D> tempT1(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Slot_Rare_.T_Slot_Rare_'"));
+	ConstructorHelpers::FObjectFinder <UTexture2D> tempT1(TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Slot_Rare.T_Slot_Rare'"));
 	if (tempT1.Succeeded())
 	{
 		BGarray.Add(tempT1.Object);	//1¹ø Rare
