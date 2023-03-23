@@ -42,6 +42,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Quest;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* Button_ETC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Left;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Right;
@@ -78,6 +80,8 @@ protected:
 	void ClickedFood();
 	UFUNCTION()
 	void ClickedQuest();
+	UFUNCTION()
+	void ClickedETC();
 	UFUNCTION()
 	void LeftMenu();
 	UFUNCTION()

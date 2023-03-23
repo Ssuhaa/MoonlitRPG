@@ -14,7 +14,9 @@ enum class EItemType : uint8
 	Outfit,
 	Quest,
 	Food,
+	Etc,
 	Count,
+	
 };
 
 UENUM(BlueprintType)

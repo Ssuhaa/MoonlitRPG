@@ -127,7 +127,7 @@ void UAttackComponent::ResetAttack()
 
 void UAttackComponent::CommonAttack()
 {
-	if (player->bInventoryOpen == true) return;
+	if (player->bUIOpen == true) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
 		PlayAttackMontage("Attack0");
@@ -141,7 +141,7 @@ void UAttackComponent::CommonAttack()
 
 void UAttackComponent::intensiveAttack()
 {
-	if (player->bInventoryOpen == true) return;
+	if (player->bUIOpen == true) return;
 	if (currWeapon == EWeaponType::None) return;
 	if (!isAttacking && !player->playerAnim->bAir)
 	{
@@ -156,7 +156,7 @@ void UAttackComponent::intensiveAttack()
 
 void UAttackComponent::SpecialAttack()
 {
-	if (player->bInventoryOpen == true) return;
+	if (player->bUIOpen == true) return;
 	if (currWeapon == EWeaponType::None) return;
 	if (!isAttacking && !player->playerAnim->bAir && !isSpecialAttacking)
 	{

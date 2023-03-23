@@ -21,6 +21,7 @@
 #include "MainDialogueUI.h"
 #include "IH_WarningUI.h"
 #include <Engine/SkeletalMesh.h>
+#include "QuestComponent.h"
 
 ASH_Player::ASH_Player()
 {
@@ -41,6 +42,7 @@ ASH_Player::ASH_Player()
 
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
+	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
 
 	ConstructorHelpers::FClassFinder<UPlayerMainWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
 	if (tempWG.Succeeded())
@@ -136,6 +138,7 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
+		QuestComp->SetupPlayerInputComponent(EnhancedInputComponent);
 	}
 }
 

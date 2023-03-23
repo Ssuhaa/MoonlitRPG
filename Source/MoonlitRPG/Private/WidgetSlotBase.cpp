@@ -53,3 +53,10 @@ void UWidgetSlotBase::UpdateSlot(FInvenItem invenData)
 	int32 BGindex = int32(invenInfo.iteminfomation.itemgrade);
 	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
 }
+
+void UWidgetSlotBase::UpdateSlot(FIteminfo iteminfo)
+{
+	ItemImage->SetBrushFromTexture(iteminfo.itemImage);
+	int32 BGindex = int32(iteminfo.itemgrade);
+	SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
+}

@@ -33,6 +33,7 @@ public:
 	UFUNCTION()
 	virtual void SlotClicked();
 	virtual void UpdateSlot(FInvenItem invenData);
+	virtual void UpdateSlot(FIteminfo iteminfo);
 
 	UPROPERTY()
 	class UInventoryWG* invenWG;

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "DialogueTree.generated.h"
+#include "WidgetSlotBase.h"
+#include "QuestSlotWG.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOONLITRPG_API UDialogueTree : public UObject
+class MOONLITRPG_API UQuestSlotWG : public UWidgetSlotBase
 {
 	GENERATED_BODY()
 	

@@ -59,7 +59,8 @@ public:
 	class UAttackComponent* AttackComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UInventoryComponent* InvenComp;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class UQuestComponent* QuestComp;
 
 
 	UPROPERTY(EditAnywhere)
@@ -83,7 +84,7 @@ public:
 	UPROPERTY()
 	class UPlayerMainWG* MainHUD;
 
-	bool bInventoryOpen = false;
+	bool bUIOpen = false;
 	bool bFighting = false;
 
 	UPROPERTY(EditDefaultsOnly)

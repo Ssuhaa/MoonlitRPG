@@ -103,7 +103,7 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* En
 
 void UMoveComponent::Horizontal(const FInputActionValue& value)
 {
-	if(Player->bInventoryOpen == true) return;
+	if(Player->bUIOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.Y += Axis;
 	Player->playerAnim->bChangePose = false;
@@ -111,7 +111,7 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
 {
-	if (Player->bInventoryOpen == true) return;
+	if (Player->bUIOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.X += Axis;
 	Player->playerAnim->bChangePose = false;
@@ -119,7 +119,7 @@ void UMoveComponent::Vertical(const FInputActionValue& value)
 
 void UMoveComponent::Look(const FInputActionValue& value)
 {
-	if (Player->bInventoryOpen == true) return;
+	if (Player->bUIOpen == true) return;
 	FVector2D MouseAxis = value.Get<FVector2D>();
 
 	Player->AddControllerYawInput(MouseAxis.X);
@@ -128,7 +128,7 @@ void UMoveComponent::Look(const FInputActionValue& value)
 
 void UMoveComponent::Jump()
 {
-	if (Player->bInventoryOpen == true) return;
+	if (Player->bUIOpen == true) return;
 	Player->Jump();
 	Player->playerAnim->bChangePose = false;
 }
@@ -136,17 +136,7 @@ void UMoveComponent::Jump()
 
 void UMoveComponent::Dash()
 {
-	if (Player->bInventoryOpen == true) return;
-
-// 	UAnimInstance* currAnim = Player->GetMesh()->GetAnimInstance();
-// 	if (currAnim != nullptr)
-// 	{
-// 		UAnimMontage* currMont = currAnim->GetCurrentActiveMontage();
-// 		if (currMont != nullptr)
-// 		{
-// 			currAnim->Montage_Stop(0.2, currMont);
-// 		}
-// 	}
+	if (Player->bUIOpen == true) return;
 
 	if (Stamina > 30)
 	{

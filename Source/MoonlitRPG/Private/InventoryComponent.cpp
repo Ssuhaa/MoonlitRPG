@@ -60,7 +60,7 @@ void UInventoryComponent::SetupPlayerInputComponent(class UEnhancedInputComponen
 
 void UInventoryComponent::InventoryOpen()
 {
-	if (!inventory->IsInViewport()) //인벤토리가 열려있지 않으면
+	if (Player->bUIOpen == false && !inventory->IsInViewport()) //인벤토리가 열려있지 않으면
 	{
 		inventory->AddToViewport(); // 뷰포트에 띄운다.
 	}

@@ -68,7 +68,7 @@ void UInventoryWG::NativeConstruct() //위젯이 뷰포트에 보여질 때
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
-		Player->bInventoryOpen = true;
+		Player->bUIOpen = true;
 	}
 
 	Setinventory();
@@ -79,7 +79,7 @@ void UInventoryWG::NativeConstruct() //위젯이 뷰포트에 보여질 때
 void UInventoryWG::NativeDestruct()
 {
 	Super::NativeDestruct();
-
+	
 	SetSelectSlot.Clear();
 
 }
@@ -96,6 +96,7 @@ void UInventoryWG::ButtonBinding()
 	Button_Consum->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedConsum);
 	Button_Outfit->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedOutfit);
 	Button_Food->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedFood);
+	Button_ETC->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedETC);
 	Button_Quest->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedQuest);
 	Button_Right->OnPressed.AddUniqueDynamic(this, &UInventoryWG::RightMenu);
 	Button_Left->OnPressed.AddUniqueDynamic(this, &UInventoryWG::LeftMenu);
@@ -171,6 +172,11 @@ void UInventoryWG::ClickedQuest()
 	ChangeInven(EItemType::Quest);
 }
 
+void UInventoryWG::ClickedETC()
+{
+	ChangeInven(EItemType::Etc);
+}
+
 void UInventoryWG::LeftMenu()
 {
 	int32 index = int32(currinventype);
@@ -210,7 +216,6 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 {
 	currinventype = ChangeInvenType;
 	ClearInvenWGChild();
-
 	WrapBox->ClearChildren();
 	TArray<FInvenItem> FindArr = InvenComp->FindAllItemsType(currinventype);
 	if (!FindArr.IsEmpty())
@@ -228,22 +233,29 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 			WrapBox->AddChildToWrapBox(Slots[i]);
 		}
 	}
+	if (WrapBox->GetChildrenCount() != 0)
+	{
+		UInventorySlotWG* First = Cast<UInventorySlotWG>(WrapBox->GetChildAt(0));
+		ItemSlotClicked(First->Slotindex);
+	}
 
 	FText currslotName;
 	switch (currinventype)
 	{
 	case EItemType::Consum:
-		currslotName = FText::FromString(TEXT("소비창"));
+		currslotName = FText::FromString(TEXT("소비 창"));
 		break;
 	case EItemType::Outfit:
-		currslotName = FText::FromString(TEXT("장비창"));
+		currslotName = FText::FromString(TEXT("장비 창"));
 		break;
 	case EItemType::Quest:
-		currslotName = FText::FromString(TEXT("퀘스트창"));
+		currslotName = FText::FromString(TEXT("퀘스트 창"));
 		break;
 	case EItemType::Food:
-		currslotName = FText::FromString(TEXT("음식창"));
+		currslotName = FText::FromString(TEXT("음식 창"));
 		break;
+	case EItemType::Etc:
+		currslotName = FText::FromString(TEXT("기타 창"));
 	}
 	CurrSlot_Text->SetText(currslotName);
 }
@@ -261,7 +273,7 @@ void UInventoryWG::RemoveInventory()
 
 	FoodPopup->RemoveFromParent();
 	OutfitWG->RemoveFromParent(); 
-	Player->bInventoryOpen = false;
+	Player->bUIOpen = false;
 
 	RemoveFromParent();
 }
