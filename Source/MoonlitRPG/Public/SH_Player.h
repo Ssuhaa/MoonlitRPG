@@ -83,7 +83,7 @@ public:
 	UPROPERTY()
 	class UPlayerMainWG* MainHUD;
 
-	bool bInventoryOpen = false;
+	bool bUIOpen = false;
 	bool bFighting = false;
 
 	UPROPERTY(EditDefaultsOnly)

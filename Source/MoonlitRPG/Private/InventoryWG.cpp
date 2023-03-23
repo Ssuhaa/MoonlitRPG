@@ -68,7 +68,7 @@ void UInventoryWG::NativeConstruct() //위젯이 뷰포트에 보여질 때
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
-		Player->bInventoryOpen = true;
+		Player->bUIOpen = true;
 	}
 
 	Setinventory();
@@ -261,7 +261,7 @@ void UInventoryWG::RemoveInventory()
 
 	FoodPopup->RemoveFromParent();
 	OutfitWG->RemoveFromParent(); 
-	Player->bInventoryOpen = false;
+	Player->bUIOpen = false;
 
 	RemoveFromParent();
 }
