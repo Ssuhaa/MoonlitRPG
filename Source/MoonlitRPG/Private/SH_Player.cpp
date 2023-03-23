@@ -22,6 +22,7 @@
 #include "IH_WarningUI.h"
 #include <Engine/SkeletalMesh.h>
 #include "QuestComponent.h"
+#include "IH_PuzzleGuide.h"
 
 ASH_Player::ASH_Player()
 {
@@ -153,7 +154,7 @@ void ASH_Player::interactionObject()
 
 	FVector collisionLoc = GetActorLocation();
 	collisionLoc.Z = 0;
-	//DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
+	DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
 
 	if (bhit)
 	{
@@ -174,7 +175,12 @@ void ASH_Player::interactionObject()
 		if (currNPC != nullptr)
 		{
 			currNPC->InteractNPC();
-//			warningUI->AddToViewport();
+		}
+
+		APuzzleGuide* currGuide = Cast<APuzzleGuide>(hitinfo.GetActor());
+		if (currGuide != nullptr)
+		{
+			currGuide->MoveToPuzzleActor();
 		}
 	}
 }

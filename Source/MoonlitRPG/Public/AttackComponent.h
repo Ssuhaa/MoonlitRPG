@@ -73,6 +73,10 @@ protected:
 	class ASH_Player* player;
 	UPROPERTY()
 	class AHitObjectBase* HitObject;
+	UPROPERTY()
+	class AIH_Puzzle* HitPuzzle;
+	UPROPERTY()
+	TArray<class UStaticMeshComponent*> puzzleMesh;
 
 	UPROPERTY(EditAnywhere, Category = AttackValue) // 맞았을때 e 딜레이 주는거
 	float MinusDelayValue = 0.2f;

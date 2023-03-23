@@ -208,22 +208,23 @@ void UAttackComponent::EnemyAttack(FDamageRange damageRange)	// Damage를 랜덤으�
 	switch (damageRange.damageType)
 	{
 		case EDamageType::DG_Intensive1:
-		case EDamageType::GS_Intensive1:
+		case EDamageType::DG_Special1:
 		skillPercent = FMath::RandRange(1.3f, 1.4f);
 		break;
 		case EDamageType::DG_Intensive2:
-		case EDamageType::GS_Intensive2:
+		case EDamageType::DG_Special2:
 		skillPercent = FMath::RandRange(1.5f, 1.6f);
 		break;
-		case EDamageType::DG_Special1:
-		skillPercent = FMath::RandRange(1.6f, 1.7f);
+		case EDamageType::GS_Intensive2:
+		skillPercent = FMath::RandRange(2.0f, 2.2f);
 		break;
 		case EDamageType::GS_Special1:
-		skillPercent = FMath::RandRange(2.0f, 2.2f);
+		skillPercent = FMath::RandRange(2.5f, 2.6f);
 		break;
 	}
 
 	currDamage *= skillPercent;
+	skillPercent = 1.0f;	// 기본 공격을 위해 다시 초기화
 
 	Target->FSM->ReceiveDamage(currDamage);                                                                                                                                                           
 
