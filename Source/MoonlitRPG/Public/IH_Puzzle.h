@@ -57,8 +57,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
 
+	UPROPERTY(EditAnywhere)
+	TArray<class UMaterialInterface*> materialFactory;
+
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
 	void CheckAnswer();
-
-	bool getTreasure = false;
 };

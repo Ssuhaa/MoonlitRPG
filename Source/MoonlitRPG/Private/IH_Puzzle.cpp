@@ -19,6 +19,13 @@ AIH_Puzzle::AIH_Puzzle()
 	compBoxSpawnPos->SetupAttachment(RootComponent);
 	compBoxSpawnPos->SetRelativeLocation(FVector(-50, 0, 0));
 
+// 	for (int32 i = 0; i < 4; i++)
+// 	{
+// 		FString str = FString::Printf(TEXT("Puzzle%d"), i);
+// 		compMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(*str);
+// 		compMesh1->SetupAttachment(RootComponent);
+// 	}
+
 	compMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh1"));
 	compMesh1->SetupAttachment(RootComponent);
 	meshArr.Add(compMesh1);
@@ -66,6 +73,7 @@ void AIH_Puzzle::Tick(float DeltaTime)
 void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 {
 	hitMeshArr.Add(mesh);
+	mesh->SetMaterial(0, materialFactory[0]);
 	UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 	if (hitMeshArr.Num() == meshArr.Num())
 	{
@@ -86,6 +94,10 @@ void AIH_Puzzle::CheckAnswer()
 			}
 			else
 			{
+				for (int32 j = 0; j < hitMeshArr.Num(); j++)
+				{
+					hitMeshArr[j]->SetMaterial(0, materialFactory[1]);
+				}
 				hitMeshArr.Empty();
 				UE_LOG(LogTemp, Warning, TEXT("Bad"));
 			}
