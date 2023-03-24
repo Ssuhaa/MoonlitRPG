@@ -50,4 +50,15 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class APuzzleGuide> guideFactory;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<class UStaticMeshComponent*> hitMeshArr;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
+
+	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
+	void CheckAnswer();
+
+	bool getTreasure = false;
 };

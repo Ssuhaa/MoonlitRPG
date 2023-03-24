@@ -18,6 +18,7 @@
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "WeaponItemBase.h"
 #include "InventoryComponent.h"
+#include "IH_Puzzle.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -352,6 +353,20 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 				if (currWeapon != EWeaponType::None &&  HitObject != nullptr)
 				{
 					HitObject->DropItem();
+				}
+			}
+			else if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Puzzle")))
+			{
+				HitPuzzle = Cast<AIH_Puzzle>(hitinfos[i].GetActor());
+
+				if (HitPuzzle != nullptr)
+				{
+					UStaticMeshComponent* HitMesh = Cast<UStaticMeshComponent>(hitinfos[i].GetComponent());
+					if (HitMesh != nullptr)
+					{
+						HitPuzzle->ReceiveMeshArr(HitMesh);
+						UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
+					}
 				}
 			}
 		}

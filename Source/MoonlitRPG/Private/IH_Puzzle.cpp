@@ -40,6 +40,12 @@ AIH_Puzzle::AIH_Puzzle()
 	{
 		guideFactory = tempGuide.Class;
 	}
+
+	ConstructorHelpers::FClassFinder<AInteractiveObjectBase>tempBox(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_TreasureBox.BP_TreasureBox_C'"));
+	if (tempBox.Succeeded())
+	{
+		treasureBoxFactory = tempBox.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +61,48 @@ void AIH_Puzzle::BeginPlay()
 void AIH_Puzzle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
+{
+	hitMeshArr.Add(mesh);
+	UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
+	if (hitMeshArr.Num() == meshArr.Num())
+	{
+		CheckAnswer();
+	}
+}
+
+void AIH_Puzzle::CheckAnswer()
+{
+	if (hitMeshArr.IsValidIndex(0))
+	{
+		for (int32 i = 0; i < hitMeshArr.Num(); i++)
+		{
+			if (hitMeshArr[i] == meshArr[i])
+			{
+				hitMeshArr[i] = meshArr[i];
+				UE_LOG(LogTemp, Warning, TEXT("Good"));
+			}
+			else
+			{
+				hitMeshArr.Empty();
+				UE_LOG(LogTemp, Warning, TEXT("Bad"));
+			}
+		}
+	}
+
+	if (hitMeshArr.IsValidIndex(meshArr.Num()-1))
+	{
+		if (meshArr[meshArr.Num() - 1] == hitMeshArr[hitMeshArr.Num() - 1])
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Correct!!!!!!!!!!!"));
+			GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compBoxSpawnPos->GetComponentTransform());
+			puzzleGuide->Destroy();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("InCorrect!!!!!!!!!!!"));
+		}
+	}
+}
