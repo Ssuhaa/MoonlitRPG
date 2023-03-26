@@ -94,17 +94,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class UUserWidget>> interactUIFactory;
 
-// 	UPROPERTY(EditAnywhere)
-// 	TSubclassOf<class UIH_InteractionUI> interactUIFactory;
-
 	UPROPERTY(EditAnywhere)
 	class UIH_InteractionUI* interactionUI;
 
-// 	UPROPERTY(EditAnywhere)
-// 	TSubclassOf<class UIH_GetItemUI> getitemUIFactory;
-
 	UPROPERTY()
 	class UIH_GetItemUI* getItemUI;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* itemEffect;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UParticleSystem*> particleArr;
+
+	EItemgrade currGrade;
 
 	virtual void GetItem();
 	bool bAddWidget = false;

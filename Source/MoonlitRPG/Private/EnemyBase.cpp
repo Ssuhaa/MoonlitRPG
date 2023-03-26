@@ -10,6 +10,9 @@
 #include "ItemBase.h"
 #include "IH_EnemyDamageUI.h"
 #include "IH_ExclamationUI.h"
+#include <Particles/ParticleSystemComponent.h>
+#include "SH_Player.h"
+#include "AttackComponent.h"
 
 AEnemyBase::AEnemyBase()
 {
@@ -63,6 +66,24 @@ AEnemyBase::AEnemyBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel1);
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Enemy")));
+
+	hitImpact=CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact"));
+	hitImpact->SetupAttachment(RootComponent);
+	hitImpact->SetRelativeLocation(FVector(30, 0, -20));
+	hitImpact->SetRelativeScale3D(FVector(0.8));
+	hitImpact->SetActive(false);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
+	if (tempHit.Succeeded())
+	{
+		impactEffectArr.Add(tempHit.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCritical(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_1.P_Impact_1'"));
+	if (tempCritical.Succeeded())
+	{
+		impactEffectArr.Add(tempCritical.Object);
+	}
 }
 
 void AEnemyBase::BeginPlay()
@@ -93,4 +114,19 @@ void AEnemyBase::SetActive(bool bActive)
 	GetMesh()->SetVisibility(bActive);
 	GetMovementComponent()->SetActive(bActive);
 	FSM->SetActive(bActive);
+}
+
+void AEnemyBase::ImpactEffect()
+{
+	if (FSM->target->AttackComp->iscriticAttack)
+	{
+		hitImpact->SetTemplate(impactEffectArr[1]);
+		hitImpact->SetActive(true);
+	}
+	else
+	{
+		hitImpact->SetTemplate(impactEffectArr[0]);
+		hitImpact->SetRelativeScale3D(FVector(0.5));
+		hitImpact->SetActive(true);
+	}
 }

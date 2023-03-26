@@ -45,6 +45,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compExclamation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UParticleSystemComponent* hitImpact;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UParticleSystem*> impactEffectArr;
+
 public:
 	void SetActive(bool bActive);
+	void ImpactEffect();
 };

@@ -242,10 +242,12 @@ void UEnemy_FSM::ReceiveDamage(int32 damage)
 		if (currHP > 0)
 		{
 			ChangeState(EEnemyState::Damage);
+			me->ImpactEffect();
 		}
 		else
 		{
 			ChangeState(EEnemyState::Die);
+			me->ImpactEffect();
 			me->PlayAnimMontage(enemyMontage, 1.0f, FName(TEXT("Die")));
 		}
 	}

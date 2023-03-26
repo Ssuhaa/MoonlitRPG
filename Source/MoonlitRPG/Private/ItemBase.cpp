@@ -12,6 +12,7 @@
 #include <UMG/Public/Components/VerticalBox.h>
 #include "IH_GetItemUI.h"
 #include <UMG/Public/Components/Image.h>
+#include <Cascade/Classes/CascadeParticleSystemComponent.h>
 
 
 // Sets default values
@@ -23,6 +24,7 @@ AItemBase::AItemBase()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent> (TEXT("ItemMesh"));
 	SetRootComponent(Mesh);
 	Mesh->SetRelativeLocation(FVector(0));
+	Mesh->SetRelativeScale3D(FVector(0.3));
 	Mesh->SetSimulatePhysics(true);
 	Mesh->SetCollisionObjectType(ECC_GameTraceChannel3);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
@@ -40,6 +42,33 @@ AItemBase::AItemBase()
 	{
 		interactUIFactory.Add(tempgetItemUI.Class);
 	}
+
+	itemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Item Drop Effect"));
+	itemEffect->SetRelativeScale3D(FVector(0.3));
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCommon(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_5.P_Loot_5'"));
+	if (tempCommon.Succeeded())
+	{
+		particleArr.Add(tempCommon.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRare(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_3.P_Loot_3'"));
+	if (tempRare.Succeeded())
+	{
+		particleArr.Add(tempRare.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempUnique(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_4.P_Loot_4'"));
+	if (tempUnique.Succeeded())
+	{
+		particleArr.Add(tempUnique.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLegendary(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_1.P_Loot_1'"));
+	if (tempLegendary.Succeeded())
+	{
+		particleArr.Add(tempLegendary.Object);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -56,12 +85,31 @@ void AItemBase::BeginPlay()
 	getItemUI = CreateWidget< UIH_GetItemUI>(GetWorld(), interactUIFactory[1]);
 	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *ItemInformation.ItemName, 1)));
 	getItemUI->img_Get->SetBrushFromTexture(ItemInformation.itemImage);
+
+	currGrade = ItemInformation.itemgrade;
+	switch (currGrade)
+	{
+		case EItemgrade::Common:
+		itemEffect->SetTemplate(particleArr[0]);
+		break;
+		case EItemgrade::Rare:
+		itemEffect->SetTemplate(particleArr[1]);
+		break;
+		case EItemgrade::Unique:
+		itemEffect->SetTemplate(particleArr[2]);
+		break;
+		case EItemgrade::Legendary:
+		itemEffect->SetTemplate(particleArr[3]);
+		break;
+	}
 }
 
 // Called every frame
 void AItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	itemEffect->SetWorldLocation(Mesh->GetSocketLocation(TEXT("ItemEffect")));
 
 	FVector targetVector = Player->GetActorLocation() - GetActorLocation();
 	float dot = FVector::DotProduct(GetActorForwardVector(), targetVector.GetSafeNormal());
