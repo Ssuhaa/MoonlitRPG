@@ -1,10 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "QuestComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
 #include "QuestWG.h"
+#include "QuestNaviActor.h"
+#include <Kismet/GameplayStatics.h>
+#include "DataManager.h"
+#include "SH_Player.h"
 
 // Sets default values for this component's properties
 UQuestComponent::UQuestComponent()
@@ -28,15 +32,37 @@ UQuestComponent::UQuestComponent()
 }
 
 
+
+
+
+
 // Called when the game starts
 void UQuestComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	Player = Cast<ASH_Player>(GetOwner());
 	QuestWG = CreateWidget<UQuestWG>(GetWorld(), QuestFactory);
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
+
+	for (int32 i = 0; i < 3; i++)
+	{
+		AQuestNaviActor* CurrNavi = GetWorld()->SpawnActor<AQuestNaviActor>(AQuestNaviActor::StaticClass(), FVector(0), FRotator::ZeroRotator);
+		CurrNavi->SetActiveNaviWG(false);
+		QuestNavis.Add(CurrNavi);
+	}
 	// ...
-	
+
+	//처음 퀘스트
+	CompleteMainQuest();
 }
+
+void UQuestComponent::CompleteMainQuest()
+{
+	mainQuestIdx++;
+	UE_LOG(LogTemp, Error, TEXT("%s"), *DataManager->newQuestList[mainQuestIdx].description);
+	currGoalCount = 0;
+}
+
 
 
 // Called every frame
@@ -60,6 +86,7 @@ void UQuestComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* E
 
 void UQuestComponent::QuestUIOpen()
 {
+
 	if (Player->bUIOpen == false && !QuestWG->IsInViewport())
 	{
 		QuestWG->AddToViewport();

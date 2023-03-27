@@ -14,6 +14,7 @@
 #include "MainDialogueUI.h"
 #include <UMG/Public/Components/Image.h>
 
+
 // Sets default values
 ANPCBase::ANPCBase()
 {
@@ -42,7 +43,7 @@ void ANPCBase::BeginPlay()
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory);
-	interactionUI->txt_Interaction->SetText(NPCName);
+	interactionUI->txt_Interaction->SetText(FText::FromString(NPCName));
 	interactionUI->img_Interact->SetBrushFromTexture(interactionImg);
 }
 
@@ -88,6 +89,12 @@ void ANPCBase::InteractNPC()
 
 	bTalking = true;
 	player->dialogueUI->npc = this;
+	player->dialogueUI->ReadCSVFile(MakeCSVPath());
 	player->dialogueUI->AddToViewport();
-	player->dialogueUI->Name->SetText(FText(NPCName));
+}
+
+FString ANPCBase::MakeCSVPath()
+{
+	return FPaths::ProjectDir() + FString::Printf(TEXT("Dialogue/%s%d.csv"), *NPCName, DialogueNum); //CSV 파일명 Npc이름 + 번호
+
 }

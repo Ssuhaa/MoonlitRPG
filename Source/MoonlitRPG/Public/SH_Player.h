@@ -89,4 +89,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> PlayerMesh;
+
+
+	UPROPERTY()
+	class ADataManager* DataManager;
+		
 };

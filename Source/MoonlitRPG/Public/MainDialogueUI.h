@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DataManager.h"
 #include "MainDialogueUI.generated.h"
 
 /**
@@ -49,19 +50,22 @@ public:
 	UPROPERTY()
 	TArray<class UDialogueButtonWG*> Buttons;
 
-	int32 CurrNext = 0;
+	int32 CurrNext = 1;
 	void SetDialogue(int32 Next);
 
 
 
 public:
 
-	bool ReadCSVFile(FString CVSName);
+	void ReadCSVFile(FString CSVPath);
 	UFUNCTION()
 	void OnClikedNextButton(int32 Nextindex);
 
+	UPROPERTY()
 	TArray<FString> CsvRows;
+	UPROPERTY()
 	TArray<FString> CsvColumns;
+
 	FString Text;
 	FString Select1;
 	FString Select2;
