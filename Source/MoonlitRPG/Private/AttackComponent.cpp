@@ -19,6 +19,7 @@
 #include "WeaponItemBase.h"
 #include "InventoryComponent.h"
 #include "IH_Puzzle.h"
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -172,6 +173,13 @@ void UAttackComponent::SpecialAttack()
 void UAttackComponent::WeaponChange(EWeaponType weaponType)
 {
 	currWeapon = weaponType;
+}
+
+void UAttackComponent::ImpactEffect(FVector impactLoc)
+{
+	player->hitImpact->SetWorldLocation(impactLoc);
+	player->hitImpact->SetRelativeScale3D(FVector(0.5));
+	player->hitImpact->SetActive(true);
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
@@ -352,6 +360,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 
 				if (currWeapon != EWeaponType::None &&  HitObject != nullptr)
 				{
+					ImpactEffect(HitObject->GetActorLocation());
 					HitObject->DropItem();
 				}
 			}
@@ -364,8 +373,12 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 					UStaticMeshComponent* HitMesh = Cast<UStaticMeshComponent>(hitinfos[i].GetComponent());
 					if (HitMesh != nullptr)
 					{
-						HitPuzzle->ReceiveMeshArr(HitMesh);
-						UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
+						ImpactEffect(HitMesh->GetComponentLocation());
+						if (HitPuzzle->hitMeshArr.Num() < HitPuzzle->meshArr.Num())
+						{
+							HitPuzzle->ReceiveMeshArr(HitMesh);
+							UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
+						}
 					}
 				}
 			}

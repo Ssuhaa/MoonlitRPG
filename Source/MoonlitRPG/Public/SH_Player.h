@@ -79,6 +79,8 @@ public:
 	class AIH_WarpPoint* warpPoint = nullptr;
 	UPROPERTY(EditAnywhere)
 	class AInteractiveObjectBase* InteractiveObjects;
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* hitImpact;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()

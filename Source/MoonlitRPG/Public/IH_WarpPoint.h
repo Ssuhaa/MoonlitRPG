@@ -33,5 +33,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UIH_WarpActiveUI* warpUI;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* activeEffect;
+
 	void RemoveUI();
 };

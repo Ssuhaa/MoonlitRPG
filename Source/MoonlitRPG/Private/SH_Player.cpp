@@ -23,6 +23,7 @@
 #include <Engine/SkeletalMesh.h>
 #include "QuestComponent.h"
 #include "IH_PuzzleGuide.h"
+#include <Particles/ParticleSystemComponent.h>
 
 ASH_Player::ASH_Player()
 {
@@ -44,6 +45,16 @@ ASH_Player::ASH_Player()
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
+
+	hitImpact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact Effect"));
+	hitImpact->SetRelativeScale3D(FVector(1));
+	hitImpact->SetupAttachment(RootComponent);
+	
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
+	if (tempHit.Succeeded())
+	{
+		hitImpact->SetTemplate(tempHit.Object);
+	}
 
 	ConstructorHelpers::FClassFinder<UPlayerMainWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
 	if (tempWG.Succeeded())
@@ -108,10 +119,10 @@ ASH_Player::ASH_Player()
 void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
+
 	MainHUD = CreateWidget<UPlayerMainWG>(GetWorld(), MainWGFactory);
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
-
 
 	playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
@@ -121,6 +132,8 @@ void ASH_Player::BeginPlay()
 	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
 	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
 	warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
+
+	hitImpact->SetActive(false);
 }
 
 void ASH_Player::Tick(float DeltaTime)

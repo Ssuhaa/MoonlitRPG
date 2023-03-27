@@ -5,6 +5,7 @@
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include "ItemBase.h"
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values
 AHitObjectBase::AHitObjectBase()

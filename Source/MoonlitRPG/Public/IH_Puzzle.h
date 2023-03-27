@@ -43,6 +43,9 @@ public:
 	class UStaticMeshComponent* compMesh4;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UParticleSystemComponent* hitEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class UStaticMeshComponent*> meshArr;
 
 	UPROPERTY(EditAnywhere)
@@ -54,11 +57,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<class UStaticMeshComponent*> hitMeshArr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<class UStaticMeshComponent*> prevhitMeshArr;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
 
 	UPROPERTY(EditAnywhere)
 	TArray<class UMaterialInterface*> materialFactory;
+
+	int32 hitCount = 0;
+	bool isBoxSpawned = false;
 
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
 	void CheckAnswer();

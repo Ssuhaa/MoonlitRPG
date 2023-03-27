@@ -160,4 +160,3 @@ void AItemBase::GetItem()
 		Destroy();
 	}
 }
-

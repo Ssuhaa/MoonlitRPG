@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "PuzzleGuide.h"
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values
 AIH_Puzzle::AIH_Puzzle()
@@ -18,13 +19,6 @@ AIH_Puzzle::AIH_Puzzle()
 	compBoxSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("BoxSpawnPos Component"));
 	compBoxSpawnPos->SetupAttachment(RootComponent);
 	compBoxSpawnPos->SetRelativeLocation(FVector(-50, 0, 0));
-
-// 	for (int32 i = 0; i < 4; i++)
-// 	{
-// 		FString str = FString::Printf(TEXT("Puzzle%d"), i);
-// 		compMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(*str);
-// 		compMesh1->SetupAttachment(RootComponent);
-// 	}
 
 	compMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh1"));
 	compMesh1->SetupAttachment(RootComponent);
@@ -42,16 +36,26 @@ AIH_Puzzle::AIH_Puzzle()
 	compMesh4->SetupAttachment(RootComponent);
 	meshArr.Add(compMesh4);
 
+	hitEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Effect"));
+	hitEffect->SetRelativeScale3D(FVector(0.5));
+	hitEffect->SetupAttachment(RootComponent);
+
 	ConstructorHelpers::FClassFinder<APuzzleGuide>tempGuide(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_PuzzleGuider.BP_PuzzleGuider_C'"));
 	if (tempGuide.Succeeded())
 	{
 		guideFactory = tempGuide.Class;
 	}
 
-	ConstructorHelpers::FClassFinder<AInteractiveObjectBase>tempBox(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_TreasureBox.BP_TreasureBox_C'"));
+	ConstructorHelpers::FClassFinder<AInteractiveObjectBase>tempBox(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_Treasure.BP_Treasure_C'"));
 	if (tempBox.Succeeded())
 	{
 		treasureBoxFactory = tempBox.Class;
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
+	if (tempHit.Succeeded())
+	{
+		hitEffect->SetTemplate(tempHit.Object);
 	}
 }
 
@@ -62,6 +66,8 @@ void AIH_Puzzle::BeginPlay()
 
 	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compRoot->GetComponentLocation(), compRoot->GetComponentRotation());
 	puzzleGuide->ReceivePuzzleArr(meshArr);
+
+	hitEffect->SetActive(false);
 }
 
 // Called every frame
@@ -72,9 +78,32 @@ void AIH_Puzzle::Tick(float DeltaTime)
 
 void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 {
-	hitMeshArr.Add(mesh);
-	mesh->SetMaterial(0, materialFactory[0]);
-	UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
+	bool isDifferent = true;
+
+	if (hitMeshArr.IsValidIndex(0))
+	{
+		for (int32 i = 0; i < hitMeshArr.Num(); i++)
+		{
+			if (hitMeshArr[i] == mesh)
+			{
+				isDifferent = false;
+				break;
+			}
+		}
+		if (isDifferent)
+		{
+			hitMeshArr.Add(mesh);
+			mesh->SetMaterial(0, materialFactory[0]);
+			UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
+		}
+	}
+	else
+	{
+		hitMeshArr.Add(mesh);
+		mesh->SetMaterial(0, materialFactory[0]);
+		UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
+	}
+
 	if (hitMeshArr.Num() == meshArr.Num())
 	{
 		CheckAnswer();
@@ -110,6 +139,7 @@ void AIH_Puzzle::CheckAnswer()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Correct!!!!!!!!!!!"));
 			GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compBoxSpawnPos->GetComponentTransform());
+			isBoxSpawned = true;
 			puzzleGuide->Destroy();
 		}
 		else

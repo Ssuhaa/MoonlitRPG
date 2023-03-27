@@ -133,6 +133,7 @@ public:
 	void EnemyAttack(FDamageRange damageRange);
 	void PlayAttackMontage(FString montName);
 	void WeaponChange(EWeaponType weaponType);
+	void ImpactEffect(FVector impactLoc);
 	
 	FVector direction;
 	FVector force;

@@ -10,6 +10,7 @@
 #include <UMG/Public/Components/TextBlock.h>
 #include "PlayerMainWG.h"
 #include <UMG/Public/Components/VerticalBox.h>
+#include <Particles/ParticleSystemComponent.h>
 
 AIH_WarpPoint::AIH_WarpPoint()
 {
@@ -18,12 +19,22 @@ AIH_WarpPoint::AIH_WarpPoint()
 	{
 		warpUIFactory = tempActive.Class;
 	}
+
+	activeEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Active Effect"));
+	activeEffect->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/GoodFXLevelUp/FX/Particles/PS_GFXLU_Aura.PS_GFXLU_Aura'"));
+	if (tempActive.Succeeded())
+	{
+		activeEffect -> SetTemplate(tempEffect.Object);
+	}
 }
 
 void AIH_WarpPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
+	activeEffect->SetActive(false);
 	warpUI = CreateWidget<UIH_WarpActiveUI>(GetWorld(), warpUIFactory);
 }
 
@@ -59,6 +70,7 @@ void AIH_WarpPoint::Interaction()
 	{
 		bsavePoint = true;
 		warpUI->AddToViewport();
+		activeEffect->SetActive(true);
 
 		FTimerHandle timer;
 		GetWorld()->GetTimerManager().SetTimer(timer, this, &AIH_WarpPoint::RemoveUI, 2.0f, false);
