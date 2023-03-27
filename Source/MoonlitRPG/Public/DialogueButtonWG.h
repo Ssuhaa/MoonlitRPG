@@ -26,6 +26,7 @@ public:
 
 	void SetText(FString Text);
 
+	UPROPERTY()
 	int32 NextIndex;
 
 

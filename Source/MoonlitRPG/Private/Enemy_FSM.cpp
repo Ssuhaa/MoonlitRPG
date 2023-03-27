@@ -20,6 +20,7 @@
 #include "IH_DamageActor.h"
 #include "MainDialogueUI.h"
 #include "NPCBase.h"
+#include "QuestComponent.h"
 
 
 // Sets default values for this component's properties
@@ -45,6 +46,7 @@ void UEnemy_FSM::BeginPlay()
 	Super::BeginPlay();
 
 	target = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 
 	me = Cast<AEnemyBase>(GetOwner());
 
@@ -322,16 +324,36 @@ void UEnemy_FSM::DieState()
 				}
 			}
 
-			AIH_EnemyManager* manager = Cast<AIH_EnemyManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AIH_EnemyManager::StaticClass()));
-			manager->deathCount++;
-			me->SetActive(false);
+			
+			TArray<class AIH_EnemyManager*> Managers = DataManager->GetAllActorOfClass<AIH_EnemyManager>();;
 
-			if (manager->deathCount == manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
+			AIH_EnemyManager* Manager = nullptr;
+			for(int32 i = 0 ; i<Managers.Num();i++)
 			{
-				manager->enemyArr.Add(me);		// enemy 배열에 마지막에 죽은 enemy를 Add
-				manager->canSpawn = true;		// 다시 스폰 가능
-				manager->deathCount = 0;		// 죽인 횟수 초기화
+				if (Managers[i]->EnemyManagerIdx == me->EnemyManagerIdx)
+				{
+					Manager = Managers[i];
+					break;
+				}
 			}
+
+			if (Manager != nullptr)
+			{
+				Manager->deathCount++;
+				me->SetActive(false);
+
+				if (Manager->deathCount == Manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
+				{
+					if (DataManager->GetCurrQuestInfo(target->QuestComp->mainQuestIdx).requirementIdx == me->EnemyManagerIdx)
+					{
+						target->QuestComp->CompleteMainQuest();
+					}
+					Manager->enemyArr.Add(me);		// enemy 배열에 마지막에 죽은 enemy를 Add
+					Manager->canSpawn = true;		// 다시 스폰 가능
+					Manager->deathCount = 0;		// 죽인 횟수 초기화
+				}
+			}
+			
 
 			currHP = maxHP;
 			ChangeState(EEnemyState::Idle);

@@ -53,4 +53,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Spawn)
 	bool canSpawn = true;
+
+	UPROPERTY(EditAnywhere, Category = Index)
+	int32 EnemyManagerIdx;
+
+	UPROPERTY()
+	class ADataManager* DataManager;
 };

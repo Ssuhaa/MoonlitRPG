@@ -124,6 +124,9 @@ void ASH_Player::BeginPlay()
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
 
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
+
+
 	playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
@@ -187,7 +190,14 @@ void ASH_Player::interactionObject()
 		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
 		if (currNPC != nullptr)
 		{
-			currNPC->InteractNPC();
+			if (DataManager->GetCurrQuestInfo(QuestComp->mainQuestIdx).completeNpcIdx == currNPC->idx)
+			{
+				currNPC->InteractNPC();
+			}
+			else
+			{
+
+			}
 		}
 
 		APuzzleGuide* currGuide = Cast<APuzzleGuide>(hitinfo.GetActor());

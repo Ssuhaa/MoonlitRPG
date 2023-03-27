@@ -6,6 +6,10 @@
 #include "QuestComponent.h"
 #include "QuestSlotWG.h"
 #include <UMG/Public/Components/HorizontalBox.h>
+#include <UMG/Public/Components/Button.h>
+#include "QuestNaviActor.h"
+#include <Kismet/GameplayStatics.h>
+#include "SH_Player.h"
 
 UQuestDescriptionWG::UQuestDescriptionWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,8 +26,34 @@ UQuestDescriptionWG::UQuestDescriptionWG(const FObjectInitializer& ObjectInitial
 	}
 }
 
+void UQuestDescriptionWG::NativeConstruct()
+{
+	Super::NativeConstruct();
+	
+	Button_Navi->OnPressed.AddUniqueDynamic(this, &UQuestDescriptionWG::OnPressedNavi);
+}
+
+void UQuestDescriptionWG::OnPressedNavi()
+{
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	if(Player != nullptr)
+	{
+		for (int32 i = 0; i < Quest->Requirements.Num(); i++)
+		{
+			AActor* requirement = UGameplayStatics::GetActorOfClass(GetWorld(), Quest->Requirements[i].Requirement);
+			if (requirement != nullptr)
+			{
+				Player->QuestComp->QuestNavis[i]->SetActorLocation(requirement->GetActorLocation());
+				Player->QuestComp->QuestNavis[i]->SetActiveNaviWG(true);
+			}
+			
+		}
+	}
+}
+
 void UQuestDescriptionWG::SetQuestDescription(FQuestInfo* QuestInfo)
 {
+	Quest = QuestInfo;
 	TB_QName->SetText(FText::FromString(QuestInfo->QuestName));
 	TB_QLocation->SetText(FText::FromString(QuestInfo->LocationName));
 	TB_QDescription->SetText(FText::FromString(QuestInfo->Description));

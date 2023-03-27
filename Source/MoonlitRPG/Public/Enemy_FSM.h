@@ -119,4 +119,7 @@ public:
 	void LookAtSmooth();
 	bool PlayerCheck();
 	void FloatingDamage();
+
+	UPROPERTY()
+	class ADataManager* DataManager;
 };

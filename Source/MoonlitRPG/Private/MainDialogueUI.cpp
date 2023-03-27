@@ -13,6 +13,7 @@
 #include "DialogueButtonWG.h"
 #include <UMG/Public/Components/ScrollBox.h>
 #include <UMG/Public/Components/VerticalBox.h>
+#include "QuestComponent.h"
 
 UMainDialogueUI::UMainDialogueUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -33,22 +34,18 @@ void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ReadCSVFile(TEXT("Dialogue"));
-
-	
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
 	
 	btn_Close->OnPressed.AddUniqueDynamic(this, &UMainDialogueUI::CloseButton);
-
 	PlayAnimation(DialogueOpenAnim);
 }
 
 FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
-	if (!VB_Choices->HasChild(Buttons[0]))
+	if (CsvColumns[2] == TEXT("None"))
 	{
 		CurrNext ++;
 		SetDialogue(CurrNext);
@@ -71,22 +68,17 @@ void UMainDialogueUI::CloseButton()
 	RemoveFromParent();
 }
 
-bool UMainDialogueUI::ReadCSVFile(FString CVSName)
+void UMainDialogueUI::ReadCSVFile(FString CSVPath)
 {
-	FString CsvFilePath = FPaths::ProjectContentDir() + FString::Printf(TEXT("Dialogue/%s.csv"), *CVSName);
-	
-	if (!FFileHelper::LoadFileToStringArray(CsvRows, *CsvFilePath))
+	if (FFileHelper::LoadFileToStringArray(CsvRows, *CSVPath))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CsvFilePath);
-		return false;
+		CurrNext = 1;
+		SetDialogue(CurrNext);
 	}
 	else
 	{
-		CurrNext = 0;
-		SetDialogue(CurrNext);
+		UE_LOG(LogTemp, Error, TEXT("Failed to load CSV file: %s"), *CSVPath);
 	}
-
-	return true;
 }
 
 
@@ -99,66 +91,73 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	}
 	else
 	{
+		
+		player->QuestComp->CompleteMainQuest();
 		CloseButton();
 		return;
 	}
 
-	VB_Choices->ClearChildren();
-	if (CsvColumns.Num() < 3)
+
+
+	//이름[0], 내용[1], 선택지1[2], Next1[3], 선택지2[4], Next2[5], 선택지3[6], Next3[7]
+	for (int32 i = 1; i < CsvColumns.Num(); i++)
 	{
-		Pointer->SetVisibility(ESlateVisibility::Visible);
-		PlayAnimation(PointerAnim, 0.0f, 0);
+		CsvColumns[i].ReplaceInline(TEXT("{@}"), *PlayerName);
+		CsvColumns[i].ReplaceInline(TEXT("\\n"), TEXT("\n"));
+
+	}
+
+	//CharacterName = CsvColumns[0];
+	Name->SetText(FText::FromString(CsvColumns[0]));
+	
+	//Text = CsvColumns[1];
+	Dialogue->SetText(FText::FromString(CsvColumns[1]));
+
+	VB_Choices->ClearChildren();
+
+	if(CsvColumns[2] != TEXT("None"))
+	{
+	
+		//Select1 = CsvColumns[2];
+		Buttons[0]->SetText(CsvColumns[2]);
+		Buttons[0]->DialogueWG = this;
+		VB_Choices->AddChild(Buttons[0]);
+	
+		//Next1 = FCString::Atoi(*CsvColumns[3]);
+		Buttons[0]->NextIndex = FCString::Atoi(*CsvColumns[3]);
+
+		Pointer->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
-		Pointer->SetVisibility(ESlateVisibility::Hidden);
+		Pointer->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(PointerAnim, 0.0f, 0);
+		return;
 	}
 
-	//이름[0], 내용[1], 선택지1[2], Next1[3], 선택지2[4], Next2[5], 선택지3[6], Next3[7]
-	for (int32 i = 0; i < CsvColumns.Num(); i++)
+	if (CsvColumns[4] != TEXT("None"))
 	{
-		CsvColumns[i].ReplaceInline(TEXT("{@}"), *PlayerName);
-		switch (i)
-		{
-		case 0: // 이름 세팅
-			CharacterName = CsvColumns[0];
-			Name->SetText(FText::FromString(CharacterName));
-			break;
-		case 1: //내용 세팅
-			Text = CsvColumns[1];
-			Dialogue->SetText(FText::FromString(Text));
-			break;
-		case 2: //선택지 세팅을 한 후 스크롤에 차일드 시킴.
-			Select1 = CsvColumns[2];
-			Buttons[0]->SetText(Select1);
-			Buttons[0]->DialogueWG = this;
-			VB_Choices->AddChild(Buttons[0]);
-			break;
-		case 3: //스트링을 숫자로 바꿔서 Next에 저장.
-			Next1 = FCString::Atoi(*CsvColumns[3]);
-			Buttons[0]->NextIndex = Next1;
-			break;
-		case 4:
-			Select2 = CsvColumns[4];
-			Buttons[1]->SetText(Select2);
-			Buttons[1]->DialogueWG = this;
-			VB_Choices->AddChild(Buttons[1]);
-			break;
-		case 5:
-			Next2 = FCString::Atoi(*CsvColumns[5]);
-			Buttons[1]->NextIndex = Next2;
-			break;
-		case 6:
-			Select3 = CsvColumns[6];
-			Buttons[2]->SetText(Select3);
-			Buttons[2]->DialogueWG = this;
-			VB_Choices->AddChild(Buttons[3]);
-			break;
-		case 7:
-			Next3 = FCString::Atoi(*CsvColumns[7]);
-			Buttons[2]->NextIndex = Next3;
-			break;
-		}
+		//Select2 = CsvColumns[4];
+		Buttons[1]->SetText(CsvColumns[4]);
+		Buttons[1]->DialogueWG = this;
+		VB_Choices->AddChild(Buttons[1]);
+
+		//Next2 = FCString::Atoi(*CsvColumns[5]);
+		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
+	}
+	else return;
+
+
+	if (CsvColumns[6] != TEXT("None"))
+	{
+
+		//Select3 = CsvColumns[6];
+		Buttons[2]->SetText(CsvColumns[6]);
+		Buttons[2]->DialogueWG = this;
+		VB_Choices->AddChild(Buttons[2]);
+
+		//Next3 = FCString::Atoi(*CsvColumns[7]);
+		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);
 	}
 	
 }
@@ -166,5 +165,5 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 void UMainDialogueUI::OnClikedNextButton(int32 Nextindex)
 {
 	CurrNext = Nextindex;
-	SetDialogue(Nextindex); //ROW, 행을 지정해서 대화 세팅.
+	SetDialogue(CurrNext); //ROW, 행을 지정해서 대화 세팅.
 }

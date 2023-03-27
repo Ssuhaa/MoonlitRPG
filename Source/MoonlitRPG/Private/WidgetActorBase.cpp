@@ -11,6 +11,7 @@ AWidgetActorBase::AWidgetActorBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	compWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget Component"));
+	compWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(compWidget);
 }
 

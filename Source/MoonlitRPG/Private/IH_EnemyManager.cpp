@@ -18,6 +18,9 @@ void AIH_EnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
+
+
 	for (int32 i = 0; i < createNumber; i++)
 	{
 		FActorSpawnParameters param;
@@ -27,7 +30,7 @@ void AIH_EnemyManager::BeginPlay()
 
 		AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
 		enemy->SetActive(false);
-
+		enemy->EnemyManagerIdx = EnemyManagerIdx;
 		enemyArr.Add(enemy);
 	}
 

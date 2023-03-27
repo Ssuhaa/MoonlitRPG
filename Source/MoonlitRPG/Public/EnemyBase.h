@@ -23,7 +23,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UEnemy_FSM* FSM;
 
@@ -53,5 +52,9 @@ public:
 
 public:
 	void SetActive(bool bActive);
+
 	void ImpactEffect();
+
+	int32 EnemyManagerIdx;
+
 };
