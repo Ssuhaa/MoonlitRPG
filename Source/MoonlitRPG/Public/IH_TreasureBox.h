@@ -20,14 +20,14 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-	class UParticleSystemComponent* spawnEffect_1;
-
-	UPROPERTY(EditAnywhere)
-	class UParticleSystemComponent* spawnEffect_2;
-
-	UPROPERTY(EditAnywhere)
-	TArray<UParticleSystem*> particleArr;
+// 	UPROPERTY(EditAnywhere)
+// 	class UParticleSystemComponent* spawnEffect_1;
+// 
+// 	UPROPERTY(EditAnywhere)
+// 	class UParticleSystemComponent* spawnEffect_2;
+// 
+// 	UPROPERTY(EditAnywhere)
+// 	TArray<UParticleSystem*> particleArr;
 
 public:
 	virtual void Interaction() override;

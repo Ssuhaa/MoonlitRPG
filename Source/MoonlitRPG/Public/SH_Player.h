@@ -80,7 +80,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class AInteractiveObjectBase* InteractiveObjects;
 	UPROPERTY(EditAnywhere)
-	class UParticleSystemComponent* hitImpact;
+	class UParticleSystem* hitImpact;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()

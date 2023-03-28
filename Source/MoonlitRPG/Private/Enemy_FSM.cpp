@@ -303,6 +303,7 @@ void UEnemy_FSM::DieState()
 {
 	if (bDiedone)
 	{
+		
 		if (DelayComplete(2.0))
 		{
 			if (me->spawnMoney.IsValidIndex(0))
@@ -324,7 +325,6 @@ void UEnemy_FSM::DieState()
 				}
 			}
 
-			
 			TArray<class AIH_EnemyManager*> Managers = DataManager->GetAllActorOfClass<AIH_EnemyManager>();;
 
 			AIH_EnemyManager* Manager = nullptr;

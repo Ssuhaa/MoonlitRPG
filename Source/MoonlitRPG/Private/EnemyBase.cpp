@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnemyBase.h"
@@ -13,6 +13,8 @@
 #include <Particles/ParticleSystemComponent.h>
 #include "SH_Player.h"
 #include "AttackComponent.h"
+#include "Materials/MaterialParameterCollection.h"
+#include <Kismet/KismetMaterialLibrary.h>
 
 AEnemyBase::AEnemyBase()
 {
@@ -89,13 +91,34 @@ AEnemyBase::AEnemyBase()
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	enemyHPUI = Cast<UIH_EnemyHPUI>(compEnemyHP->GetUserWidgetObject());
+
+	for (int32 i = 0; i < GetMesh()->GetMaterials().Num(); i++)
+	{
+		instArr.Add(UMaterialInstanceDynamic::Create(GetMesh()->GetMaterial(i), nullptr));
+		GetMesh()->SetMaterial(i, instArr[i]);
+	}
 }
 
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (FSM->bDiestart)
+	{
+		currTime += DeltaTime;
+
+		if (currTime > 1.5)
+		{
+			dissolveValue -=DeltaTime*0.35;
+
+			for (int32 i = 0; i < instArr.Num(); i++)
+			{
+				instArr[i]->SetScalarParameterValue(TEXT("Dead"), dissolveValue);
+			}
+		}
+	}
 }
 
 void AEnemyBase::SetActive(bool bActive)

@@ -20,6 +20,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	float dissolveValue = 1;
+	float currTime = 0;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UMaterialInstanceDynamic*> instArr;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -33,13 +39,13 @@ public:
 	class UIH_EnemyHPUI* enemyHPUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USceneComponent* itemSpawnPos;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf <class AItemBase>> spawnItems;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf <class AMoney>> spawnMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* itemSpawnPos;
 
 	UPROPERTY(EditAnywhere)
 	class UWidgetComponent* compExclamation;
@@ -50,9 +56,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<UParticleSystem*> impactEffectArr;
 
-public:
 	void SetActive(bool bActive);
-
 	void ImpactEffect();
 
 	int32 EnemyManagerIdx;

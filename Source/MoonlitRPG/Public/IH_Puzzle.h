@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	TArray<UParticleSystemComponent*> lootArr;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,35 +32,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compBoxSpawnPos;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* compMesh1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* compMesh2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* compMesh3;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* compMesh4;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UParticleSystemComponent* hitEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TArray<class UStaticMeshComponent*> meshArr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Puzzle")
 	class APuzzleGuide* puzzleGuide;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Puzzle")
 	TSubclassOf<class APuzzleGuide> guideFactory;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TArray<class UStaticMeshComponent*> hitMeshArr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<class UStaticMeshComponent*> prevhitMeshArr;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
@@ -66,9 +62,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<class UMaterialInterface*> materialFactory;
 
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	TArray<UParticleSystem*> particleArr;
+
 	int32 hitCount = 0;
 	bool isBoxSpawned = false;
 
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
 	void CheckAnswer();
+	void SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size);
 };

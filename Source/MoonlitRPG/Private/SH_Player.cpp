@@ -46,14 +46,14 @@ ASH_Player::ASH_Player()
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
 
-	hitImpact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact Effect"));
-	hitImpact->SetRelativeScale3D(FVector(1));
-	hitImpact->SetupAttachment(RootComponent);
+// 	hitImpact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact Effect"));
+// 	hitImpact->SetRelativeScale3D(FVector(1));
+// 	hitImpact->SetupAttachment(RootComponent);
 	
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
 	if (tempHit.Succeeded())
 	{
-		hitImpact->SetTemplate(tempHit.Object);
+		hitImpact = tempHit.Object;
 	}
 
 	ConstructorHelpers::FClassFinder<UPlayerMainWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
@@ -135,8 +135,6 @@ void ASH_Player::BeginPlay()
 	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
 	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
 	warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
-
-	hitImpact->SetActive(false);
 }
 
 void ASH_Player::Tick(float DeltaTime)

@@ -177,9 +177,8 @@ void UAttackComponent::WeaponChange(EWeaponType weaponType)
 
 void UAttackComponent::ImpactEffect(FVector impactLoc)
 {
-	player->hitImpact->SetWorldLocation(impactLoc);
-	player->hitImpact->SetRelativeScale3D(FVector(0.5));
-	player->hitImpact->SetActive(true);
+	UParticleSystemComponent* compHitEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), player->hitImpact, impactLoc);
+	compHitEffect->SetRelativeScale3D(FVector(0.5));
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
@@ -377,7 +376,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 						if (HitPuzzle->hitMeshArr.Num() < HitPuzzle->meshArr.Num())
 						{
 							HitPuzzle->ReceiveMeshArr(HitMesh);
-							UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
+//							UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
 						}
 					}
 				}
