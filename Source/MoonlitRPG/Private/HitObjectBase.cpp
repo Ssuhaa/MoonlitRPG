@@ -6,6 +6,7 @@
 #include <Components/StaticMeshComponent.h>
 #include "ItemBase.h"
 #include <Particles/ParticleSystemComponent.h>
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values
 AHitObjectBase::AHitObjectBase()
@@ -27,6 +28,7 @@ void AHitObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	originActorPos = GetActorLocation();
 	originSpawnPos = compSpawnPos->GetComponentLocation();
 }
 
@@ -35,10 +37,33 @@ void AHitObjectBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (isHit)
+	{
+		currTime += DeltaTime;
+
+//		SetActorLocation(GetActorLocation() + GetActorRightVector());
+
+		float DeltaMove = AnimationAmplitude * FMath::Sin(2 * PI * GetWorld()->GetTimeSeconds() * 50 / AnimationPeriod);
+ 
+		FVector CurrentPos = GetActorLocation();
+		FVector NewPos = CurrentPos + FVector(DeltaMove, DeltaMove, 0.0f);
+ 
+		SetActorLocation(NewPos);
+
+		if (currTime > 0.1)
+		{
+			currTime = 0;
+			isHit = false;
+			SetActorLocation(originActorPos);
+		}
+	}
+
 }
 
 void AHitObjectBase::DropItem()
 {
+	isHit = true;
+
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
 

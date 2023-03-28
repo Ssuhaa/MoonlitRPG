@@ -19,11 +19,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	float currTime = 0;
+	FVector originSpawnPos;
+	FVector	originActorPos;
+	
+	UPROPERTY(EditAnywhere)
+	float AnimationPeriod = 2.0f;	// 애니메이션 주기, 이동 거리 조정
+
+	UPROPERTY(EditAnywhere)
+	float AnimationAmplitude = 5.0f;	// 애니메이션 진폭, 속도 조정
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* compMesh;
 
@@ -38,8 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 hitCount;
 
-	FVector originSpawnPos;
+	bool isHit = false;
 
-public:
 	void DropItem();
 };
