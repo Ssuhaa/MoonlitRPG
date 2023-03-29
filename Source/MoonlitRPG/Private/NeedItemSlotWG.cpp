@@ -25,7 +25,7 @@ void UNeedItemSlotWG::SlotClicked()
 		{			
 			if ((*LevelUpSlots)[i]->isFill == false)
 			{
-				(*LevelUpSlots)[i]->UpdateSlot(invenInfo);
+				(*LevelUpSlots)[i]->UpdateSlot(invenData.invenitem);
 				isSelect = true;
 				SelectDone->SetVisibility(ESlateVisibility::Visible);
 				settingSlot = (*LevelUpSlots)[i];
@@ -44,11 +44,10 @@ void UNeedItemSlotWG::SlotClicked()
 
 }
 
-void UNeedItemSlotWG::UpdateSlot(FInvenItem invenData)
+void UNeedItemSlotWG::UpdateSlot(FInvenItem invenitem)
 {	
-	Super::UpdateSlot(invenData);
-
-	TB_WeaponLevel->SetText(FText::AsNumber(invenInfo.weaponinfomaiton.Level));
+	Super::UpdateSlot(invenitem);
+	TB_WeaponLevel->SetText(FText::AsNumber(invenData.invenitem.WeaponData.Level));
 }
 
 void UNeedItemSlotWG::ResetSlot()

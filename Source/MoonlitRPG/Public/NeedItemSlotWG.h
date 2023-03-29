@@ -33,7 +33,7 @@ protected:
 
 public:
 
-	virtual void UpdateSlot(FInvenItem invenData) override;
+	virtual void UpdateSlot(FInvenItem invenitem) override;
 	void ResetSlot();
 	void RemoveSlot();
 

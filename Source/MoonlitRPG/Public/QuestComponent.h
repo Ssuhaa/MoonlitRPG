@@ -34,16 +34,10 @@ protected:
 	class ASH_Player* Player;
 
 
-
 public:	
 	// Called every frame
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	void reciveQuest(FQuestInfo sendQuest);
-
-	UPROPERTY(EditAnywhere)
-	TArray<FQuestInfo> playerQuestList;
-	
 	UPROPERTY()
 	class UQuestWG* QuestWG;
 
@@ -62,8 +56,5 @@ public:
 
 
 	void CompleteMainQuest();
-
-
-
 	
 };

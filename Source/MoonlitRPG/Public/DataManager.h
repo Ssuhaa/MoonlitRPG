@@ -7,52 +7,51 @@
 #include <Engine/DataTable.h>
 #include "DataManager.generated.h"
 
+//[ITEMINFO]---------------------------------------------------------------------//
 UENUM(BlueprintType)
-enum class EItemType : uint8
+enum class EItemType : uint8 //아이템 타입 분류 
 {
 	Consum,
 	Outfit,
 	Quest,
 	Food,
 	Etc,
-	Count,
-
+	None,
 };
-
 UENUM(BlueprintType)
-enum  class EItemgrade : uint8
+enum  class EItemgrade : uint8 // 아이템 등급 분류
 {
 	Common,
 	Rare,
 	Unique,
 	Legendary,
+	None,
 };
-
 USTRUCT(BlueprintType)
-struct FIteminfo : public FTableRowBase
+struct FIteminfo : public FTableRowBase //아이템 기본 정보
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		EItemType itemType;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		EItemgrade itemgrade = EItemgrade::Common;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		FString ItemName = "None";
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		FString itemDescription = "None";
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UTexture2D* itemImage = LoadObject<UTexture2D>(nullptr, TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Empty.T_Empty'"));
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool Stackable = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 SellPrice = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 PurchasePrice = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int32 HealAmount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //아이템 타입
+	EItemType itemType = EItemType::None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 아이템 등급
+	EItemgrade itemgrade = EItemgrade::Common;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 아이템 이름
+	FString ItemName = "None";
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 아이템 설명
+	FString itemDescription = "None";
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //아이템 2d 이미지
+	class UTexture2D* itemImage = LoadObject<UTexture2D>(nullptr, TEXT("/Script/Engine.Texture2D'/Game/UI/UISource/T_Empty.T_Empty'"));
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 쌓을 수 있는지 여부
+	bool Stackable = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 구매 가격
+	int32 SellPrice = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 판매 가격
+	int32 PurchasePrice = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 소비시 힐량
+	int32 HealAmount = 0;
 
-	bool operator==(const FIteminfo& Other) const //비교 연산자
+	bool operator==(const FIteminfo& Other) const 
 	{
 		return itemType == Other.itemType
 			&& itemgrade == Other.itemgrade
@@ -65,8 +64,177 @@ struct FIteminfo : public FTableRowBase
 			&& HealAmount == Other.HealAmount;
 	}
 };
+//[WeaponINFO]---------------------------------------------------------------------//
+UENUM(BlueprintType)
+enum  class EWeaponType : uint8 //무기 분류
+{
+	Sword,
+	Dagger,
+	Bow,
+	None,
+};
+
+USTRUCT(BlueprintType)
+struct FItemGradeData : public FTableRowBase // 아이템 등급 별 데이터.
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EItemgrade Grade;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 PlusEXP;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 PlusPower;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UTexture2D* Slotlmage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UTexture2D* DiscriptionImage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UParticleSystem* Effect;
+
+};
+
+USTRUCT(BlueprintType)
+struct FUpGradeMoneyData : public FTableRowBase //업그레이드 시 필요 재화 데이터.
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 UpgradeNeedMoney;
+};
+
+USTRUCT(BlueprintType)
+struct FUpgradeNeedItem //업그레이드시 필요 재료
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //업그레이드시 필요 재료
+	int32 iteminfoIndex = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //필요 수량
+	int32 UseAmont = 0;
+
+	bool operator==(const FUpgradeNeedItem& Other) const
+	{
+		return iteminfoIndex == Other.iteminfoIndex &&
+			UseAmont == Other.UseAmont;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponNeedItem //업그레이드 카운트 별 필요 재료
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FUpgradeNeedItem> UpgradeNeedItem;// 강화는 최대 3번만 어레이 각각 3개 만들어야함.
+
+	bool operator==(const FWeaponNeedItem& Other) const
+	{
+		return UpgradeNeedItem == Other.UpgradeNeedItem;
+	}
+};
 
 
+USTRUCT(BlueprintType)
+struct FWeaponinfo : public FTableRowBase //무기 아이템 기본 정보
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 명
+	FString WeaponName = "None";
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 타입
+	EWeaponType WeaponType = EWeaponType::None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 스태딕메쉬
+	TObjectPtr<class UStaticMesh> Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //돌파에 필요한 재료 리스트
+	TArray<FWeaponNeedItem> UpgradeItemList;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //공격력 초기값 (38-40, 41-48, 49-60, 61-83 )
+	float initPower = 38;
+
+	bool operator==(const FWeaponinfo& Other) const
+	{
+		return WeaponName == Other.WeaponName && 
+			WeaponType == Other.WeaponType &&
+			Mesh == Other.Mesh &&
+			UpgradeItemList == Other.UpgradeItemList &&
+			initPower == Other.initPower;
+	}
+
+};
+
+
+USTRUCT(BlueprintType)
+struct FWeaponGradeData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //현재 레벨
+	int32 Level = 1;
+	UPROPERTY(BlueprintReadOnly) // 최대 레벨업 가능 레벨
+	int32 MaxLevel = 20;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //현재 EXP
+	int32 CurrEXP = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //현재 Power
+	int32 CurrPower = 38;
+	UPROPERTY(BlueprintReadOnly) //최대 EXP
+	int32 MaxEXP = 600;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) // 몇번 업그레이드 했는지
+	int32 UpgradeCount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) // 착용 여부
+	bool isEquip = false;
+
+	bool operator==(const  FWeaponGradeData& Other) const
+	{
+		return Level == Other.Level &&
+			MaxLevel == Other.MaxLevel &&
+			CurrEXP == Other.CurrEXP &&
+			MaxEXP == Other.MaxEXP &&
+			UpgradeCount == Other.UpgradeCount;
+	}
+
+
+};
+
+
+DECLARE_MULTICAST_DELEGATE(FlevelUpDel);
+//[InvenINFO]---------------------------------------------------------------------//
+USTRUCT(BlueprintType)
+struct FInvenItem : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid InvenID = FGuid::NewGuid();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 ItemInfoIndex = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 WeaponInfoIndex = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 itemAmount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FWeaponGradeData WeaponData;
+
+	bool operator==(const FInvenItem& Other) const //비교 연산자
+	{
+		return ItemInfoIndex == Other.ItemInfoIndex &&
+			WeaponInfoIndex == Other.WeaponInfoIndex &&
+			WeaponData == Other.WeaponData &&
+			InvenID == Other.InvenID;
+	}
+
+
+	FlevelUpDel SendLevelUpClear;
+
+public:
+	void SetWeaponPower(ADataManager* DataManager);
+	bool Upgrade(int32* playerMoney, bool isHaveAllItem, ADataManager* DataManager);//돌파
+	void levelUP(FItemGradeData GradeData);//강화
+	bool PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMoney, FItemGradeData GradeData);// 다른 무기 아이템 넣기
+
+};
+
+//[DialougueINFO]---------------------------------------------------------------------//
 USTRUCT(BlueprintType)
 struct FNPCDialogue
 {
@@ -92,30 +260,33 @@ public:
 
 };
 
-
+//[QuestINFO]---------------------------------------------------------------------//
 
 UENUM(BlueprintType)
-enum class EQuestType : uint8
+enum class EQuestType : uint8 //퀘스트 대 분류
 {
 	Main,
 	Today,
 	Sub,
 	Total,
+	None,
 };
 
 UENUM(BlueprintType)
-enum class EKindOfQuest : uint8
+enum class ESubQuestType : uint8 //퀘스트 소 분류
 {
 	Contact,
 	Hunt,
 	GetItem,
+	None,
 };
 
 UENUM(BlueprintType)
-enum class EQuestState : uint8
+enum class EQuestState : uint8 //퀘스트 진행 상황
 {
 	Continue,
 	Done,
+	None,
 };
 
 USTRUCT(BlueprintType)
@@ -125,12 +296,13 @@ struct  FQuestReward
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FIteminfo> RewardItem;
+	TArray<int32> RewardItem;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 RewardMoney;
+	int32 RewardMoney = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 RewardEXP;
+	int32 RewardEXP = 0;
 };
+
 
 USTRUCT(BlueprintType)
 struct FQuestRequirements
@@ -138,65 +310,38 @@ struct FQuestRequirements
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class AActor> Requirement;
+	int32 Requirementindex = -1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool isRequirements = false;
 };
 
 
 USTRUCT(BlueprintType)
-struct FQuestInfo
+struct FQuestInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGuid QuestID = FGuid::NewGuid();
+	EQuestType Type = EQuestType::None;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EQuestType Type;
+	ESubQuestType SubType = ESubQuestType::None;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EKindOfQuest KindOf;
+	FString QuestName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString QuestName;
+	FString Description = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString Description;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString LocationName;
+	FString LocationName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FQuestRequirements> Requirements;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FQuestReward Reward;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 DialougueIndex = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EQuestState Queststate;
-};
-
-
-USTRUCT(BlueprintType)
-struct FNewQuestInfo : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	EQuestType questType = EQuestType::Main;
-
-	UPROPERTY(EditAnywhere)
-	EKindOfQuest subType = EKindOfQuest::Contact;
-
-	UPROPERTY(EditAnywhere)
-	int32 requirementIdx;
-
-	UPROPERTY(EditAnywhere)
-	int32 dialogueIdx;
-
-	UPROPERTY(EditAnywhere)
-	FString description;
-
-	UPROPERTY(EditAnywhere)
-	int32 goalCount;
-
-	UPROPERTY(EditAnywhere)
-	int32 completeNpcIdx;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Summary = "None";
 
 	void SetDescription(ADataManager* DataManager);
 };
@@ -218,9 +363,38 @@ struct FEnemyManagerInfo : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere)
-	FString LocationName;
+	FString EnemyPlaceName;
 };
 
+USTRUCT(BlueprintType)
+struct FinvenData
+{
+	GENERATED_BODY()
+public: 
+	UPROPERTY(EditAnywhere)
+	FInvenItem invenitem;
+	UPROPERTY(EditAnywhere)
+	FIteminfo iteminfo;
+	UPROPERTY(EditAnywhere)
+	FWeaponinfo Weaponinfo;
+	UPROPERTY(EditAnywhere)
+	FItemGradeData itemGradeData;
+	UPROPERTY(EditAnywhere)
+	FUpGradeMoneyData UpGradeMoneyData;
+};
+
+
+//[DataManager]---------------------------------------------------------------------//
+UENUM(BlueprintType)
+enum class EDataList : uint8
+{
+	Item,
+	Npc,
+	EnemyPlace,
+	UpgradeMoney,
+	GradeData,
+	MainQuest,
+};
 
 UCLASS()
 class MOONLITRPG_API ADataManager : public AActor
@@ -244,22 +418,32 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FNpcInfo> npcList;
 	UPROPERTY(EditAnywhere)
-	TArray<FNewQuestInfo> newQuestList;
+	TArray<FEnemyManagerInfo> EnemyPlaceList;
+	UPROPERTY(EditAnywhere)
+	TArray<FWeaponinfo> WeaponList;
+	UPROPERTY(EditAnywhere)
+	TArray<FUpGradeMoneyData> UpgradeMoneyData;
+	UPROPERTY(EditAnywhere)
+	TArray<FItemGradeData> ItemGradeData;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FQuestInfo> MainQuestList;
 
+	TArray<FInvenItem>* InventoryItemList;
 
 	template<typename T>
-	TArray<T> LoadTable(FString path);
+	TArray<T> LoadTable(FString path); //데이터테이블 불러오는 함수
+	template<typename T>
+	TArray<T> Parse(FString path, UScriptStruct* pScriptStruct); //CSV파일 Struct 어레이로 반환하는 함수
+	template<typename T>
+	TArray<T*> GetAllActorOfClass(); //원하는 액터를 찾아 액터클래스 어레이로 반환하는 함수.
 
 	template<typename T>
-	TArray<T> Parse(FString path, UScriptStruct* pScriptStruct);
+	T GetInfo(int32 Index, const TArray<T> List);
+
+	FinvenData GetData(FInvenItem invenitem);
+
 	template<typename T>
-	TArray<T*> GetAllActorOfClass();
-
-	FNewQuestInfo GetCurrQuestInfo(int32 mainQuestIdx)
-	{
-		return newQuestList[mainQuestIdx];
-	}
-
+	T GetInfo(int32 index, EDataList DataList);
 };
 

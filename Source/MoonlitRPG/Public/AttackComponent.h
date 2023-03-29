@@ -88,6 +88,9 @@ protected:
 	float specialCount = 0;
 	int32 currDamage = 0;
 
+	UPROPERTY()
+	class ADataManager* DataManager;
+
 public:	
 	// Called every frame
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
@@ -132,7 +135,7 @@ public:
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);
 	void PlayAttackMontage(FString montName);
-	void WeaponChange(EWeaponType weaponType);
+	void WeaponChange(int32 WeaponinfoIndex);
 	void ImpactEffect(FVector impactLoc);
 	
 	FVector direction;

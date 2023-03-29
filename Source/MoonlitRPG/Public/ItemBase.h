@@ -26,12 +26,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UStaticMeshComponent* Mesh;
-
+	UPROPERTY()
 	class ASH_Player* Player;
 
+	UPROPERTY()
+	class ADataManager* DataManager;
+
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = iteminfo)
-	FIteminfo ItemInformation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DataIndex)
+	int32 iteminfoIndex; 
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class UUserWidget>> interactUIFactory;

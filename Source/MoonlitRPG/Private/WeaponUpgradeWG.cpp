@@ -33,6 +33,7 @@ void UWeaponUpgradeWG::NativeConstruct()
 {
 	Super::NativeConstruct();
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 	ButtonBinding();
 }
 
@@ -41,24 +42,22 @@ void UWeaponUpgradeWG::ButtonBinding()
 	Button_Upgrade->OnPressed.AddUniqueDynamic(this, &UWeaponUpgradeWG::UpGrade);
 }
 
-void UWeaponUpgradeWG::SetUpGradeWG(FInvenItem SelectSlotItem)
+void UWeaponUpgradeWG::SetUpGradeWG(FinvenData InvenData)
 {
-	SelectedSlotItem = SelectSlotItem;
-	FWeaponinfo WeaponData = SelectedSlotItem.weaponinfomaiton;
-	TB_CurrLevel->SetText(FText::AsNumber(WeaponData.Level));
-	TB_CurrLevel1->SetText(FText::AsNumber(WeaponData.Level));
-	TB_AfterMaxLevel->SetText(FText::AsNumber(WeaponData.MaxLevel + 10));
-	TB_BeforeMaxLevel->SetText(FText::AsNumber(WeaponData.MaxLevel));
-	TB_UpGradeMoney->SetText(FText::AsNumber(WeaponData.UpGradeMoney));
-	TB_CurrPower->SetText(FText::AsNumber(WeaponData.Power));
-	TB_UpgradePower->SetText(FText::AsNumber(WeaponData.Power + WeaponData.PlusPower * 9));
+	inventoryData = InvenData;
+	TB_CurrLevel->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.Level));
+	TB_CurrLevel1->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.Level));
+	TB_BeforeMaxLevel->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.MaxLevel));
+	TB_AfterMaxLevel->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.MaxLevel + 10));
+	TB_UpGradeMoney->SetText(FText::AsNumber(InvenData.UpGradeMoneyData.UpgradeNeedMoney));
+	TB_CurrPower->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.CurrPower));
+	TB_UpgradePower->SetText(FText::AsNumber(InvenData.invenitem.WeaponData.CurrPower + InvenData.itemGradeData.PlusPower * 9));
 	
 	for (int32 i = 0; i < UpgradeSlots.Num(); i++)
 	{
 		UpgradeSlots[i]->Index = i;
-		UpgradeSlots[i]->UpdateSlot(SelectedSlotItem);
+		UpgradeSlots[i]->UpdateSlot(InvenData.invenitem);
 		NeedItemList->AddChildToHorizontalBox(UpgradeSlots[i]);
-		
 	}
 }
 
@@ -69,18 +68,15 @@ void UWeaponUpgradeWG::UpGrade()
 	{
 		if (isHaveAllNeedItem())
 		{
-			int32 index = player->InvenComp->FindItem(SelectedSlotItem);
+			int32 index = player->InvenComp->FindItem(inventoryData.invenitem);
 			if (index < 0) return;
-			bool result = player->InvenComp->invenItemArr[index].weaponinfomaiton.Upgrade(&player->InvenComp->Money, isHaveAllNeedItem());
+
+			bool result = player->InvenComp->invenItemArr[index].Upgrade(&player->InvenComp->Money, isHaveAllNeedItem(), DataManager);
 			if (result)
 			{
-				
-				SelectedSlotItem = player->InvenComp->invenItemArr[index];
 				SendToUsedItem();
-				OutfitWG->ReceiveUseItem(SelectedSlotItem);
-
+				OutfitWG->ReceiveUseItem(player->InvenComp->invenItemArr[index]);
 			}
-
 		}
 	}
 }
@@ -95,8 +91,7 @@ bool UWeaponUpgradeWG::isHaveAllNeedItem()
 }
 
 void UWeaponUpgradeWG::SendToUsedItem()
-{
-	
+{	
 	for (int32 i = 0; i < UpgradeSlots.Num(); i++)
 	{
 		player->InvenComp->MinusItemAmount(UpgradeSlots[i]->UpgradeItem, UpgradeSlots[i]->UseAmount);

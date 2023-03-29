@@ -10,7 +10,7 @@ void AWeaponItemBase::GetItem()
 {
 	if (Player != nullptr)
 	{
-		Player->InvenComp->CheckSameItemAfterAdd(ItemInformation, weaponinfo);
+		Player->InvenComp->WeaponAddItemToinven(iteminfoIndex, WeaponinfoIndex);
 		Destroy();
 	}
 }

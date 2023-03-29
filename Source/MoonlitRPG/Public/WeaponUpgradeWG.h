@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryComponent.h"
+#include "DataManager.h"
 #include "WeaponUpgradeWG.generated.h"
 
 /**
@@ -38,15 +38,15 @@ protected:
 	UPROPERTY()
 	TArray<class UUpgradeSlotWG*> UpgradeSlots;
 
-	FInvenItem SelectedSlotItem;
-
 	int32* PlayerMoney;
-
-
-
 
 	UPROPERTY()
 	class ASH_Player* player;
+
+	UPROPERTY()
+	class ADataManager* DataManager;
+
+	FinvenData inventoryData;
 
 	UFUNCTION()
 	void UpGrade();
@@ -59,7 +59,7 @@ public:
 	class UButton* Button_Upgrade;
 
 	UFUNCTION()
-	void SetUpGradeWG(FInvenItem SelectSlotItem);
+	void SetUpGradeWG(FinvenData InvenData);
 	
 	void ButtonBinding();
 

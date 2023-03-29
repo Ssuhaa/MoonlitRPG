@@ -21,6 +21,7 @@ UInventoryComponent::UInventoryComponent()
 	{
 		inputArray.Add(tempAction.Object); //0번 탭
 	}
+
 	ConstructorHelpers::FClassFinder<UInventoryWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_Inventory.BP_WG_Inventory_C'"));
 	if (tempWG.Succeeded())
 	{
@@ -34,13 +35,12 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	Player = Cast<ASH_Player>(GetOwner());
-	inventory = CreateWidget<UInventoryWG>(GetWorld(),invenFactory);
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(),ADataManager::StaticClass()));
+	DataManager->InventoryItemList = &invenItemArr;
+	inventory = CreateWidget<UInventoryWG>(GetWorld(), invenFactory);
 	inventory->InvenComp = this;
 }
-
-
 
 // Called every frame
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -70,38 +70,51 @@ void UInventoryComponent::InventoryOpen()
 	}
 }
 
-void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, int32 Amount) // 일반 아이템 추가 함수
+void UInventoryComponent::CommonCheckSameItemAfterAdd(int32 ItemInfoIndex, int32 Amount) // 일반 아이템 추가 함수
 {
-	int32 value = FindItem(iteminfo); //같은게 있는지 확인, 있으면 인덱스를 반환 없으면 -1을 반환.
+	int32 value = FindItem(ItemInfoIndex); //같은게 있는지 확인, 있으면 인덱스를 반환 없으면 -1을 반환.
+	FInvenItem currGetItem;
 	if (value > -1)
 	{
-		if (invenItemArr[value].iteminfomation.Stackable) // 쌓을수 있는지 확인 후 쌓을 수 있으면 추가
+		if (DataManager->GetInfo(ItemInfoIndex, DataManager->itemList).Stackable) // 쌓을수 있는지 확인 후 쌓을 수 있으면 추가
 		{
 			invenItemArr[value].itemAmount += Amount;
 		}
 		else //아니면 새로 추가
 		{
-			AddItemToinven(iteminfo, Amount);
+			currGetItem.ItemInfoIndex = ItemInfoIndex;
+			currGetItem.itemAmount = Amount;
+			currGetItem.InvenID = FGuid::NewGuid();
+			invenItemArr.Add(currGetItem);
 		}
 	}
 	else //없으면 새로 추가
 	{
-		AddItemToinven(iteminfo, Amount);
+		currGetItem.ItemInfoIndex = ItemInfoIndex;
+		currGetItem.itemAmount = Amount;
+		currGetItem.InvenID = FGuid::NewGuid();
+		invenItemArr.Add(currGetItem);
 	}
 }
 
-void UInventoryComponent::CheckSameItemAfterAdd(FIteminfo iteminfo, FWeaponinfo weaponinfo) 
+void UInventoryComponent::WeaponAddItemToinven(int32 ItemInfoIndex, int32 WeaponInfoIndex) //무기 추가 함수
 {
-	//무기 아이템의 경우 쌓이지 않으므로 새로추가.
-	AddItemToinven(iteminfo, weaponinfo); 
+	FInvenItem currGetItem;
+	currGetItem.ItemInfoIndex = ItemInfoIndex;
+	currGetItem.WeaponInfoIndex = WeaponInfoIndex;
+	currGetItem.itemAmount = 1;
+	currGetItem.InvenID = FGuid::NewGuid();
+	currGetItem.SetWeaponPower(DataManager);
+	invenItemArr.Add(currGetItem);
 }
+
 
 int32 UInventoryComponent::CheckWeaponisEquip()
 {
 	//인벤토리에 있는 아이템중 무기 정보에서 착용했는지 찾아서 인덱스를 반환, 없다면 -1을 반환.
 	for (int32 i = 0; i < invenItemArr.Num() ; i++)
 	{
-		if (invenItemArr[i].weaponinfomaiton.isEquip)
+		if (invenItemArr[i].WeaponData.isEquip)
 		{
 			return i;
 		}
@@ -115,9 +128,9 @@ bool UInventoryComponent::WeaponOff(FInvenItem ChangeItem)
 	int32 currEquip = FindItem(ChangeItem); //착용한 무기가 인벤토리에 존재하는지 확인
 	if (currEquip > -1) //해당 무기는 해제 시킴.
 	{
-		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
-		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[0]);
-		Player->AttackComp->WeaponChange(EWeaponType::None);
+		invenItemArr[currEquip].WeaponData.isEquip = false;
+		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[3]);
+		Player->AttackComp->WeaponChange(-1);
 		return true;
 	}
 	return false;
@@ -128,18 +141,18 @@ bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 	int32 currEquip = CheckWeaponisEquip(); //착용한 무기가 있는지 체크후
 	if (currEquip > -1) //해당 무기는 해제 시킴.
 	{
-		invenItemArr[currEquip].weaponinfomaiton.isEquip = false;
+		invenItemArr[currEquip].WeaponData.isEquip = false;
 	}
 
 	int32 index = FindItem(ChangeItem); // 바꿀 무기를 찾은 후 
 	if (index > -1)
 	{
 		//바꿀 무기의 착용여부를 변경.
-		invenItemArr[index].weaponinfomaiton.isEquip = true;
+		invenItemArr[index].WeaponData.isEquip = true;
 		//플레이어 어택컴포넌트에 정보를 전달.
-		Player->AttackComp->WeaponChange(invenItemArr[index].weaponinfomaiton.WeaponType);
-		int32 MeshNum = int32(invenItemArr[index].weaponinfomaiton.WeaponType);
-		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[MeshNum]);
+		Player->AttackComp->WeaponChange(invenItemArr[index].WeaponInfoIndex);
+		FinvenData data = DataManager->GetData(ChangeItem);
+		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[int32(data.Weaponinfo.WeaponType)]);
 		return true;
 	}
 
@@ -149,27 +162,7 @@ bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 
 
 
-void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, int32 Amount) //무기 이외의 것
-{
-	FInvenItem currGetItem;
-	currGetItem.iteminfomation = Getiteminfo;
-	currGetItem.itemAmount = Amount;
-	currGetItem.InvenID = FGuid::NewGuid();
-	invenItemArr.Add(currGetItem);
-
-}
-
-void UInventoryComponent::AddItemToinven(FIteminfo Getiteminfo, FWeaponinfo GetWeaponinfo) //무기
-{
-	FInvenItem currGetItem;
-	currGetItem.iteminfomation = Getiteminfo;
-	currGetItem.weaponinfomaiton = GetWeaponinfo;
-	currGetItem.itemAmount = 1;
-	currGetItem.InvenID = FGuid::NewGuid();
-	invenItemArr.Add(currGetItem);
-}
-
-int32 UInventoryComponent::MinusItemAmount(FInvenItem MinusInvenItem, int32 Amount) //아이템 뺄 때
+int32 UInventoryComponent::MinusItemAmount(FInvenItem MinusInvenItem, int32 Amount) //아이템을 빼고 개수를 반환
 {
 	int32 value = FindItem(MinusInvenItem); 
 	if (value > -1)
@@ -186,19 +179,6 @@ int32 UInventoryComponent::MinusItemAmount(FInvenItem MinusInvenItem, int32 Amou
 }
 
 
-int32 UInventoryComponent::FindItem(FIteminfo iteminfo)
-{
-	for (int32 i = 0; i < invenItemArr.Num(); i++)
-	{
-		
-		if (invenItemArr[i].iteminfomation == iteminfo)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
 int32 UInventoryComponent::FindItem(FInvenItem invenitem)
 {
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
@@ -211,16 +191,16 @@ int32 UInventoryComponent::FindItem(FInvenItem invenitem)
 	return -1;
 }
 
-int32 UInventoryComponent::FindItem(FString ItemName)
+
+int32 UInventoryComponent::FindItem(int32 iteminfoindex)
 {
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
 	{
-		if (invenItemArr[i].iteminfomation.ItemName == ItemName)
+		if(invenItemArr[i].ItemInfoIndex == iteminfoindex)
 		{
 			return i;
 		}
 	}
-
 	return -1;
 }
 
@@ -229,7 +209,8 @@ TArray<FInvenItem> UInventoryComponent::FindAllItems(FIteminfo iteminfo)
 	TArray<FInvenItem> FindItemArr;
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
 	{
-		if (invenItemArr[i].iteminfomation == iteminfo)
+		FinvenData data = DataManager->GetData(invenItemArr[i]);
+		if (data.iteminfo == iteminfo)
 		{
 			FindItemArr.Add(invenItemArr[i]);
 		}
@@ -242,16 +223,17 @@ TArray<FInvenItem> UInventoryComponent::FindAllItems(FIteminfo iteminfo)
 
 TArray<FInvenItem> UInventoryComponent::FindAllItemsType(EItemType type)
 {
+
 	TArray<FInvenItem> FindItemArr;
 	if (!invenItemArr.IsEmpty())
 	{
 		for (int32 i = 0; i < invenItemArr.Num(); i++)
 		{
-			if (invenItemArr[i].iteminfomation.itemType == type)
-			{
-	
-				FindItemArr.Add(invenItemArr[i]);
 			
+			FinvenData data = DataManager->GetData(invenItemArr[i]);
+			if (data.iteminfo.itemType == type)
+			{
+				FindItemArr.Add(invenItemArr[i]);
 			}
 		}
 	}

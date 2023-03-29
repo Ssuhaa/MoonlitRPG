@@ -4,30 +4,30 @@
 #include "UpgradeSlotWG.h"
 #include <UMG/Public/Components/Image.h>
 #include <UMG/Public/Components/TextBlock.h>
-#include "SH_Player.h"
 #include <Kismet/GameplayStatics.h>
 
 
-void UUpgradeSlotWG::UpdateSlot(FInvenItem invenData)
+void UUpgradeSlotWG::UpdateSlot(FInvenItem invenitem)
 {
-	invenInfo = invenData;
-	int32 UpgradeCount =  invenInfo.weaponinfomaiton.UpgradeCount;
-	if (invenInfo.weaponinfomaiton.UpgradeItemList.IsValidIndex(UpgradeCount))
+	Super::UpdateSlot(invenitem);
+	int32 UpgradeCount = invenData.invenitem.WeaponData.UpgradeCount;
+	if (invenData.Weaponinfo.UpgradeItemList.IsValidIndex(UpgradeCount))
 	{
-		FUpgradeNeedItem item = invenInfo.weaponinfomaiton.UpgradeItemList[UpgradeCount].UpgradeNeedItem[Index];
-		ItemImage->SetBrushFromTexture(item.itemImage);
-		int32 BGindex = int32(item.itemgrade);
-		SlotBG->SetBrushFromTexture(BGarray[BGindex], true);
+		FUpgradeNeedItem item = invenData.Weaponinfo.UpgradeItemList[UpgradeCount].UpgradeNeedItem[Index];
+		FIteminfo info = DataManager->GetInfo(item.iteminfoIndex, DataManager->itemList);
+		ItemImage->SetBrushFromTexture(info.itemImage);
+		FItemGradeData GradeData = DataManager->GetInfo(int32(info.itemgrade), DataManager->ItemGradeData);
+		SlotBG->SetBrushFromTexture(GradeData.Slotlmage, true);
 		UseAmount = item.UseAmont;
 		TB_NeedAmount->SetText(FText::AsNumber(UseAmount));
-		player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-		if (player != nullptr)
+		Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+		if (Player != nullptr)
 		{
-			int32 findindex = player->InvenComp->FindItem(item.ItemName);
+			int32 findindex = Player->InvenComp->FindItem(item.iteminfoIndex);
 			int32 currAmount;
 			if (findindex > -1)
 			{
-				UpgradeItem = player->InvenComp->invenItemArr[findindex];
+				UpgradeItem = Player->InvenComp->invenItemArr[findindex];
 				currAmount = UpgradeItem.itemAmount;
 			}
 			else

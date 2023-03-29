@@ -13,14 +13,17 @@
  * 
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FSendSlot, class UInventorySlotWG*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FSendSlot, FinvenData);
 
 UCLASS()
 class MOONLITRPG_API UInventoryWG : public UUserWidget
 {
 	GENERATED_BODY()
+	
 	UInventoryWG (const FObjectInitializer& ObjectInitializer);
 
+	template<typename T>
+	T* CreateWGClass(FString path);
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -59,7 +62,6 @@ protected:
 	class UScaleBox* itemDescription;
 
 
-	TArray<TSubclassOf<class UUserWidget>> WGFactory;
 	UPROPERTY()
 	class UFoodPopup* FoodPopup;
 	UPROPERTY()
@@ -97,12 +99,14 @@ protected:
 
 	int32 CurrMoney = 0;
 	EItemType currinventype = EItemType::Consum; //인벤토리에서 버튼들을 클릭했을때 사용.
-	EItemType SelectItemType; //인벤토리에서 아이템을 클릭했을 때 사용.
 
 
 
 	UPROPERTY()
 	TArray<class UInventorySlotWG*> Slots;
+
+	UPROPERTY()
+	class ADataManager* DataManager;
 
 public:
 	void Setinventory();
@@ -110,11 +114,12 @@ public:
 	void RemoveInventory();
 
 	UFUNCTION()
-	void ItemSlotClicked(int32 slotindex);
+	void ItemSlotClicked(FinvenData invenData);
 
 	UPROPERTY()
 	class UInventoryComponent* InvenComp;
 
-	FSendSlot SetSelectSlot;
+	FSendSlot SendInvenData;
 
  };
+

@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "DataManager.h"
 #include "SH_Player.h"
+#include "MainDialogueUI.h"
 
 // Sets default values for this component's properties
 UQuestComponent::UQuestComponent()
@@ -28,13 +29,7 @@ UQuestComponent::UQuestComponent()
 		QuestFactory = tempWG.Class;
 	}
 	
-
 }
-
-
-
-
-
 
 // Called when the game starts
 void UQuestComponent::BeginPlay()
@@ -50,7 +45,6 @@ void UQuestComponent::BeginPlay()
 		CurrNavi->SetActiveNaviWG(false);
 		QuestNavis.Add(CurrNavi);
 	}
-	// ...
 
 	//처음 퀘스트
 	CompleteMainQuest();
@@ -59,8 +53,14 @@ void UQuestComponent::BeginPlay()
 void UQuestComponent::CompleteMainQuest()
 {
 	mainQuestIdx++;
-	UE_LOG(LogTemp, Error, TEXT("%s"), *DataManager->newQuestList[mainQuestIdx].description);
-	currGoalCount = 0;
+	FQuestInfo NextMainQuest = DataManager->GetInfo(mainQuestIdx, DataManager->MainQuestList);
+	if (NextMainQuest.Type != EQuestType::None)
+	{
+		QuestWG->ContinueList.Add(NextMainQuest);
+		Player->dialogueUI->CurrNext = NextMainQuest.DialougueIndex;
+		currGoalCount = 0;
+
+	}
 }
 
 
@@ -95,10 +95,4 @@ void UQuestComponent::QuestUIOpen()
 	{
 		QuestWG->RemoveQuestWG();
 	}
-}
-
-void UQuestComponent::reciveQuest(FQuestInfo sendQuest)
-{
-
-	playerQuestList.Add(sendQuest);
 }

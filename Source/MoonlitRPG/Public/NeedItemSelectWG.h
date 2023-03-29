@@ -46,7 +46,7 @@ public:
 	class UWrapBox* Wrap_HadWeapon;
 
 	
-	FInvenItem SelectedSlotItem;
+	FinvenData inventoryData;
 
 	TArray<class ULevelUpSlotWG*> LevelupSlots;
 
