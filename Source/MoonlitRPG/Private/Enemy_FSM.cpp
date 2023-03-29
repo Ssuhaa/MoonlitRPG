@@ -328,7 +328,7 @@ void UEnemy_FSM::DieState()
 			TArray<class AIH_EnemyManager*> Managers = DataManager->GetAllActorOfClass<AIH_EnemyManager>();;
 
 			AIH_EnemyManager* Manager = nullptr;
-			for(int32 i = 0 ; i<Managers.Num();i++)
+			for (int32 i = 0; i < Managers.Num(); i++)
 			{
 				if (Managers[i]->EnemyManagerIdx == me->EnemyManagerIdx)
 				{
