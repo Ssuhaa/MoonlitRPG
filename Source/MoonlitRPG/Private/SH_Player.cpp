@@ -52,9 +52,6 @@ ASH_Player::ASH_Player()
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
 
-// 	hitImpact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact Effect"));
-// 	hitImpact->SetRelativeScale3D(FVector(1));
-// 	hitImpact->SetupAttachment(RootComponent);
 	
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
 	if (tempHit.Succeeded())
@@ -89,7 +86,7 @@ ASH_Player::ASH_Player()
 	dialogueUI = CreateWGClass<UMainDialogueUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
 	warningUI = CreateWGClass<UIH_WarningUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
 	MainHUD = CreateWGClass<UPlayerMainWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
-	screenshotUI = CreateWidget<UScreenShotUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
+	screenshotUI = CreateWGClass<UScreenShotUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
 
 }
 
@@ -127,7 +124,7 @@ void ASH_Player::BeginPlay()
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
 
-	hitImpact->SetActive(false);
+
 }
 
 void ASH_Player::Tick(float DeltaTime)

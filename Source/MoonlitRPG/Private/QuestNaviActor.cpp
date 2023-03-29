@@ -3,6 +3,7 @@
 
 #include "QuestNaviActor.h"
 #include "QuestNaviWG.h"
+#include <UMG/Public/Components/WidgetComponent.h>
 
 AQuestNaviActor::AQuestNaviActor()
 {

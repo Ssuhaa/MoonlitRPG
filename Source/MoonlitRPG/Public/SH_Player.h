@@ -75,9 +75,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UQuestComponent* QuestComp;
 
-
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class UUserWidget>> UIFactory;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	class UIH_DieUI* dieUI;
 	UPROPERTY(EditAnywhere, Category = "Widget")

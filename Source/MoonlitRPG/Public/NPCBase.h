@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "GameFramework/Pawn.h"
+#include "DataManager.h"
 #include "NPCBase.generated.h"
 
 
@@ -56,14 +57,10 @@ public:
 	int32 DialogueNum = 1;
 
 	TArray<FNPCDialogue> NPCTalk;
-
 	void InteractNPC();
 	bool bTalking = false;
 
 	FString MakeCSVPath();
-
-
-
 
 
 	
