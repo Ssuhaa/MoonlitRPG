@@ -13,6 +13,7 @@
 #include "SH_Player.h"
 #include <UMG/Public/Components/ProgressBar.h>
 #include "InventoryWG.h"
+#include "OutfitWG.h"
 
 
 UWeaponLevelUpWG::UWeaponLevelUpWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

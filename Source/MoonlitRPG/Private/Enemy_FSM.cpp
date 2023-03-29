@@ -238,7 +238,7 @@ void UEnemy_FSM::ReceiveDamage(int32 damage)
 	if (!bDiestart)
 	{
 		float randLocX = FMath::RandRange(-15, 15);
-		damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, me->itemSpawnPos->GetComponentLocation() + me->itemSpawnPos->GetRightVector() * randLocX, me->itemSpawnPos->GetComponentRotation());
+		FloatingDamage();
 		damageUI->UpdateDamage(damage);
 		damageUI->FloatingAnimation();
 		if (currHP > 0)
@@ -533,6 +533,7 @@ bool UEnemy_FSM::PlayerCheck()
 	{
 		if (hitinfo.GetActor()->GetName().Contains(TEXT("Player")))
 		{
+			enemyDamage = FMath::RandRange(minDamage, maxDamage);
 			return true;
 		}
 	}

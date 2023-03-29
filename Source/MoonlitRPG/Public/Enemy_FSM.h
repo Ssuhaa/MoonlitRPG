@@ -82,6 +82,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
 	float maxHP = 30;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float minDamage = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxDamage = 7;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerHP)
 	float enemyDamage = 5;
 

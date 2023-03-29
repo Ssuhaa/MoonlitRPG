@@ -58,6 +58,7 @@ public:
 
 	void SetActive(bool bActive);
 	void ImpactEffect();
+	void RandomHitImpact(FVector loc);
 
 	int32 EnemyManagerIdx;
 

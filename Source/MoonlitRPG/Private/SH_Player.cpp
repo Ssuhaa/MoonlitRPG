@@ -24,6 +24,10 @@
 #include "QuestComponent.h"
 #include "IH_PuzzleGuide.h"
 #include <Particles/ParticleSystemComponent.h>
+#include "ScreenShotUI.h"
+#include <Kismet/GameplayStatics.h>
+#include "PuzzleGuide.h"
+#include "IH_DamageActor.h"
 
 ASH_Player::ASH_Player()
 {
@@ -72,6 +76,11 @@ ASH_Player::ASH_Player()
 	{
 		fkey = tempAction.Object; //f
 	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempAlt(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Key_Alt.Key_Alt'"));
+	if (tempAlt.Succeeded())
+	{
+		altkey = tempAlt.Object; //alt
+	}
 	ConstructorHelpers::FClassFinder<UIH_DieUI> tempdieUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
 	if (tempdieUI.Succeeded())
 	{
@@ -92,7 +101,11 @@ ASH_Player::ASH_Player()
 	{
 		UIFactory.Add(tempwarningUI.Class);
 	}
-
+	ConstructorHelpers::FClassFinder<UScreenShotUI> tempscreenshotUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
+	if (tempscreenshotUI.Succeeded())
+	{
+		UIFactory.Add(tempscreenshotUI.Class);
+	}
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh1(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter.SK_SdCharacter'"));
 	if(tempMesh1.Succeeded())
 	{
@@ -126,15 +139,18 @@ void ASH_Player::BeginPlay()
 
 	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 
-
 	playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
 
-	dieUI = CreateWidget<UIH_DieUI>(GetWorld(), UIFactory[0]);
-	loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
-	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
-	warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
+	if (UIFactory.IsValidIndex(0))
+	{
+		dieUI = CreateWidget<UIH_DieUI>(GetWorld(), UIFactory[0]);
+		loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
+		dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
+		warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
+		screenshotUI = CreateWidget<UScreenShotUI>(GetWorld(), UIFactory[4]);
+	}
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -150,6 +166,7 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	if (EnhancedInputComponent != nullptr)
 	{
 		EnhancedInputComponent->BindAction(fkey, ETriggerEvent::Triggered, this, &ASH_Player::interactionObject); //F키
+		EnhancedInputComponent->BindAction(altkey, ETriggerEvent::Triggered, this, &ASH_Player::OpenScreenshotUI); //ALT키
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
@@ -157,6 +174,23 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	}
 }
 
+void ASH_Player::OpenScreenshotUI()
+{
+	if (!screenShotOpen)
+	{
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		GetCharacterMovement()->DisableMovement();
+		screenshotUI->AddToViewport();
+		screenShotOpen = true;
+	}
+	else
+	{
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		screenshotUI->RemoveFromParent();
+		screenShotOpen = false;
+	}
+}
 
 void ASH_Player::interactionObject()
 {
@@ -217,6 +251,11 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
 			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(*sectionName));
+
+			FloatingPlayerDamage();
+			damageUI->UpdateDamage(DamageValue);
+			damageUI->FloatingAnimation();
+
 			GetCharacterMovement()->DisableMovement();
 		}
 		else // 플레이어 죽음
@@ -264,4 +303,10 @@ void ASH_Player::RevivePlayer()
 			currAnim->Montage_Stop(0, currMont);
 		}
 	}
+}
+
+void ASH_Player::FloatingPlayerDamage()
+{
+	float randLocX = FMath::RandRange(-15, 15);
+	damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, GetActorLocation() + GetActorRightVector() * randLocX, GetActorRotation());
 }

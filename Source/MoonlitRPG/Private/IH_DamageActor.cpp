@@ -13,7 +13,7 @@ AIH_DamageActor::AIH_DamageActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FClassFinder<UIH_EnemyDamageUI>tempDamage(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_EnemyDamage.WG_EnemyDamage_C'"));
+	ConstructorHelpers::FClassFinder<UIH_EnemyDamageUI>tempDamage(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Damage.WG_Damage_C'"));
 	if (tempDamage.Succeeded())
 	{
 		compWidget->SetWidgetClass(tempDamage.Class);

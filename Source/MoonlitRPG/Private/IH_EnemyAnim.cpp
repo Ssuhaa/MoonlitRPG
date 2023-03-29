@@ -29,7 +29,9 @@ void UIH_EnemyAnim::AnimNotify_EnemyAttack()
 	{
 		if (me->FSM->PlayerCheck())
 		{
-			me->FSM->target->DamagedPlayer(me->FSM->enemyDamage);
+			me->RandomHitImpact(me->FSM->target->GetActorLocation() - (me->FSM->target->GetActorUpVector() * 30));
+
+			me->FSM->target->DamagedPlayer(int32(me->FSM->enemyDamage));
 		}
 	}
 }

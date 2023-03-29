@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DataManager.h"
 #include "QuestListButtonWG.generated.h"
 
 /**
@@ -30,6 +31,6 @@ public:
 
 	UPROPERTY()
 	class UQuestWG* QuestWG;
-
+	
 	FQuestInfo* SelectQuest;
 };

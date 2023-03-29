@@ -40,7 +40,11 @@ protected:
 	
 	UPROPERTY()
 	class UInputAction* fkey;
+	UPROPERTY()
+	class UInputAction* altkey;
 	void interactionObject();
+	void OpenScreenshotUI();
+	bool screenShotOpen = false;
 
 public:
 
@@ -51,6 +55,8 @@ public:
 	void DamagedPlayer(float DamageValue);
 	void HealPlayer(float HealValue);
 	void RevivePlayer();
+	void FloatingPlayerDamage();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
@@ -65,14 +71,16 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class UUserWidget>> UIFactory;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Widget")
 	class UIH_DieUI* dieUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Widget")
 	class UIH_LoadingUI* loadingUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Widget")
 	class UMainDialogueUI* dialogueUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Widget")
 	class UIH_WarningUI* warningUI;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	class UScreenShotUI* screenshotUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
 	UPROPERTY()
@@ -81,6 +89,10 @@ public:
 	class AInteractiveObjectBase* InteractiveObjects;
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* hitImpact;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<class AIH_DamageActor> damageActor;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	class AIH_DamageActor* damageUI;
 	
 	EPlayerState ChracterState = Idle;
 	UPROPERTY()

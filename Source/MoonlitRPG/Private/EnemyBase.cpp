@@ -86,6 +86,13 @@ AEnemyBase::AEnemyBase()
 	{
 		impactEffectArr.Add(tempCritical.Object);
 	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempplayerHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_4.P_Impact_4'"));
+	if (tempplayerHit.Succeeded())
+	{
+		impactEffectArr.Add(tempplayerHit.Object);
+	}
+
 }
 
 void AEnemyBase::BeginPlay()
@@ -152,4 +159,10 @@ void AEnemyBase::ImpactEffect()
 		hitImpact->SetRelativeScale3D(FVector(0.5));
 		hitImpact->SetActive(true);
 	}
+}
+
+void AEnemyBase::RandomHitImpact(FVector loc)
+{
+	UParticleSystemComponent* playerhit = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), impactEffectArr[2], loc);
+	playerhit->SetRelativeScale3D(FVector(0.5));
 }

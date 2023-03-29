@@ -17,25 +17,17 @@ AIH_Puzzle::AIH_Puzzle()
 	compRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
 	SetRootComponent(compRoot);
 
-	compBoxSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("BoxSpawnPos Component"));
-	compBoxSpawnPos->SetupAttachment(RootComponent);
-	compBoxSpawnPos->SetRelativeLocation(FVector(-50, 0, 0));
+	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("BoxSpawnPos Component"));
+	compSpawnPos->SetupAttachment(RootComponent);
+	compSpawnPos->SetRelativeLocation(FVector(-50, 0, 0));
 
-	compMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh1"));
-	compMesh1->SetupAttachment(RootComponent);
-	meshArr.Add(compMesh1);
-
-	compMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh2"));
-	compMesh2->SetupAttachment(RootComponent);
-	meshArr.Add(compMesh2);
-
-	compMesh3 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh3"));
-	compMesh3->SetupAttachment(RootComponent);
-	meshArr.Add(compMesh3);
-
-	compMesh4 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Puzzle Mesh4"));
-	compMesh4->SetupAttachment(RootComponent);
-	meshArr.Add(compMesh4);
+	for (int32 i = 0; i < componentCount; i++)
+	{
+		FString meshName = FString::Printf(TEXT("Puzzle Mesh Component%d"), i);
+		UStaticMeshComponent* currComp = CreateDefaultSubobject<UStaticMeshComponent>(*meshName);
+		currComp->SetupAttachment(RootComponent);
+		meshArr.Add(currComp);
+	}
 
 	ConstructorHelpers::FClassFinder<APuzzleGuide>tempGuide(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_PuzzleGuider.BP_PuzzleGuider_C'"));
 	if (tempGuide.Succeeded())
@@ -67,7 +59,7 @@ AIH_Puzzle::AIH_Puzzle()
 		particleArr.Add(tempEffect.Object);
 	}
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLoot(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_1.P_Loot_1'"));
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLoot(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_6.P_Loot_6'"));
 	if (tempLoot.Succeeded())
 	{
 		particleArr.Add(tempLoot.Object);
@@ -79,7 +71,7 @@ void AIH_Puzzle::BeginPlay()
 {
 	Super::BeginPlay();
 
-	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compRoot->GetComponentLocation(), compRoot->GetComponentRotation());
+	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
 	puzzleGuide->ReceivePuzzleArr(meshArr);
 }
 
@@ -106,24 +98,22 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 		if (isDifferent)
 		{
 			hitMeshArr.Add(mesh);
-			mesh->SetMaterial(0, materialFactory[0]);
 
 			FVector hitLoc = mesh->GetComponentLocation();
-			hitLoc.Z = 0;
+//			hitLoc.Z = 0;
 			SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-//			SpawnEffect(particleArr[3], mesh->GetComponentLocation(), FVector(0.5));
+			SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 70), FVector(0.5));
 //			UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 		}
 	}
 	else
 	{
 		hitMeshArr.Add(mesh);
-		mesh->SetMaterial(0, materialFactory[0]);
 
 		FVector hitLoc = mesh->GetComponentLocation();
-		hitLoc.Z = 0;
+//		hitLoc.Z = 0;
 		SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-//		SpawnEffect(particleArr[3], mesh->GetComponentLocation(), FVector(0.5));
+		SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 70), FVector(0.5));
 //		UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 	}
 
@@ -148,23 +138,23 @@ void AIH_Puzzle::CheckAnswer()
 			{
 				for (int32 j = 0; j < hitMeshArr.Num(); j++)
 				{
-					hitMeshArr[j]->SetMaterial(0, materialFactory[1]);
-					//lootArr[j]->Deactivate();
+					lootArr[j]->DestroyComponent();
 				}
 				hitMeshArr.Empty();
-				//lootArr.Empty();
+				lootArr.Empty();
 				UE_LOG(LogTemp, Warning, TEXT("Bad"));
 			}
 		}
 	}
-
+	
 	if (hitMeshArr.IsValidIndex(meshArr.Num()-1))
 	{
 		if (meshArr[meshArr.Num() - 1] == hitMeshArr[hitMeshArr.Num() - 1])
 		{
 //			UE_LOG(LogTemp, Warning, TEXT("Correct!!!!!!!!!!!"));
-			GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compBoxSpawnPos->GetComponentTransform());
-			SpawnEffect(particleArr[0], compBoxSpawnPos->GetComponentLocation(), FVector(0.5));
+			GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compSpawnPos->GetComponentTransform());
+			SpawnEffect(particleArr[0], compSpawnPos->GetComponentLocation(), FVector(0.5));
+			SpawnEffect(particleArr[1], compSpawnPos->GetComponentLocation(), FVector(0.8));
 			isBoxSpawned = true;
 			puzzleGuide->Destroy();
 		}
@@ -173,11 +163,11 @@ void AIH_Puzzle::CheckAnswer()
 
 void AIH_Puzzle::SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size)
 {
-	UParticleSystemComponent* effect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, loc);
-	effect->SetRelativeScale3D(size);
+	UParticleSystemComponent* compEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, loc);
+	compEffect->SetRelativeScale3D(size);
 
-// 	if (particle == particleArr[2])
-// 	{
-// 		lootArr.Add(effect);
-// 	}
+	if (particle == particleArr[3])
+	{
+		lootArr.Add(compEffect);
+	}
 }

@@ -178,7 +178,7 @@ void UAttackComponent::WeaponChange(EWeaponType weaponType)
 void UAttackComponent::ImpactEffect(FVector impactLoc)
 {
 	UParticleSystemComponent* compHitEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), player->hitImpact, impactLoc);
-	compHitEffect->SetRelativeScale3D(FVector(0.5));
+	compHitEffect->SetRelativeScale3D(FVector(0.8));
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
@@ -359,7 +359,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 
 				if (currWeapon != EWeaponType::None &&  HitObject != nullptr)
 				{
-					ImpactEffect(HitObject->GetActorLocation());
+					ImpactEffect(HitObject->GetActorLocation() + HitObject->GetActorUpVector()*50);
 					HitObject->DropItem();
 				}
 			}
@@ -372,7 +372,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 					UStaticMeshComponent* HitMesh = Cast<UStaticMeshComponent>(hitinfos[i].GetComponent());
 					if (HitMesh != nullptr)
 					{
-						ImpactEffect(HitMesh->GetComponentLocation());
+						ImpactEffect(HitMesh->GetComponentLocation() + HitMesh->GetUpVector()*50);
 						if (HitPuzzle->hitMeshArr.Num() < HitPuzzle->meshArr.Num())
 						{
 							HitPuzzle->ReceiveMeshArr(HitMesh);
