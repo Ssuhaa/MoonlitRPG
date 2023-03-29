@@ -344,7 +344,8 @@ void UEnemy_FSM::DieState()
 
 				if (Manager->deathCount == Manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
 				{
-					if (DataManager->GetCurrQuestInfo(target->QuestComp->mainQuestIdx).requirementIdx == me->EnemyManagerIdx)
+					FQuestInfo data = DataManager->GetInfo(target->QuestComp->mainQuestIdx, DataManager->MainQuestList);
+					if (data.Requirements[0].Requirementindex == me->EnemyManagerIdx)
 					{
 						target->QuestComp->CompleteMainQuest();
 					}

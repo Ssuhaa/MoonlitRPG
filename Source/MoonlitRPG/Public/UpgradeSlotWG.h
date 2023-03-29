@@ -21,7 +21,7 @@ protected:
 	class UTextBlock* TB_CurrAmount;
 
 public:
-	virtual void UpdateSlot(FInvenItem invenData) override;
+	virtual void UpdateSlot(FInvenItem invenitem) override;
 
 	int32 Index;
 	bool isHaveAmount = false;

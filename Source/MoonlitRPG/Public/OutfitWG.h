@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryComponent.h"
+#include "DataManager.h"
 #include "OutfitWG.generated.h"
 
 /**
  * 
  */
 
- DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, FInvenItem);
+ DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, FinvenData);
 
 UENUM(BlueprintType)
 enum class EEquipmentState : uint8
@@ -27,6 +27,8 @@ class MOONLITRPG_API UOutfitWG : public UUserWidget
 	GENERATED_BODY()
 
 	UOutfitWG(const FObjectInitializer& ObjectInitializer);
+	template<typename T>
+	T* CreateWGClass(FString path);
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -57,14 +59,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* TB_Wearing;
 
-
-
-
-	UPROPERTY()
-	class APreviewActor* OutfitActor;
-
-	EEquipmentState OutfitState = EEquipmentState::Detail;
-
 	UFUNCTION()
 	void OnclickedDetail();	
 	UFUNCTION()
@@ -82,7 +76,6 @@ protected:
 	void ButtonSwitch(bool isMaxLevel);
 	void ReinforceSwitch(EEquipmentState state);
 
-	TArray<TSubclassOf<class UUserWidget>> WGFactory; 
 	UPROPERTY()
 	class UItemDescriptionWG* description;
 	UPROPERTY()
@@ -92,24 +85,24 @@ protected:
 
 	UPROPERTY()
 	class ASH_Player* player;
+
 	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
+	class APreviewActor* OutfitActor;
 
 
+	FinvenData inventoryData;
 
 	void ButtonBinding();
 
 	FSendInvenData SendToInvenInfo;
 
-	void UpdateOutfitWG();
+	void SetOutfItWG();
 
-	
 
 public:
 	UFUNCTION()
-	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
-	UFUNCTION()
-	void UpdateMoney();
-
+	void UpdateOutfitWG();
+	void ReceiveSelectSlotData(FinvenData invenData);
 	void ReceiveUseItem(FInvenItem ModifiedItem);
 };
+

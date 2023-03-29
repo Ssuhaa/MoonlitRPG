@@ -28,6 +28,8 @@
 #include <Kismet/GameplayStatics.h>
 #include "PuzzleGuide.h"
 #include "IH_DamageActor.h"
+#include <UMG/Public/Blueprint/UserWidget.h>
+
 
 ASH_Player::ASH_Player()
 {
@@ -60,11 +62,6 @@ ASH_Player::ASH_Player()
 		hitImpact = tempHit.Object;
 	}
 
-	ConstructorHelpers::FClassFinder<UPlayerMainWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
-	if (tempWG.Succeeded())
-	{
-		MainWGFactory = tempWG.Class; 
-	}
 	ConstructorHelpers::FClassFinder<UAnimInstance> tempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrint/ABP_Player.ABP_Player_C'"));
 	if (tempAnim.Succeeded())
 	{
@@ -81,59 +78,46 @@ ASH_Player::ASH_Player()
 	{
 		altkey = tempAlt.Object; //alt
 	}
-	ConstructorHelpers::FClassFinder<UIH_DieUI> tempdieUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
-	if (tempdieUI.Succeeded())
-	{
-		UIFactory.Add(tempdieUI.Class);
-	}
-	ConstructorHelpers::FClassFinder<UIH_LoadingUI> temploadingUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Loading.WG_Loading_C'"));
-	if (temploadingUI.Succeeded())
-	{
-		UIFactory.Add(temploadingUI.Class);
-	}
-	ConstructorHelpers::FClassFinder<UMainDialogueUI> tempdialogueUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
-	if (tempdialogueUI.Succeeded())
-	{
-		UIFactory.Add(tempdialogueUI.Class);
-	}
-	ConstructorHelpers::FClassFinder<UIH_WarningUI> tempwarningUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
-	if (tempwarningUI.Succeeded())
-	{
-		UIFactory.Add(tempwarningUI.Class);
-	}
-	ConstructorHelpers::FClassFinder<UScreenShotUI> tempscreenshotUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
-	if (tempscreenshotUI.Succeeded())
-	{
-		UIFactory.Add(tempscreenshotUI.Class);
-	}
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh1(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter.SK_SdCharacter'"));
-	if(tempMesh1.Succeeded())
-	{
-		PlayerMesh.Add(tempMesh1.Object);
-	}	
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh2(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));
-	if(tempMesh2.Succeeded())
-	{
-		PlayerMesh.Add(tempMesh2.Object);
-	}	
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh3(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WTD.SK_SdCharacter_WTD'"));
-	if(tempMesh3.Succeeded())
-	{
-		PlayerMesh.Add(tempMesh3.Object);
-	}	
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh4(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_LS_fishingrob.SK_SdCharacter_LS_fishingrob'"));
-	if(tempMesh4.Succeeded())
-	{
-		PlayerMesh.Add(tempMesh4.Object);
-	}
+
+	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));
+	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WTD.SK_SdCharacter_WTD'"));
+	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_LS_fishingrob.SK_SdCharacter_LS_fishingrob'"));
+	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter.SK_SdCharacter'"));
+
+	dieUI = CreateWGClass<UIH_DieUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
+	loadingUI = CreateWGClass<UIH_LoadingUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Loading.WG_Loading_C'"));
+	dialogueUI = CreateWGClass<UMainDialogueUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
+	warningUI = CreateWGClass<UIH_WarningUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
+	MainHUD = CreateWGClass<UPlayerMainWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
+	screenshotUI = CreateWidget<UScreenShotUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
+
 }
 
+template<typename T>
+T* ASH_Player::CreateWGClass(FString path)
+{
+	TSubclassOf<T> WGFactory;
+	ConstructorHelpers::FClassFinder<T> tempWG(*path);
+	if (tempWG.Succeeded())
+	{
+		WGFactory = tempWG.Class;
+	}
+	return CreateWidget<T>(GetWorld(), WGFactory);
+}
+
+void ASH_Player::SkeletalMeshFinder(FString path)
+{
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(*path);
+	if (tempMesh.Succeeded())
+	{
+		PlayerMesh.Add(tempMesh.Object);
+	}
+}
 
 void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MainHUD = CreateWidget<UPlayerMainWG>(GetWorld(), MainWGFactory);
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
 
@@ -143,14 +127,7 @@ void ASH_Player::BeginPlay()
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
 
-	if (UIFactory.IsValidIndex(0))
-	{
-		dieUI = CreateWidget<UIH_DieUI>(GetWorld(), UIFactory[0]);
-		loadingUI = CreateWidget<UIH_LoadingUI>(GetWorld(), UIFactory[1]);
-		dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), UIFactory[2]);
-		warningUI = CreateWidget<UIH_WarningUI>(GetWorld(), UIFactory[3]);
-		screenshotUI = CreateWidget<UScreenShotUI>(GetWorld(), UIFactory[4]);
-	}
+	hitImpact->SetActive(false);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -222,7 +199,7 @@ void ASH_Player::interactionObject()
 		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
 		if (currNPC != nullptr)
 		{
-			if (DataManager->GetCurrQuestInfo(QuestComp->mainQuestIdx).completeNpcIdx == currNPC->idx)
+			if (DataManager->GetInfo(QuestComp->mainQuestIdx, DataManager->MainQuestList).Requirements[0].Requirementindex == currNPC->idx)
 			{
 				currNPC->InteractNPC();
 			}

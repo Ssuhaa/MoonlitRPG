@@ -10,13 +10,17 @@ ADataManager::ADataManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	itemList = LoadTable<FIteminfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/ItemList.ItemList'"));
+	WeaponList = LoadTable<FWeaponinfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/WeaponList.WeaponList'"));
 	npcList = LoadTable<FNpcInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/NpcList.NpcList'"));
-	newQuestList = LoadTable<FNewQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/NewQuestList.NewQuestList'"));
-	for (int32 i = 0; i < newQuestList.Num(); i++)
+	EnemyPlaceList = LoadTable<FEnemyManagerInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/EnemyManagerList.EnemyManagerList'"));
+	UpgradeMoneyData = LoadTable<FUpGradeMoneyData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/UpGradeMoneyData.UpGradeMoneyData'"));
+	ItemGradeData = LoadTable<FItemGradeData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/ItemGradeData.ItemGradeData'"));
+	MainQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/MainQuestList.MainQuestList'"));
+	
+	for (int32 i = 0; i < MainQuestList.Num(); i++)
 	{
-		(&newQuestList[i])->SetDescription(this);
+		(&MainQuestList[i])->SetDescription(this);
 	}
-
 
 }
 
@@ -24,8 +28,6 @@ ADataManager::ADataManager()
 void ADataManager::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 
 }
 
@@ -124,24 +126,100 @@ TArray<T*> ADataManager::GetAllActorOfClass()
 	return Managers;
 }
 
-
-//조심 구조체다
-void FNewQuestInfo::SetDescription(ADataManager* DataManager)
+FinvenData ADataManager::GetData(FInvenItem invenitem)
 {
-	switch (subType)
+	FinvenData invenData;
+	invenData.invenitem = invenitem;
+	invenData.iteminfo = GetInfo(invenitem.ItemInfoIndex, itemList);
+	invenData.Weaponinfo = GetInfo(invenitem.WeaponInfoIndex, WeaponList);
+	invenData.itemGradeData = GetInfo(int32(invenData.iteminfo.itemgrade), ItemGradeData);
+	invenData.UpGradeMoneyData = GetInfo(invenData.invenitem.WeaponData.UpgradeCount, UpgradeMoneyData);
+
+	return invenData;
+}
+
+template<typename T>
+T ADataManager::GetInfo(int32 Index, const TArray<T> List)
+{
+	if(Index < 0 || List.IsEmpty())
 	{
-	case EKindOfQuest::Contact:
-	
-		description = FString::Printf(TEXT("%s 를 만나세요"), *DataManager->npcList[requirementIdx].NPCName);
-	
-	break;
-	case EKindOfQuest::Hunt:
-		description = TEXT("해당 지역을 청소하시오.");
+		T null;
+		return null;
+	}
+	return List[Index];
+}
+
+template<typename T>
+T ADataManager::GetInfo(int32 index, EDataList DataList)
+{	
+	switch (DataList)
+	{
+	default:
 		break;
-	case EKindOfQuest::GetItem:
+	}
+}
+
+//---------<조심> 구조체함수--------------------------------------------------------
+
+void FInvenItem::SetWeaponPower(ADataManager* DataManager)
+{
+	WeaponData.CurrPower = DataManager->GetInfo(WeaponInfoIndex, DataManager->WeaponList).initPower;
+}
+
+bool FInvenItem::PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMoney, FItemGradeData GradeData)
+{
+	if (*playerMoney >= 120 * TotalAmount)
+	{
+		*playerMoney -= 120 * TotalAmount;
+		*playerMoney = FMath::Clamp(*playerMoney, 0, *playerMoney);
+		WeaponData.CurrEXP += TotalEXP;
+		levelUP(GradeData);
+		return true;
+	}
+	SendLevelUpClear.Broadcast();
+	return false;
+}
+
+void  FInvenItem::levelUP(FItemGradeData GradeData)
+{
+	if (WeaponData.CurrEXP >= WeaponData.MaxEXP)
+	{
+		WeaponData.Level++;
+		WeaponData.MaxEXP += GradeData.PlusEXP;
+		WeaponData.CurrEXP = WeaponData.CurrEXP - WeaponData.MaxEXP;
+		WeaponData.CurrPower += GradeData.PlusPower;
+	}
+	SendLevelUpClear.Broadcast();
+}
+
+bool FInvenItem::Upgrade(int32* playerMoney, bool isHaveAllItem, ADataManager* DataManager)
+{
+	int32 UpgradeMoney = DataManager->UpgradeMoneyData[WeaponData.UpgradeCount].UpgradeNeedMoney;
+	if (*playerMoney >= UpgradeMoney && isHaveAllItem == true)
+	{
+		*playerMoney -= UpgradeMoney;
+		*playerMoney = FMath::Clamp(*playerMoney, 0, *playerMoney);
+		WeaponData.UpgradeCount++;
+		WeaponData.MaxLevel += 10;
+		return true;
+	}
+	return false;
+}
+
+void FQuestInfo::SetDescription(ADataManager* DataManager)
+{
+	int32 index = Requirements[0].Requirementindex;
+	switch (SubType)
+	{
+	case ESubQuestType::Contact:
 	
-		description = FString::Printf(TEXT("%s 을(를) %d 수집해요"), *DataManager->itemList[requirementIdx].ItemName, goalCount);
-	
+		Summary = FString::Printf(TEXT("%s 를 만나자."), *DataManager->GetInfo(index, DataManager->npcList).NPCName);
+	break;
+	case  ESubQuestType::Hunt:
+		Summary = FString::Printf(TEXT("%s 을/를 소탕하라."), *DataManager->GetInfo(index, DataManager->EnemyPlaceList).EnemyPlaceName);
+		break;
+	case  ESubQuestType::GetItem:
+		Summary = FString::Printf(TEXT("%s 을(를) %d 수집하자."), *DataManager->GetInfo(index, DataManager->itemList).ItemName, 1);
 	break;
 	}
 }

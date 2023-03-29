@@ -20,6 +20,7 @@
 #include "InventoryComponent.h"
 #include "IH_Puzzle.h"
 #include <Particles/ParticleSystemComponent.h>
+#include "DataManager.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -71,6 +72,7 @@ void UAttackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	player = Cast<ASH_Player>(GetOwner());
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 }
 
 // Called every frame
@@ -170,9 +172,16 @@ void UAttackComponent::SpecialAttack()
 	}
 }
 
-void UAttackComponent::WeaponChange(EWeaponType weaponType)
+void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 {
-	currWeapon = weaponType;
+	if (WeaponinfoIndex < 0)
+	{
+		currWeapon = EWeaponType::None;
+	}
+	else
+	{
+		currWeapon = DataManager->WeaponList[WeaponinfoIndex].WeaponType;
+	}
 }
 
 void UAttackComponent::ImpactEffect(FVector impactLoc)
@@ -392,7 +401,7 @@ void UAttackComponent::DamageChange(FDamageRange damageRangeType)
 
 	if (index > -1)	// 무기를 착용하고 있으면
 	{
-		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;	// 해당 무기의 공격력을 저장한다.
+		currPower = player->InvenComp->invenItemArr[index].WeaponData.CurrPower;	// 해당 무기의 공격력을 저장한다.
 	}
 
 	// 무기의 공격력만큼 더한 값을 데미지로 뽑는다.
@@ -414,7 +423,7 @@ void UAttackComponent::SkillDamageChange(FDamageRange damageRangeType)
 
 	if (index > -1)	// 무기를 착용하고 있으면
 	{
-		currPower = player->InvenComp->invenItemArr[index].weaponinfomaiton.Power;	// 해당 무기의 공격력을 저장한다.
+		currPower = player->InvenComp->invenItemArr[index].WeaponData.CurrPower;	// 해당 무기의 공격력을 저장한다.
 	}
 
 	// 무기의 공격력만큼 더한 값을 데미지로 뽑는다.

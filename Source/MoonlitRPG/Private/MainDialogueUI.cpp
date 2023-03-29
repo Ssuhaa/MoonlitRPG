@@ -14,6 +14,7 @@
 #include <UMG/Public/Components/ScrollBox.h>
 #include <UMG/Public/Components/VerticalBox.h>
 #include "QuestComponent.h"
+#include "DataManager.h"
 
 UMainDialogueUI::UMainDialogueUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -28,18 +29,23 @@ UMainDialogueUI::UMainDialogueUI(const FObjectInitializer& ObjectInitializer) : 
 		UDialogueButtonWG* CurrWG = CreateWidget<UDialogueButtonWG>(GetWorld(),buttonFactory);
 		Buttons.Add(CurrWG);
 	}
+
+	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 }
 
 void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
 	
 	btn_Close->OnPressed.AddUniqueDynamic(this, &UMainDialogueUI::CloseButton);
 	PlayAnimation(DialogueOpenAnim);
+
+
 }
 
 FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -72,7 +78,7 @@ void UMainDialogueUI::ReadCSVFile(FString CSVPath)
 {
 	if (FFileHelper::LoadFileToStringArray(CsvRows, *CSVPath))
 	{
-		CurrNext = 1;
+		CurrNext = DataManager->GetInfo(0, DataManager->MainQuestList).DialougueIndex;
 		SetDialogue(CurrNext);
 	}
 	else
@@ -89,7 +95,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	{
 		CsvRows[Next].ParseIntoArray(CsvColumns, TEXT(",")); //콤마를 기준으로 단어를 끊어서 CSV열에 담아라.
 	}
-	else
+	else 
 	{
 		
 		player->QuestComp->CompleteMainQuest();
@@ -102,15 +108,14 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	//이름[0], 내용[1], 선택지1[2], Next1[3], 선택지2[4], Next2[5], 선택지3[6], Next3[7]
 	for (int32 i = 1; i < CsvColumns.Num(); i++)
 	{
-		CsvColumns[i].ReplaceInline(TEXT("{@}"), *PlayerName);
+		CsvColumns[i].ReplaceInline(TEXT("{PlayerName}"), *PlayerName);
 		CsvColumns[i].ReplaceInline(TEXT("\\n"), TEXT("\n"));
 
 	}
 
-	//CharacterName = CsvColumns[0];
 	Name->SetText(FText::FromString(CsvColumns[0]));
 	
-	//Text = CsvColumns[1];
+
 	Dialogue->SetText(FText::FromString(CsvColumns[1]));
 
 	VB_Choices->ClearChildren();

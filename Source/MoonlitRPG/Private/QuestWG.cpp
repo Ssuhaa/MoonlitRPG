@@ -42,7 +42,7 @@ void UQuestWG::NativeConstruct()
 	if (Player != nullptr)
 	{
 		Player->bUIOpen = true;
-		SetQuestWG(&Player->QuestComp->playerQuestList);
+		SetQuestWG();
 	}
 	ButtonBinding();
 	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
@@ -89,9 +89,8 @@ void UQuestWG::ClickedCloseButton()
 	RemoveQuestWG();
 }
 
-void UQuestWG::SetQuestWG(TArray<FQuestInfo>* QuestList)
+void UQuestWG::SetQuestWG()
 {
-	questlist = QuestList;
 	ChangeQuestList(EQuestType::Total);
 }
 
@@ -101,7 +100,7 @@ void UQuestWG::ChangeQuestList(EQuestType ChangeType)
 	VB_QuestList->ClearChildren();
 	if (CurrQuestType == EQuestType::Total)
 	{
-		for (int32 i = 0; i < questlist->Num(); i++)
+		for (int32 i = 0; i < ContinueList.Num(); i++)
 		{
 			if (!QuestButtons.IsValidIndex(i))
 			{
@@ -109,18 +108,18 @@ void UQuestWG::ChangeQuestList(EQuestType ChangeType)
 				QuestButtons.Add(CurrList);
 			}
 			QuestButtons[i]->QuestWG = this;
-			QuestButtons[i]->SetQuestListWG(&(*questlist)[i]);
+			QuestButtons[i]->SetQuestListWG(&ContinueList[i]);
 			VB_QuestList->AddChild(QuestButtons[i]);
 		}
 	}
 	else
 	{
-		for (int32 i = 0; i < questlist->Num(); i++)
+		for (int32 i = 0; i < ContinueList.Num(); i++)
 		{
-			if ((*questlist)[i].Type == CurrQuestType)
+			if (ContinueList[i].Type == CurrQuestType)
 			{
 				QuestButtons[i]->QuestWG = this;
-				QuestButtons[i]->SetQuestListWG(&(*questlist)[i]);
+				QuestButtons[i]->SetQuestListWG(&ContinueList[i]);
 				VB_QuestList->AddChild(QuestButtons[i]);
 
 			}

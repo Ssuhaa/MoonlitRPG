@@ -51,6 +51,7 @@ void APreviewActor::Tick(float DeltaTime)
 
 void APreviewActor::SetPreviewMesh(UStaticMesh* MeshData)
 {
+	if(MeshData == nullptr) return;
 	PreviewMesh->SetStaticMesh(MeshData);
 	PreviewMesh->SetMaterial(0, MeshData->GetMaterial(0));
 }

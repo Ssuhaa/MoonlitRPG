@@ -53,7 +53,8 @@ public:
 	int32 CurrNext = 1;
 	void SetDialogue(int32 Next);
 
-
+	UPROPERTY()
+	class ADataManager* DataManager;
 
 public:
 

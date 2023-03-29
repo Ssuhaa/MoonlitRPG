@@ -16,17 +16,22 @@ void UInventorySlotWG::ButtonBinding()
 }
 
 
-void UInventorySlotWG::UpdateSlot(FInvenItem invenData)
+void UInventorySlotWG::UpdateSlot(FInvenItem invenitem)
 {
-	Super::UpdateSlot(invenData);
-	if (invenInfo.itemAmount >= 1)
-	{
-		ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), invenInfo.itemAmount)));
-	}
+	Super::UpdateSlot(invenitem);
+
+	ItemAmount->SetText(FText::FromString(FString::Printf(TEXT("%d"), invenitem.itemAmount)));
+	
 }
 
 
+void UInventorySlotWG::NativeConstruct()
+{
+	Super::NativeConstruct();
+	PlayAnimation(AddSlot);
+}
+
 void UInventorySlotWG::SlotClicked()
 {
-	invenWG->ItemSlotClicked(Slotindex);
+	InvenWG->ItemSlotClicked(invenData);
 }

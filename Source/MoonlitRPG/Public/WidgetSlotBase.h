@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryComponent.h"
+#include "DataManager.h"
 #include "WidgetSlotBase.generated.h"
 
 /**
@@ -22,23 +22,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* SlotBG;
 
-	TArray<class UTexture2D*> BGarray;
 
 	virtual void ButtonBinding();
 
 	UPROPERTY()
-	class ASH_Player* player; 
+	class ASH_Player* Player; 
+	UPROPERTY()
+	class ADataManager* DataManager;
 
-public:
 	UFUNCTION()
 	virtual void SlotClicked();
-	virtual void UpdateSlot(FInvenItem invenData);
-	virtual void UpdateSlot(FIteminfo iteminfo);
+	virtual void UpdateSlot(FInvenItem invenitem);
 
-	UPROPERTY()
-	class UInventoryWG* invenWG;
-	int32 Slotindex;
-	FInvenItem invenInfo;
-
+public:
+	FinvenData invenData;
 
 };

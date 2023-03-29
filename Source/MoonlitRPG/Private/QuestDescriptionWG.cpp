@@ -35,20 +35,20 @@ void UQuestDescriptionWG::NativeConstruct()
 
 void UQuestDescriptionWG::OnPressedNavi()
 {
-	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-	if(Player != nullptr)
-	{
-		for (int32 i = 0; i < Quest->Requirements.Num(); i++)
-		{
-			AActor* requirement = UGameplayStatics::GetActorOfClass(GetWorld(), Quest->Requirements[i].Requirement);
-			if (requirement != nullptr)
-			{
-				Player->QuestComp->QuestNavis[i]->SetActorLocation(requirement->GetActorLocation());
-				Player->QuestComp->QuestNavis[i]->SetActiveNaviWG(true);
-			}
-			
-		}
-	}
+// 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+// 	if(Player != nullptr)
+// 	{
+// 		for (int32 i = 0; i < Quest->Requirements.Num(); i++)
+// 		{
+// 			AActor* requirement = UGameplayStatics::GetActorOfClass(GetWorld(), Quest->Requirements[i].Requirement);
+// 			if (requirement != nullptr)
+// 			{
+// 				Player->QuestComp->QuestNavis[i]->SetActorLocation(requirement->GetActorLocation());
+// 				Player->QuestComp->QuestNavis[i]->SetActiveNaviWG(true);
+// 			}
+// 			
+// 		}
+// 	}
 }
 
 void UQuestDescriptionWG::SetQuestDescription(FQuestInfo* QuestInfo)
@@ -61,9 +61,9 @@ void UQuestDescriptionWG::SetQuestDescription(FQuestInfo* QuestInfo)
 	TB_QEXP->SetText(FText::AsNumber(QuestInfo->Reward.RewardEXP));
 
 	HB_Reward->ClearChildren();
-	for (int32 i = 0; i < QuestInfo->Reward.RewardItem.Num(); i++)
-	{
-		RewardSlots[i]->UpdateSlot(QuestInfo->Reward.RewardItem[i]);
-		HB_Reward->AddChild(RewardSlots[i]);
-	}
+// 	for (int32 i = 0; i < QuestInfo->Reward.RewardItem.Num(); i++)
+// 	{
+// 		RewardSlots[i]->UpdateSlot(QuestInfo->Reward.RewardItem[i]);
+// 		HB_Reward->AddChild(RewardSlots[i]);
+// 	}
 }

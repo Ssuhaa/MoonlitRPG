@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "InventoryComponent.h"
+#include "DataManager.h"
 #include "ItemDescriptionWG.generated.h"
 
 /**
@@ -14,8 +14,6 @@ UCLASS()
 class MOONLITRPG_API UItemDescriptionWG : public UUserWidget
 {
 	GENERATED_BODY()
-
-	UItemDescriptionWG(const FObjectInitializer& ObjectInitializer);
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* ItemImage;
@@ -39,25 +37,15 @@ protected:
 	class UBorder* Border_Equip;
 
 
-
-	TArray<class UTexture2D*> BGarray;
-
-
-	FInvenItem SelectedSlotItem;
-
-
+	FinvenData inventoryData;
 
 	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
+	class ASH_Player* Player;
 
+	void SetDescription();
+	void ShowEquip();
 public:
 
 	UFUNCTION()
-	void ReceiveSelectSlotitemData(FInvenItem SelectSlotItem);
-
-	UFUNCTION()
-	void ReceiveSelectSlotData(class UInventorySlotWG* SelectSlot);
-
-	void UpdateDescription();
-
+	void ReceiveSelectSlotData(FinvenData invenData);
 };

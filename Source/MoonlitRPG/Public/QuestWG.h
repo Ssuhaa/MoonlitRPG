@@ -58,12 +58,12 @@ protected:
 	UPROPERTY()
 	class ASH_Player* Player;
 	
-	void SetQuestWG(TArray<FQuestInfo>* QuestList);
+	void SetQuestWG();
 	void ChangeQuestList(EQuestType ChangeType);
 
 	EQuestType CurrQuestType = EQuestType::Total;
 
-	TArray<FQuestInfo>* questlist;
+	
 
 public:
 
@@ -71,5 +71,5 @@ public:
 
 	void ReciveSelectQuest(FQuestInfo* SelectQuest);
 	
-
+	TArray<FQuestInfo> ContinueList;
 };

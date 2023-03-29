@@ -41,7 +41,7 @@ public:
 	UPROPERTY()
 	class UWeaponLevelUpWG* WeaponLevelUpWG;
 
-	virtual void UpdateSlot(FInvenItem invenData) override;
+	virtual void UpdateSlot(FInvenItem invenitem) override;
 	void ResetSlot();
 
 	bool isFill = false;

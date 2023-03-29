@@ -22,6 +22,13 @@ class MOONLITRPG_API ASH_Player : public ACharacterBase
 	GENERATED_BODY()
 
 	ASH_Player();
+private:
+
+	template<typename T = UUserWidget>
+	T* CreateWGClass(FString path);
+
+	void SkeletalMeshFinder(FString path);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -107,5 +114,8 @@ public:
 
 	UPROPERTY()
 	class ADataManager* DataManager;
+
 		
 };
+
+

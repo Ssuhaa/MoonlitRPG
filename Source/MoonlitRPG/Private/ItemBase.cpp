@@ -13,6 +13,7 @@
 #include "IH_GetItemUI.h"
 #include <UMG/Public/Components/Image.h>
 #include <Cascade/Classes/CascadeParticleSystemComponent.h>
+#include "DataManager.h"
 
 
 // Sets default values
@@ -77,16 +78,16 @@ void AItemBase::BeginPlay()
 	Super::BeginPlay();
 
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory[0]);
-	interactionUI->txt_Interaction->SetText(FText::FromString(ItemInformation.ItemName));
-	interactionUI->img_Interact->SetBrushFromTexture(ItemInformation.itemImage);
+	interactionUI->txt_Interaction->SetText(FText::FromString(DataManager->itemList[iteminfoIndex].ItemName));
+	interactionUI->img_Interact->SetBrushFromTexture(DataManager->itemList[iteminfoIndex].itemImage);
 
 	getItemUI = CreateWidget< UIH_GetItemUI>(GetWorld(), interactUIFactory[1]);
-	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *ItemInformation.ItemName, 1)));
-	getItemUI->img_Get->SetBrushFromTexture(ItemInformation.itemImage);
+	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *DataManager->itemList[iteminfoIndex].ItemName, 1)));
+	getItemUI->img_Get->SetBrushFromTexture(DataManager->itemList[iteminfoIndex].itemImage);
 
-	currGrade = ItemInformation.itemgrade;
+	currGrade = DataManager->itemList[iteminfoIndex].itemgrade;
 	switch (currGrade)
 	{
 		case EItemgrade::Common:
@@ -143,7 +144,7 @@ void AItemBase::GetItem()
 {
 	if(Player != nullptr)
 	{
-		Player->InvenComp->CheckSameItemAfterAdd(ItemInformation, 1);
+		Player->InvenComp->CommonCheckSameItemAfterAdd(iteminfoIndex, 1);
 
 		int32 widgetCount = Player->MainHUD->ItemGetBox->GetChildrenCount();
 

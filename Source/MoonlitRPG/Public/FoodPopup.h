@@ -40,8 +40,6 @@ protected:
 
 	UPROPERTY()
 	class ASH_Player* Player;
-	UPROPERTY()
-	class UInventorySlotWG* SlotWG;
 	
 	UFUNCTION()
 	void OnClickedCancel();
@@ -63,19 +61,15 @@ protected:
 
 	void UpdateHPBar();
 
-	
-	//FInvenItem* iteminfo;
-	UPROPERTY()
-	class UInventorySlotWG* SelectedSlot;
-
 	TSubclassOf<class UHpFullPopup> FullPopFactory;
 	UPROPERTY()
 	class UHpFullPopup* FullPopup;
 
 	void HealCallAndUpdatePopup();
+	void ButtonBinding();
 
 
-	void UpdateFoodPopup();
+	FinvenData inventoryData;
 
 public:
 
@@ -83,8 +77,5 @@ public:
 	class UInventoryWG* invenWG;
 
 	UFUNCTION()
-	void ReceiveSelectSlotData(UInventorySlotWG* SelectSlot);
-
-
-	void ButtonBinding();
+	void ReceiveSelectSlotData(FinvenData invenData);
 };

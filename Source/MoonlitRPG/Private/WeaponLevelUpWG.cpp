@@ -3,47 +3,44 @@
 
 #include "WeaponLevelUpWG.h"
 #include <UMG/Public/Components/TextBlock.h>
-#include "WeaponItemBase.h"
 #include <UMG/Public/Components/Button.h>
-#include "LevelUpSlotWG.h"
 #include <UMG/Public/Components/ScrollBox.h>
-#include "NeedItemSelectWG.h"
 #include <UMG/Public/Components/HorizontalBox.h>
-#include <Kismet/GameplayStatics.h>
-#include "SH_Player.h"
 #include <UMG/Public/Components/ProgressBar.h>
+#include <Kismet/GameplayStatics.h>
+#include "LevelUpSlotWG.h"
+#include "NeedItemSelectWG.h"
+#include "SH_Player.h"
 #include "InventoryWG.h"
 #include "OutfitWG.h"
 
 
 UWeaponLevelUpWG::UWeaponLevelUpWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	ConstructorHelpers::FClassFinder<UNeedItemSelectWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_NeedItemSelect.WG_NeedItemSelect_C'"));
-	if (tempWG.Succeeded())
-	{
-		WGFactory.Add(tempWG.Class);
-	}
-	ConstructorHelpers::FClassFinder<ULevelUpSlotWG> tempWG1(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_LevelUpSlot.WG_LevelUpSlot_C'"));
-	if (tempWG1.Succeeded())
-	{
-		WGFactory.Add(tempWG1.Class);
-	}	
-	
-	NeedSelectWG = CreateWidget<UNeedItemSelectWG>(GetWorld(), WGFactory[0]);
-
+	NeedSelectWG = CreateWGClass<UNeedItemSelectWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_NeedItemSelect.WG_NeedItemSelect_C'"));
 	for (int32 i = 0; i <15; i++)
 	{
-		ULevelUpSlotWG* currWG = CreateWidget<ULevelUpSlotWG>(GetWorld(), WGFactory[1]);
+		ULevelUpSlotWG* currWG = CreateWGClass<ULevelUpSlotWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_LevelUpSlot.WG_LevelUpSlot_C'"));
 		LevelUpSlots.Add(currWG);
-		
 	}
+}
+
+template<typename T>
+T* UWeaponLevelUpWG::CreateWGClass(FString path)
+{
+	TSubclassOf<T> WGFactory;
+	ConstructorHelpers::FClassFinder<T> tempWG(*path);
+	if (tempWG.Succeeded())
+	{
+		WGFactory = tempWG.Class;
+	}
+	return CreateWidget<T>(GetWorld(), WGFactory);
 }
 
 void UWeaponLevelUpWG::NativeConstruct()
 {
 	Super::NativeConstruct();
 	ButtonBinding();
-	
 }
 
 
@@ -51,18 +48,17 @@ void UWeaponLevelUpWG::NativeDestruct()
 {
 	Super::NativeDestruct();
 	NeedSelectWG->RemoveFromParent();
-	
 }
 
 void UWeaponLevelUpWG::UpdateLevelUpWG()
 {
-	FWeaponinfo weaponinfo = SelectedSlotItem.weaponinfomaiton;
-	TB_CurrLevel->SetText(FText::AsNumber(weaponinfo.Level));
-	TB_currEXP->SetText(FText::AsNumber(weaponinfo.CurrEXP));
-	TB_MaxEXP->SetText(FText::AsNumber(weaponinfo.MaxEXP));
-	TB_CurrPower->SetText(FText::AsNumber(weaponinfo.Power));
-	TB_UpgradePower->SetText(FText::AsNumber(weaponinfo.Power+weaponinfo.PlusPower));
-	float CurrEXP = float(weaponinfo.CurrEXP) / float(weaponinfo.MaxEXP);
+	TB_CurrLevel->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.Level));
+	TB_currEXP->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrEXP));
+	TB_MaxEXP->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.MaxEXP));
+	TB_CurrPower->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrPower));
+	TB_UpgradePower->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrPower+ inventoryData.itemGradeData.PlusPower));
+
+	float CurrEXP = float(inventoryData.invenitem.WeaponData.CurrEXP) / float(inventoryData.invenitem.WeaponData.MaxEXP);
 	Progress_EXP->SetPercent(CurrEXP);
 
 	//15개의 비어있는 슬랏을 리스트에 올린다.
@@ -79,18 +75,17 @@ void UWeaponLevelUpWG::UpdateLevelUpWG()
 	
 	}
 	//무기선택창에 정보를 전달.
-	NeedSelectWG->SelectedSlotItem = SelectedSlotItem;
+	NeedSelectWG->inventoryData = inventoryData;
 	NeedSelectWG->LevelupSlots = LevelUpSlots;
 
 
 }
 
-
-
-void UWeaponLevelUpWG::ReceiveSelectSlotData(FInvenItem SelectSlotItem)
+void UWeaponLevelUpWG::ReceiveSelectSlotData(FinvenData invenData)
 {
-	SelectedSlotItem = SelectSlotItem;
-	SelectedSlotItem.weaponinfomaiton.SendLevelUpClear.AddUObject(this, &UWeaponLevelUpWG::UpdateLevelUpWG);
+	inventoryData = invenData;
+	invenData.invenitem.SendLevelUpClear.AddUObject(this, &UWeaponLevelUpWG::UpdateLevelUpWG);
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	UpdateLevelUpWG();
 }
 
@@ -98,36 +93,19 @@ void UWeaponLevelUpWG::UpdateUseMoney()
 {
 	SetCount = 0;
 	ToTalEXP = 0;
-	UseItems.Empty();
+	CurrUseMoney = 0;
+	UseTempItems.Empty();
+
 	for (int32 i = 0 ; i < LevelUpSlots.Num() ; i++)
 	{
 		if (LevelUpSlots[i]->isFill)
 		{
 			SetCount++;
-			UseItems.Add(LevelUpSlots[i]->invenInfo);
-			EItemgrade currtype= LevelUpSlots[i]->invenInfo.iteminfomation.itemgrade;
-			int32 AddEXP = 0;
-			switch (currtype)
-			{
-			case EItemgrade::Common:
-				AddEXP = 10 * LevelUpSlots[i]->invenInfo.weaponinfomaiton.Level;
-				break;
-			case EItemgrade::Rare:
-				AddEXP = 20 * LevelUpSlots[i]->invenInfo.weaponinfomaiton.Level;
-				break;
-			case EItemgrade::Unique:
-				AddEXP = 40 * LevelUpSlots[i]->invenInfo.weaponinfomaiton.Level;
-				break;
-			case EItemgrade::Legendary:
-				AddEXP = 80 * LevelUpSlots[i]->invenInfo.weaponinfomaiton.Level;
-				break;
-			default:
-				break;
-			}
-
-			ToTalEXP +=AddEXP;
+			UseTempItems.Add(LevelUpSlots[i]->invenData.invenitem);
+			ToTalEXP += LevelUpSlots[i]->invenData.itemGradeData.PlusEXP * LevelUpSlots[i]->invenData.invenitem.WeaponData.Level;
 		}
 	}
+
 	CurrUseMoney = SetCount * 120;
 	TB_levelUpMoney->SetText(FText::AsNumber(CurrUseMoney));
 }
@@ -139,20 +117,16 @@ void UWeaponLevelUpWG::ButtonBinding()
 
 void UWeaponLevelUpWG::LevelUp() //레벨업 버튼을 누르면 실행.
 {
-	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
-		int32 index = Player->InvenComp->FindItem(SelectedSlotItem);
-		if(index < 0) return;
-		if (SetCount > 0)
+		int32 index = Player->InvenComp->FindItem(inventoryData.invenitem);
+		if(index < 0 || SetCount <= 0) return;
+		bool result = Player->InvenComp->invenItemArr[index].PlusCurrEXP(ToTalEXP, SetCount, &Player->InvenComp->Money, inventoryData.itemGradeData);
+		if (result)
 		{
-			bool result = Player->InvenComp->invenItemArr[index].weaponinfomaiton.PlusCurrEXP(ToTalEXP, SetCount, &Player->InvenComp->Money);
-			if (result)
-			{
-				SelectedSlotItem = Player->InvenComp->invenItemArr[index];
-				SendUseditem();
-				OutfitWG->ReceiveUseItem(SelectedSlotItem);
-			}
+			inventoryData.invenitem = Player->InvenComp->invenItemArr[index];
+			SendUseditem();
+			OutfitWG->ReceiveUseItem(inventoryData.invenitem);
 		}
 
 	}
@@ -160,9 +134,9 @@ void UWeaponLevelUpWG::LevelUp() //레벨업 버튼을 누르면 실행.
 
 void UWeaponLevelUpWG::SendUseditem()
 {
-	for (int32 i = 0; i < UseItems.Num(); i++)
+	for (int32 i = 0; i < UseTempItems.Num(); i++)
 	{
-		Player->InvenComp->MinusItemAmount(UseItems[i], 1);
+		Player->InvenComp->MinusItemAmount(UseTempItems[i], 1);
 	}
 	for (int32 i = 0; i < LevelUpSlots.Num(); i++)
 	{
