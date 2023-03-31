@@ -21,6 +21,11 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* btn_ScreenShot;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ScreenshotAnim;
+
 	UFUNCTION()
-	void ScreenShot();
+	void TakeScreenShot();
+
+	void ScreenShot(FString FileName);
 };

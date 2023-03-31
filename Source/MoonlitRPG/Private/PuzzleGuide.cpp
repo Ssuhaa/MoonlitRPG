@@ -55,10 +55,20 @@ void APuzzleGuide::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float period = 2.0f;
+	float amplitude = 5.0f;
+
+	float DeltaMove = amplitude * FMath::Sin(2*PI*GetWorld()->GetTimeSeconds() * 2/period);
+
+	FVector currPos = GetActorLocation();
+	FVector newPos = currPos + FVector(0.0f, 0.0f, DeltaMove);
+
+	SetActorLocation(newPos);
+
 	if (giveHint)
 	{
 		currTime += DeltaTime;
-		if (currTime > 0.5)
+		if (currTime > 1)
 		{
  			MoveToPos(Movepos[posIndex]);
 		}
@@ -96,7 +106,7 @@ void APuzzleGuide::MoveToPos(FVector pos)
 		currTime = 0;
 		posIndex++;
 		UE_LOG(LogTemp,Warning,TEXT("%d"),posIndex);
-		if (posIndex >= 4)
+		if (posIndex >= Movepos.Num())
 		{
 			ai->MoveToLocation(originPos);
 			giveHint = false;

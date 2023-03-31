@@ -32,7 +32,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compSpawnPos;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mesh")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TArray<UStaticMeshComponent*> createMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
@@ -47,16 +47,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TArray<class UStaticMeshComponent*> hitMeshArr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> meshPos;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TArray<UParticleSystem*> particleArr;
 
-
-
 	UPROPERTY(EditAnywhere)
-	int32 componentCount = 4;
+	int32 componentCount = 5;
 
 	int32 hitCount = 0;
 	bool isBoxSpawned = false;

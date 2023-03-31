@@ -26,6 +26,11 @@ AIH_Puzzle::AIH_Puzzle()
 		FString meshName = FString::Printf(TEXT("Puzzle Mesh Component%d"), i);
 		UStaticMeshComponent* currComp = CreateDefaultSubobject<UStaticMeshComponent>(*meshName);
 		currComp->SetupAttachment(RootComponent);
+		currComp->SetCanEverAffectNavigation(false);
+		currComp->SetCollisionObjectType(ECC_GameTraceChannel1);
+		currComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+		currComp->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Ignore);
+		currComp->SetRelativeScale3D(FVector(0.1));
 		meshArr.Add(currComp);
 	}
 
@@ -71,7 +76,7 @@ void AIH_Puzzle::BeginPlay()
 {
 	Super::BeginPlay();
 
-	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compSpawnPos->GetComponentLocation()+compSpawnPos->GetUpVector()*90, compSpawnPos->GetComponentRotation());
 	puzzleGuide->ReceivePuzzleArr(meshArr);
 }
 

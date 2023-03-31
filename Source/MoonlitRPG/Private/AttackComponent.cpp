@@ -378,7 +378,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 					if (HitMesh != nullptr)
 					{
 						ImpactEffect(HitMesh->GetComponentLocation() + HitMesh->GetUpVector()*50);
-						if (HitPuzzle->hitMeshArr.Num() < HitPuzzle->meshArr.Num())
+						if (HitPuzzle->hitMeshArr.Num() < HitPuzzle->componentCount)
 						{
 							HitPuzzle->ReceiveMeshArr(HitMesh);
 //							UE_LOG(LogTemp, Warning, TEXT("Hit Mesh : %s"), *HitMesh->GetName());
