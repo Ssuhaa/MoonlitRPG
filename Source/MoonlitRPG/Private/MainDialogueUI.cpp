@@ -74,11 +74,15 @@ void UMainDialogueUI::CloseButton()
 	RemoveFromParent();
 }
 
+void UMainDialogueUI::SetStartDialouge(int32 Start)
+{
+	CurrNext = Start;
+}
+
 void UMainDialogueUI::ReadCSVFile(FString CSVPath)
 {
 	if (FFileHelper::LoadFileToStringArray(CsvRows, *CSVPath))
 	{
-		CurrNext = DataManager->GetInfo(0, DataManager->MainQuestList).DialougueIndex;
 		SetDialogue(CurrNext);
 	}
 	else
@@ -97,12 +101,16 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	}
 	else 
 	{
-		
-		player->QuestComp->CompleteMainQuest();
 		CloseButton();
 		return;
 	}
 
+	if (CsvColumns[0] == TEXT("Cut"))
+	{
+		player->QuestComp->CompleteMainQuest();
+		CloseButton();
+		return;
+	}
 
 
 	//이름[0], 내용[1], 선택지1[2], Next1[3], 선택지2[4], Next2[5], 선택지3[6], Next3[7]
@@ -122,13 +130,11 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 	if(CsvColumns[2] != TEXT("None"))
 	{
-	
-		//Select1 = CsvColumns[2];
+
 		Buttons[0]->SetText(CsvColumns[2]);
 		Buttons[0]->DialogueWG = this;
 		VB_Choices->AddChild(Buttons[0]);
 	
-		//Next1 = FCString::Atoi(*CsvColumns[3]);
 		Buttons[0]->NextIndex = FCString::Atoi(*CsvColumns[3]);
 
 		Pointer->SetVisibility(ESlateVisibility::Hidden);
@@ -142,12 +148,10 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 	if (CsvColumns[4] != TEXT("None"))
 	{
-		//Select2 = CsvColumns[4];
 		Buttons[1]->SetText(CsvColumns[4]);
 		Buttons[1]->DialogueWG = this;
 		VB_Choices->AddChild(Buttons[1]);
 
-		//Next2 = FCString::Atoi(*CsvColumns[5]);
 		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
 	}
 	else return;
@@ -156,12 +160,10 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	if (CsvColumns[6] != TEXT("None"))
 	{
 
-		//Select3 = CsvColumns[6];
 		Buttons[2]->SetText(CsvColumns[6]);
 		Buttons[2]->DialogueWG = this;
 		VB_Choices->AddChild(Buttons[2]);
 
-		//Next3 = FCString::Atoi(*CsvColumns[7]);
 		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);
 	}
 	

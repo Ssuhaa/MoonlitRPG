@@ -13,7 +13,7 @@ UCLASS()
 class MOONLITRPG_API AQuestNaviActor : public AWidgetActorBase
 {
 	GENERATED_BODY()
-		AQuestNaviActor();
+	AQuestNaviActor();
 protected:
 	virtual void BeginPlay() override;
 

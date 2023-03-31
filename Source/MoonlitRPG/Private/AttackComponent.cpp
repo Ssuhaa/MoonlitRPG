@@ -261,16 +261,12 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(player);
 
-	// 공격했을 때 카메라가 바라보는 방향으로 캐릭터 돌리기
-// 	FVector directionVector = player->GetActorLocation() - player->CamComp->GetComponentLocation();
-// 	directionVector.Z = 0.0f;
-// 	player->SetActorRotation(UKismetMathLibrary::MakeRotFromX(directionVector));
 
 	// 디버그 캡슐 그리기
 	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength * 0.5f;
 	float halfHeight = damageRange.attackLength * 0.5f + damageRange.attackRadius;
 	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
-	// DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, attackCollision.GetSphereRadius(), capsuleRot, FColor::Cyan, false, 1.0f, 2.0f);
+
 
 	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(),
 	player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);

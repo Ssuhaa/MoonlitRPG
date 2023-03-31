@@ -3,3 +3,8 @@
 
 #include "QuestSlotWG.h"
 
+void UQuestSlotWG::UpdateSlot(FInvenItem invenitem)
+{
+	Super::UpdateSlot(invenitem);
+	TB_Amont->SetText(FText::AsNumber(invenitem.itemAmount));
+}

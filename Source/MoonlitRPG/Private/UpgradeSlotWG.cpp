@@ -5,6 +5,8 @@
 #include <UMG/Public/Components/Image.h>
 #include <UMG/Public/Components/TextBlock.h>
 #include <Kismet/GameplayStatics.h>
+#include "SH_Player.h"
+#include "InventoryComponent.h"
 
 
 void UUpgradeSlotWG::UpdateSlot(FInvenItem invenitem)
@@ -14,9 +16,9 @@ void UUpgradeSlotWG::UpdateSlot(FInvenItem invenitem)
 	if (invenData.Weaponinfo.UpgradeItemList.IsValidIndex(UpgradeCount))
 	{
 		FUpgradeNeedItem item = invenData.Weaponinfo.UpgradeItemList[UpgradeCount].UpgradeNeedItem[Index];
-		FIteminfo info = DataManager->GetInfo(item.iteminfoIndex, DataManager->itemList);
+		FIteminfo info = DataManager->itemList[item.iteminfoIndex];
 		ItemImage->SetBrushFromTexture(info.itemImage);
-		FItemGradeData GradeData = DataManager->GetInfo(int32(info.itemgrade), DataManager->ItemGradeData);
+		FItemGradeData GradeData = DataManager->ItemGradeData[int32(info.itemgrade)];
 		SlotBG->SetBrushFromTexture(GradeData.Slotlmage, true);
 		UseAmount = item.UseAmont;
 		TB_NeedAmount->SetText(FText::AsNumber(UseAmount));

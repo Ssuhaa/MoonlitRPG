@@ -4,12 +4,15 @@
 #include "QuestComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
+#include <Kismet/GameplayStatics.h>
 #include "QuestWG.h"
 #include "QuestNaviActor.h"
-#include <Kismet/GameplayStatics.h>
 #include "DataManager.h"
 #include "SH_Player.h"
 #include "MainDialogueUI.h"
+#include "InventoryComponent.h"
+#include "PlayerMainWG.h"
+
 
 // Sets default values for this component's properties
 UQuestComponent::UQuestComponent()
@@ -48,22 +51,132 @@ void UQuestComponent::BeginPlay()
 
 	//처음 퀘스트
 	CompleteMainQuest();
+	RandomTodayQuest();
+}
+
+
+
+void UQuestComponent::GiveQuestReward(FQuestInfo* Questinfo)
+{
+	for (int32 i = 0; i < Questinfo->Reward.RewardItems.Num(); i++)
+	{
+		FRewarditem item = Questinfo->Reward.RewardItems[i];
+		if (DataManager->itemList[item.RewardItem].itemType == EItemType::Outfit)
+		{
+			Player->InvenComp->WeaponAddItemToinven(item.RewardItem, item.WeaponData);
+		}
+		else
+		{
+			Player->InvenComp->CommonCheckSameItemAfterAdd(item.RewardItem, item.Amount);
+		}
+	}
+	Player->InvenComp->Money += MainQuest->Reward.RewardMoney;
+
+}
+
+void UQuestComponent::RandomTodayQuest()
+{
+	TArray<int32> Random;
+	TArray<int32> SelectIndex;
+	for (int32 i = 0; i < DataManager->TodayQuestList.Num(); i++)
+	{
+		Random.Add(i);
+	}
+	for (int32 i = 0; i < 2; i++)
+	{
+		int32 value = FMath::RandRange(0, Random.Num()-1);
+		SelectIndex.Add(Random[value]);
+		Random.RemoveAt(value);
+	}
+
+	for (int32 i = 0; i < SelectIndex.Num(); i++)
+	{
+		DataManager->TodayQuestList[SelectIndex[i]].Queststate = EQuestState::Continue;
+	}
+
 }
 
 void UQuestComponent::CompleteMainQuest()
 {
-	mainQuestIdx++;
-	FQuestInfo NextMainQuest = DataManager->GetInfo(mainQuestIdx, DataManager->MainQuestList);
-	if (NextMainQuest.Type != EQuestType::None)
+	if (!DataManager->MainQuestList.IsValidIndex(MainQuestIDX +1)) 
 	{
-		QuestWG->ContinueList.Add(NextMainQuest);
-		Player->dialogueUI->CurrNext = NextMainQuest.DialougueIndex;
-		currGoalCount = 0;
-
+		NaviClear();
+		Player->MainHUD->RemoveSummary();
+		return;
 	}
+
+	if (MainQuestIDX > -1) //이후 퀘스트
+	{
+		if (isDoneQuestRequirements(MainQuest))
+		{
+			MainQuest->Queststate = EQuestState::Done;
+			GiveQuestReward(MainQuest);
+
+			MainQuestIDX++;
+			MainQuest = &DataManager->MainQuestList[MainQuestIDX];
+			MainQuest->Queststate = EQuestState::Continue;
+			NaviClear();
+			DataManager->NavigateTarget(*MainQuest);
+			Player->CompleteQuest(*MainQuest);
+			QuestWG->UpdateQuestList();
+
+		}
+		
+	}
+	else // 첫 퀘스트.
+	{
+		MainQuestIDX++;
+		MainQuest = &DataManager->MainQuestList[MainQuestIDX];
+		MainQuest-> Queststate = EQuestState::Continue;
+		NaviClear();
+		DataManager->NavigateTarget(*MainQuest);
+		Player->CompleteQuest(*MainQuest);
+		QuestWG->UpdateQuestList();
+	}
+
 }
 
 
+void UQuestComponent::CheackRequirementTarget(int32 index)
+{
+
+	for (int32 i = 0; i <MainQuest->Requirements.Num(); i++)
+	{
+		if (MainQuest->Requirements[i].Requirementindex == index)
+		{
+			MainQuest->Requirements[i].isRequirements = true;
+		}
+	}
+}
+
+bool UQuestComponent::isDoneQuestRequirements(FQuestInfo* Questinfo)
+{
+	for (int32 i = 0; i < Questinfo->Requirements.Num(); i++)
+	{
+		if (!Questinfo->Requirements[i].isRequirements)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+
+void UQuestComponent::SetQuestNavi(int32 NaviIndex, AActor* Target)
+{
+	QuestNavis[NaviIndex]->SetActorLocation(Target->GetActorLocation()+ FVector(0,0,100));
+	QuestNavis[NaviIndex]->SetActiveNaviWG(true);
+}
+
+
+void UQuestComponent::NaviClear()
+{
+	for (int32 i = 0; i < QuestNavis.Num(); i++)
+	{
+		QuestNavis[i]->SetActiveNaviWG(false);
+	}
+}
 
 // Called every frame
 void UQuestComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,8 +185,6 @@ void UQuestComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	// ...
 }
-
-
 
 void UQuestComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent)
 {
@@ -96,3 +207,4 @@ void UQuestComponent::QuestUIOpen()
 		QuestWG->RemoveQuestWG();
 	}
 }
+

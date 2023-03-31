@@ -176,7 +176,6 @@ void ASH_Player::interactionObject()
 
 	FVector collisionLoc = GetActorLocation();
 	collisionLoc.Z = 0;
-	DrawDebugSphere(GetWorld(), collisionLoc, interColli.GetSphereRadius(), 20, FColor::Red, false, 1,0, 0.5);
 
 	if (bhit)
 	{
@@ -185,31 +184,33 @@ void ASH_Player::interactionObject()
 		if (curritem != nullptr)
 		{
 			curritem->GetItem();
+			return;
 		}
 		
 		AInteractiveObjectBase* currobject = Cast<AInteractiveObjectBase>(hitinfo.GetActor());
 		if (currobject != nullptr)
 		{
 			currobject->Interaction();
+			return;
 		}
 
 		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
 		if (currNPC != nullptr)
 		{
-			if (DataManager->GetInfo(QuestComp->mainQuestIdx, DataManager->MainQuestList).Requirements[0].Requirementindex == currNPC->idx)
+			if (QuestComp->MainQuest->SubType == ESubQuestType::Contact)
 			{
-				currNPC->InteractNPC();
+				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
-			else
-			{
-
-			}
+			currNPC->InteractNPC();
+			return;
+		
 		}
 
 		APuzzleGuide* currGuide = Cast<APuzzleGuide>(hitinfo.GetActor());
 		if (currGuide != nullptr)
 		{
 			currGuide->MoveToPuzzleActor();
+			return;
 		}
 	}
 }
@@ -283,4 +284,10 @@ void ASH_Player::FloatingPlayerDamage()
 {
 	float randLocX = FMath::RandRange(-15, 15);
 	damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, GetActorLocation() + GetActorRightVector() * randLocX, GetActorRotation());
+}
+
+void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
+{
+	MainHUD->UpdateQuestSummary(Questinfo);
+	dialogueUI->SetStartDialouge(Questinfo.DialougueIndex);
 }

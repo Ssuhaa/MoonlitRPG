@@ -64,15 +64,6 @@ struct FIteminfo : public FTableRowBase //아이템 기본 정보
 			&& HealAmount == Other.HealAmount;
 	}
 };
-//[WeaponINFO]---------------------------------------------------------------------//
-UENUM(BlueprintType)
-enum  class EWeaponType : uint8 //무기 분류
-{
-	Sword,
-	Dagger,
-	Bow,
-	None,
-};
 
 USTRUCT(BlueprintType)
 struct FItemGradeData : public FTableRowBase // 아이템 등급 별 데이터.
@@ -92,6 +83,16 @@ struct FItemGradeData : public FTableRowBase // 아이템 등급 별 데이터.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UParticleSystem* Effect;
 
+};
+
+//[WeaponINFO]---------------------------------------------------------------------//
+UENUM(BlueprintType)
+enum  class EWeaponType : uint8 //무기 분류
+{
+	Sword,
+	Dagger,
+	Bow,
+	None,
 };
 
 USTRUCT(BlueprintType)
@@ -290,13 +291,27 @@ enum class EQuestState : uint8 //퀘스트 진행 상황
 };
 
 USTRUCT(BlueprintType)
+struct  FRewarditem
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 RewardItem = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 WeaponData = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Amount = 0;
+
+};
+
+USTRUCT(BlueprintType)
 struct  FQuestReward
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<int32> RewardItem;
+	TArray<FRewarditem> RewardItems;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 RewardMoney = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -385,16 +400,6 @@ public:
 
 
 //[DataManager]---------------------------------------------------------------------//
-UENUM(BlueprintType)
-enum class EDataList : uint8
-{
-	Item,
-	Npc,
-	EnemyPlace,
-	UpgradeMoney,
-	GradeData,
-	MainQuest,
-};
 
 UCLASS()
 class MOONLITRPG_API ADataManager : public AActor
@@ -409,27 +414,39 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	class ASH_Player* Player;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FIteminfo> itemList;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FNpcInfo> npcList;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FEnemyManagerInfo> EnemyPlaceList;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FWeaponinfo> WeaponList;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FUpGradeMoneyData> UpgradeMoneyData;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FItemGradeData> ItemGradeData;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TArray<FQuestInfo> MainQuestList;
+	UPROPERTY(VisibleAnywhere)
+	TArray<FQuestInfo> TodayQuestList;
 
 	TArray<FInvenItem>* InventoryItemList;
+
+	UPROPERTY(VisibleAnywhere, category = SpawnActor)
+	TArray<class ANPCBase*> SpawnNPCs;
+	UPROPERTY(VisibleAnywhere, category = SpawnActor)
+	TArray<class AIH_EnemyManager*> SpawnEnemyManagers;
+	UPROPERTY(VisibleAnywhere, category = SpawnActor)
+	TArray<class AInteractiveObjectBase*> SpawnInteractObjects;
 
 	template<typename T>
 	TArray<T> LoadTable(FString path); //데이터테이블 불러오는 함수
@@ -443,7 +460,6 @@ public:
 
 	FinvenData GetData(FInvenItem invenitem);
 
-	template<typename T>
-	T GetInfo(int32 index, EDataList DataList);
-};
+	void NavigateTarget(FQuestInfo CurrQuest);
 
+};

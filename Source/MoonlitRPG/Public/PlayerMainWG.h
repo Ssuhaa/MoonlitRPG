@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DataManager.h"
 #include "PlayerMainWG.generated.h"
 
 /**
@@ -13,6 +14,11 @@ UCLASS()
 class MOONLITRPG_API UPlayerMainWG : public UUserWidget
 {
 	GENERATED_BODY()
+
+	UPlayerMainWG(const FObjectInitializer& ObjectInitializer);
+	template<typename T>
+	T* CreateWGClass(FString path);
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -33,19 +39,28 @@ protected:
 	class UTextBlock* Text_TotalHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UProgressBar* HPBar;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UVerticalBox* QuestSummaryBox;
 
 	void VisibleStaminaBar(bool isUseStamina);
 	void VisibleSkillText(bool isHand);
 
 	float currentTime = 0;
 
-	UPROPERTY()
+	UPROPERTY() 
 	class ASH_Player* Player;
+
+	UPROPERTY()
+	class UQuestSummaryWG* QuestSummary;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UVerticalBox* InteractionBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UVerticalBox* ItemGetBox;
+
+	void UpdateQuestSummary(FQuestInfo CurrQuset);
+	void RemoveSummary();
 	
 	void UpdateStamina(float Stamina, float MaxStamina);
 	void UpdateEtime(float Etime);

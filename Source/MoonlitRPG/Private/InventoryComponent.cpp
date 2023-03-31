@@ -72,6 +72,7 @@ void UInventoryComponent::InventoryOpen()
 
 void UInventoryComponent::CommonCheckSameItemAfterAdd(int32 ItemInfoIndex, int32 Amount) // 일반 아이템 추가 함수
 {
+	
 	int32 value = FindItem(ItemInfoIndex); //같은게 있는지 확인, 있으면 인덱스를 반환 없으면 -1을 반환.
 	FInvenItem currGetItem;
 	if (value > -1)

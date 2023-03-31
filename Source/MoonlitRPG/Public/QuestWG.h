@@ -57,6 +57,8 @@ protected:
 
 	UPROPERTY()
 	class ASH_Player* Player;
+	UPROPERTY()
+	class ADataManager* DataManager;
 	
 	void SetQuestWG();
 	void ChangeQuestList(EQuestType ChangeType);
@@ -67,9 +69,9 @@ protected:
 
 public:
 
+	void UpdateQuestList();
 	void RemoveQuestWG();
 
 	void ReciveSelectQuest(FQuestInfo* SelectQuest);
 	
-	TArray<FQuestInfo> ContinueList;
 };

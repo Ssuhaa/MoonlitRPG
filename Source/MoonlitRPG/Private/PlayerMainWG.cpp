@@ -10,8 +10,26 @@
 #include <UMG/Public/Components/TextBlock.h>
 #include <UMG/Public/Animation/WidgetAnimation.h>
 #include "AttackComponent.h"
+#include "QuestSummaryWG.h"
 
 
+
+UPlayerMainWG::UPlayerMainWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	QuestSummary = CreateWGClass<UQuestSummaryWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_QuestSummary.WG_QuestSummary_C'"));
+}
+
+template<typename T>
+T* UPlayerMainWG::CreateWGClass(FString path)
+{
+	TSubclassOf<T> WGFactory;
+	ConstructorHelpers::FClassFinder<T> tempWG(*path);
+	if (tempWG.Succeeded())
+	{
+		WGFactory = tempWG.Class;
+	}
+	return CreateWidget<T>(GetWorld(), WGFactory);
+}
 
 void UPlayerMainWG::NativeConstruct()
 {
@@ -57,6 +75,19 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			VisibleSkillText(true);
 		}
 	}
+}
+
+void UPlayerMainWG::UpdateQuestSummary(FQuestInfo CurrQuset)
+{
+	QuestSummaryBox->ClearChildren();
+	QuestSummary->QusetName->SetText(FText::FromString(CurrQuset.QuestName));
+	QuestSummary->Summary->SetText(FText::FromString(CurrQuset.Summary));
+	QuestSummaryBox->AddChild(QuestSummary);
+}
+
+void UPlayerMainWG::RemoveSummary()
+{
+	QuestSummaryBox->ClearChildren();
 }
 
 void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)

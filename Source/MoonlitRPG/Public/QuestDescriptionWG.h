@@ -36,14 +36,16 @@ protected:
 	TSubclassOf<class UQuestSlotWG> SlotFactory;
 	TArray<class UQuestSlotWG*> RewardSlots;
 
-	UFUNCTION()
-	void OnPressedNavi();
 
-	FQuestInfo* Quest;
+	FQuestInfo* CurrQuest;
 
 	UPROPERTY()
 	class ASH_Player* Player;
+	UPROPERTY()
+	class ADataManager* DataManager;
 
 public:
+	UFUNCTION()
+	void OnPressedNavi();
 	void SetQuestDescription(FQuestInfo* QuestInfo);
 };

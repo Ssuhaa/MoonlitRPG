@@ -128,4 +128,5 @@ public:
 
 	UPROPERTY()
 	class ADataManager* DataManager;
+
 };

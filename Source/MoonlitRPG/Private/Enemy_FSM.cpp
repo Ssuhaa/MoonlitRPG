@@ -37,6 +37,7 @@ UEnemy_FSM::UEnemy_FSM()
 	}
 
 	bAutoActivate = true;
+	
 }
 
 
@@ -46,14 +47,10 @@ void UEnemy_FSM::BeginPlay()
 	Super::BeginPlay();
 
 	target = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
-	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
-
-	me = Cast<AEnemyBase>(GetOwner());
-
-	ai = Cast<AAIController>(me->GetController());
-
-	anim = Cast<UIH_EnemyAnim>(me->GetMesh()->GetAnimInstance());
 	
+	me = Cast<AEnemyBase>(GetOwner());
+	ai = Cast<AAIController>(me->GetController());
+	anim = Cast<UIH_EnemyAnim>(me->GetMesh()->GetAnimInstance());
 	originPos = me->GetActorLocation();
 
 	currHP = maxHP;
@@ -325,34 +322,25 @@ void UEnemy_FSM::DieState()
 				}
 			}
 
-			TArray<class AIH_EnemyManager*> Managers = DataManager->GetAllActorOfClass<AIH_EnemyManager>();;
-
-			AIH_EnemyManager* Manager = nullptr;
-			for (int32 i = 0; i < Managers.Num(); i++)
+			if (me->Manager != nullptr)
 			{
-				if (Managers[i]->EnemyManagerIdx == me->EnemyManagerIdx)
-				{
-					Manager = Managers[i];
-					break;
-				}
-			}
-
-			if (Manager != nullptr)
-			{
-				Manager->deathCount++;
+				me->Manager->deathCount++;
 				me->SetActive(false);
 
-				if (Manager->deathCount == Manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
+				if (me->Manager->deathCount == me->Manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
 				{
-					FQuestInfo data = DataManager->GetInfo(target->QuestComp->mainQuestIdx, DataManager->MainQuestList);
-					if (data.Requirements[0].Requirementindex == me->EnemyManagerIdx)
+					if (target->QuestComp->MainQuest->SubType == ESubQuestType::Hunt)
 					{
+						target->QuestComp->CheackRequirementTarget(me->Manager->EnemyManagerIdx);
 						target->QuestComp->CompleteMainQuest();
 					}
-					Manager->enemyArr.Add(me);		// enemy 배열에 마지막에 죽은 enemy를 Add
-					Manager->canSpawn = true;		// 다시 스폰 가능
-					Manager->deathCount = 0;		// 죽인 횟수 초기화
+					
 				}
+
+				me->Manager->enemyArr.Add(me);	// enemy 배열에 마지막에 죽은 enemy를 Add
+				me->Manager->canSpawn = true;	// 다시 스폰 가능
+				me->Manager->deathCount = 0;	// 죽인 횟수 초기화
+			
 			}
 			
 
@@ -449,6 +437,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		}
 		case EEnemyState::Die:
 		{
+			DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 			me->compEnemyHP->SetVisibility(false);
 			bDiestart = true;
 			break;

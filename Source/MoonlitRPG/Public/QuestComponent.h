@@ -23,38 +23,40 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	
 	TArray<class UInputAction*> inputArray;
 
 	void QuestUIOpen();
-
 	TSubclassOf<class UQuestWG> QuestFactory;
+	UPROPERTY()
+	class UQuestWG* QuestWG;
 
 	UPROPERTY()
 	class ASH_Player* Player;
 
+	UPROPERTY()
+	class ADataManager* DataManager;
+
+	UPROPERTY()
+	TArray<class AQuestNaviActor*> QuestNavis;
+
+	void GiveQuestReward(FQuestInfo* Questinfo);
 
 public:	
 	// Called every frame
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 
-	UPROPERTY()
-	class UQuestWG* QuestWG;
-
-	UPROPERTY()
-	TArray<class AQuestNaviActor*> QuestNavis;
-
-
-	UPROPERTY()
-	class ADataManager* DataManager;
 
 	UPROPERTY(EditAnywhere)
-	int32 mainQuestIdx = -1;
+	int32 MainQuestIDX = -1;
+	
+	FQuestInfo* MainQuest;
 
-	int32 currGoalCount = 0;
-
-
+	void RandomTodayQuest();
 
 	void CompleteMainQuest();
-	
+	void CheackRequirementTarget(int32 index);
+	bool isDoneQuestRequirements(FQuestInfo* Questinfo);
+	void NaviClear();
+	void SetQuestNavi(int32 NaviIndex, AActor* Target);
+
 };

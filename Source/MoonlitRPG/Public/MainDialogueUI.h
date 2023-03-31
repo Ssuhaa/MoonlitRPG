@@ -58,6 +58,8 @@ public:
 
 public:
 
+	void SetStartDialouge(int32 Start);
+
 	void ReadCSVFile(FString CSVPath);
 	UFUNCTION()
 	void OnClikedNextButton(int32 Nextindex);

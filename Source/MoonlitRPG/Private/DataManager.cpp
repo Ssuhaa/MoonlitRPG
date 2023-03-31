@@ -2,6 +2,12 @@
 
 
 #include "DataManager.h"
+#include "NPCBase.h"
+#include "IH_EnemyManager.h"
+#include "InteractiveObjectBase.h"
+#include <Kismet/GameplayStatics.h>
+#include "SH_Player.h"
+#include "QuestComponent.h"
 
 // Sets default values
 ADataManager::ADataManager()
@@ -16,7 +22,8 @@ ADataManager::ADataManager()
 	UpgradeMoneyData = LoadTable<FUpGradeMoneyData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/UpGradeMoneyData.UpGradeMoneyData'"));
 	ItemGradeData = LoadTable<FItemGradeData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/ItemGradeData.ItemGradeData'"));
 	MainQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/MainQuestList.MainQuestList'"));
-	
+	TodayQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/TodayQuestList.TodayQuestList'"));
+
 	for (int32 i = 0; i < MainQuestList.Num(); i++)
 	{
 		(&MainQuestList[i])->SetDescription(this);
@@ -28,6 +35,10 @@ ADataManager::ADataManager()
 void ADataManager::BeginPlay()
 {
 	Super::BeginPlay();
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
+	SpawnInteractObjects = GetAllActorOfClass<AInteractiveObjectBase>();
+	SpawnEnemyManagers = GetAllActorOfClass<AIH_EnemyManager>();
+	SpawnNPCs = GetAllActorOfClass<ANPCBase>();
 
 }
 
@@ -133,9 +144,43 @@ FinvenData ADataManager::GetData(FInvenItem invenitem)
 	invenData.iteminfo = GetInfo(invenitem.ItemInfoIndex, itemList);
 	invenData.Weaponinfo = GetInfo(invenitem.WeaponInfoIndex, WeaponList);
 	invenData.itemGradeData = GetInfo(int32(invenData.iteminfo.itemgrade), ItemGradeData);
-	invenData.UpGradeMoneyData = GetInfo(invenData.invenitem.WeaponData.UpgradeCount, UpgradeMoneyData);
+	invenData.UpGradeMoneyData = GetInfo(invenitem.WeaponData.UpgradeCount, UpgradeMoneyData);
 
 	return invenData;
+}
+
+void ADataManager::NavigateTarget(FQuestInfo CurrQuest)
+{
+	switch (CurrQuest.SubType)
+	{
+	case ESubQuestType::Contact:
+
+		for (int32 i = 0; i < SpawnNPCs.Num(); i++)
+		{
+			for (int32 j = 0; j < CurrQuest.Requirements.Num(); j++)
+			{
+				if (SpawnNPCs[i]->idx == CurrQuest.Requirements[j].Requirementindex)
+				{
+					Player->QuestComp->SetQuestNavi(j, SpawnNPCs[i]);
+					break;
+				}
+			}
+		}
+		break;
+	case ESubQuestType::Hunt:
+		for (int32 i = 0; i < SpawnEnemyManagers.Num(); i++)
+		{
+			for (int32 j = 0; j < CurrQuest.Requirements.Num(); j++)
+			{
+				if (SpawnEnemyManagers[i]->EnemyManagerIdx == CurrQuest.Requirements[j].Requirementindex)
+				{
+					Player->QuestComp->SetQuestNavi(j, SpawnEnemyManagers[i]);
+					break;
+				}
+			}
+		}
+		break;
+	}
 }
 
 template<typename T>
@@ -149,15 +194,6 @@ T ADataManager::GetInfo(int32 Index, const TArray<T> List)
 	return List[Index];
 }
 
-template<typename T>
-T ADataManager::GetInfo(int32 index, EDataList DataList)
-{	
-	switch (DataList)
-	{
-	default:
-		break;
-	}
-}
 
 //---------<조심> 구조체함수--------------------------------------------------------
 
@@ -208,18 +244,64 @@ bool FInvenItem::Upgrade(int32* playerMoney, bool isHaveAllItem, ADataManager* D
 
 void FQuestInfo::SetDescription(ADataManager* DataManager)
 {
-	int32 index = Requirements[0].Requirementindex;
+	TArray<int32> indexs;
+	for (int32 i = 0; i < Requirements.Num(); i++)
+	{
+		indexs.Add(Requirements[i].Requirementindex);
+	}
+
+	FString RequirementsName;
 	switch (SubType)
 	{
 	case ESubQuestType::Contact:
 	
-		Summary = FString::Printf(TEXT("%s 를 만나자."), *DataManager->GetInfo(index, DataManager->npcList).NPCName);
+		for(int32 i = 0; i < indexs.Num(); i++)
+		{
+			if (i == indexs.Num() - 1)
+			{
+				FString Name  = FString::Printf(TEXT("%s"), *DataManager->npcList[indexs[i]].NPCName);
+				RequirementsName += Name;
+			}
+			else
+			{
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->npcList[indexs[i]].NPCName);
+				RequirementsName += Name;
+			}
+		}
+		Summary = FString::Printf(TEXT("%s 을/를 만나자."), *RequirementsName);
 	break;
 	case  ESubQuestType::Hunt:
-		Summary = FString::Printf(TEXT("%s 을/를 소탕하라."), *DataManager->GetInfo(index, DataManager->EnemyPlaceList).EnemyPlaceName);
+		for (int32 i = 0; i < indexs.Num(); i++)
+		{
+			if (i == indexs.Num() - 1)
+			{
+				FString Name = FString::Printf(TEXT("%s"), *DataManager->EnemyPlaceList[indexs[i]].EnemyPlaceName);
+				RequirementsName += Name;
+			}
+			else
+			{
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->EnemyPlaceList[indexs[i]].EnemyPlaceName);
+				RequirementsName += Name;
+			}
+		}
+		Summary = FString::Printf(TEXT("%s 을/를 소탕하라."), * RequirementsName);
 		break;
 	case  ESubQuestType::GetItem:
-		Summary = FString::Printf(TEXT("%s 을(를) %d 수집하자."), *DataManager->GetInfo(index, DataManager->itemList).ItemName, 1);
+		for (int32 i = 0; i < indexs.Num(); i++)
+		{
+			if (i == indexs.Num() - 1)
+			{
+				FString Name = FString::Printf(TEXT("%s"), *DataManager->itemList[indexs[i]].ItemName);
+				RequirementsName += Name;
+			}
+			else
+			{
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->itemList[indexs[i]].ItemName);
+				RequirementsName += Name;
+			}
+		
+		}
+		Summary = FString::Printf(TEXT("%s 을(를) 수집하자."), *RequirementsName);
 	break;
 	}
 }

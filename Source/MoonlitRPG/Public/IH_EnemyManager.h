@@ -43,7 +43,7 @@ public:
 	float maxTime = 15;
 
 	UPROPERTY(EditAnywhere, Category = Spawn)
-	int32 createNumber = 3;
+	int32 createNumber = 5;
 
 	UPROPERTY(EditAnywhere, Category = Spawn)
 	int32 spawnNumber = 5;

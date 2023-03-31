@@ -112,6 +112,7 @@ public:
 	UPROPERTY()
 	class ADataManager* DataManager;
 
+	void CompleteQuest(FQuestInfo Questinfo);
 		
 };
 

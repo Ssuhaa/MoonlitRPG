@@ -60,6 +60,7 @@ public:
 	void ImpactEffect();
 	void RandomHitImpact(FVector loc);
 
-	int32 EnemyManagerIdx;
+	UPROPERTY()
+	class AIH_EnemyManager* Manager;
 
 };

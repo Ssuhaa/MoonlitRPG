@@ -32,12 +32,13 @@ UQuestWG::UQuestWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	}
 	
 	QuestDescription = CreateWidget<UQuestDescriptionWG>(GetWorld(), WGFactory[1]);
-
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 }
 
 void UQuestWG::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
@@ -97,33 +98,52 @@ void UQuestWG::SetQuestWG()
 void UQuestWG::ChangeQuestList(EQuestType ChangeType)
 {
 	CurrQuestType = ChangeType;
+	UpdateQuestList();
+}
+
+void UQuestWG::UpdateQuestList()
+{
 	VB_QuestList->ClearChildren();
-	if (CurrQuestType == EQuestType::Total)
+
+	switch (CurrQuestType)
 	{
-		for (int32 i = 0; i < ContinueList.Num(); i++)
+	case EQuestType::Main:
+		for (int32 i = 0; i < DataManager->MainQuestList.Num(); i++)
 		{
+			if (DataManager->MainQuestList[i].Queststate != EQuestState::Continue) continue;
 			if (!QuestButtons.IsValidIndex(i))
 			{
 				UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
 				QuestButtons.Add(CurrList);
 			}
 			QuestButtons[i]->QuestWG = this;
-			QuestButtons[i]->SetQuestListWG(&ContinueList[i]);
+			QuestButtons[i]->SetQuestListWG(&DataManager->MainQuestList[i]);
 			VB_QuestList->AddChild(QuestButtons[i]);
 		}
-	}
-	else
-	{
-		for (int32 i = 0; i < ContinueList.Num(); i++)
+		break;
+	case EQuestType::Today:
+		for (int32 i = 0; i < DataManager->TodayQuestList.Num(); i++)
 		{
-			if (ContinueList[i].Type == CurrQuestType)
+			if (DataManager->TodayQuestList[i].Queststate != EQuestState::Continue) continue;
+			if (!QuestButtons.IsValidIndex(i))
 			{
-				QuestButtons[i]->QuestWG = this;
-				QuestButtons[i]->SetQuestListWG(&ContinueList[i]);
-				VB_QuestList->AddChild(QuestButtons[i]);
-
+				UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
+				QuestButtons.Add(CurrList);
 			}
+			QuestButtons[i]->QuestWG = this;
+			QuestButtons[i]->SetQuestListWG(&DataManager->TodayQuestList[i]);
+			VB_QuestList->AddChild(QuestButtons[i]);
 		}
+		break;
+	case EQuestType::Sub:
+		break;
+	case EQuestType::Total:
+
+		break;
+	case EQuestType::None:
+		break;
+	default:
+		break;
 	}
 
 	if (VB_QuestList->GetChildrenCount() != 0)
@@ -131,7 +151,6 @@ void UQuestWG::ChangeQuestList(EQuestType ChangeType)
 		UQuestListButtonWG* First = Cast<UQuestListButtonWG>(VB_QuestList->GetChildAt(0));
 		ReciveSelectQuest(First->SelectQuest);
 	}
-	
 }
 
 void UQuestWG::RemoveQuestWG()
