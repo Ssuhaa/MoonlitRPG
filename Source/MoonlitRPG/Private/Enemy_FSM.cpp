@@ -21,6 +21,7 @@
 #include "MainDialogueUI.h"
 #include "NPCBase.h"
 #include "QuestComponent.h"
+#include "Money.h"
 
 
 // Sets default values for this component's properties

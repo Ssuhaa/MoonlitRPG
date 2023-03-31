@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
+#include "DataManager.h"
 #include "SH_Player.generated.h"
 
 enum EPlayerState : uint8
@@ -115,5 +116,3 @@ public:
 	void CompleteQuest(FQuestInfo Questinfo);
 		
 };
-
-
