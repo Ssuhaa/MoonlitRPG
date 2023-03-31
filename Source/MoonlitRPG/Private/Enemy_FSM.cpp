@@ -335,12 +335,12 @@ void UEnemy_FSM::DieState()
 						target->QuestComp->CheackRequirementTarget(me->Manager->EnemyManagerIdx);
 						target->QuestComp->CompleteMainQuest();
 					}
-					
+
+					me->Manager->enemyArr.Add(me);	// enemy 배열에 마지막에 죽은 enemy를 Add
+					me->Manager->canSpawn = true;	// 다시 스폰 가능
+					me->Manager->deathCount = 0;	// 죽인 횟수 초기화
 				}
 
-				me->Manager->enemyArr.Add(me);	// enemy 배열에 마지막에 죽은 enemy를 Add
-				me->Manager->canSpawn = true;	// 다시 스폰 가능
-				me->Manager->deathCount = 0;	// 죽인 횟수 초기화
 			
 			}
 			
