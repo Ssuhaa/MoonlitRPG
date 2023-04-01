@@ -38,8 +38,6 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
-	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UMoveComponent* MoveComp;
 
@@ -56,6 +54,8 @@ protected:
 
 public:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
+	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
 	float PlayercurrHP = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
@@ -64,6 +64,7 @@ public:
 	void HealPlayer(float HealValue);
 	void RevivePlayer();
 	void FloatingPlayerDamage();
+	void SkillCameraFollow(USceneComponent* attachLoc, FName socketName = NAME_None);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;

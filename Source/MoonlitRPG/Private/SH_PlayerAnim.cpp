@@ -93,6 +93,7 @@ void USH_PlayerAnim::SwitchCheck(FDamageRange handRange, FDamageRange daggerRang
 void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
 	Player->AttackComp->ResetAttack();
+	Player->SkillCameraFollow(Player->GetRootComponent());
 }
 
 void USH_PlayerAnim::AnimNotify_NextCombo()

@@ -167,6 +167,7 @@ void UAttackComponent::SpecialAttack()
 		if (specialCount == 100)
 		{	
 			PlayAttackMontage("SpecialAttack");
+			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
 			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
 		}
 	}
@@ -404,28 +405,6 @@ void UAttackComponent::DamageChange(FDamageRange damageRangeType)
 	currDamage = FMath::RandRange(damageRangeType.minDamage+int32(currPower), damageRangeType.maxDamage+int32(currPower));
 	float randPercent = FMath::RandRange(0.7f, 1.0f);
 	currDamage*=randPercent;	// 0.7~1.0배가 현재 공격력이 된다.
-
-	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
-	if (iscriticAttack)		// 20% 이하일 때 크리티컬 데미지를 입힌다.
-	{
-		currDamage *= 3;
-	}
-}
-
-void UAttackComponent::SkillDamageChange(FDamageRange damageRangeType)
-{
-	int32 index = player->InvenComp->CheckWeaponisEquip();
-	float currPower = 0;
-
-	if (index > -1)	// 무기를 착용하고 있으면
-	{
-		currPower = player->InvenComp->invenItemArr[index].WeaponData.CurrPower;	// 해당 무기의 공격력을 저장한다.
-	}
-
-	// 무기의 공격력만큼 더한 값을 데미지로 뽑는다.
-	currDamage = FMath::RandRange(damageRangeType.minDamage + int32(currPower), damageRangeType.maxDamage + int32(currPower));
-	float randPercent = FMath::RandRange(1.2f, 1.3f);
-	currDamage *= randPercent;	// 0.7~1.0배가 현재 공격력이 된다.
 
 	iscriticAttack = FMath::RandRange(0.0f, 1.0f) < 0.2f;
 	if (iscriticAttack)		// 20% 이하일 때 크리티컬 데미지를 입힌다.

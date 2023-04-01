@@ -20,15 +20,12 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-// 	UPROPERTY(EditAnywhere)
-// 	class UParticleSystemComponent* spawnEffect_1;
-// 
-// 	UPROPERTY(EditAnywhere)
-// 	class UParticleSystemComponent* spawnEffect_2;
-// 
-// 	UPROPERTY(EditAnywhere)
-// 	TArray<UParticleSystem*> particleArr;
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* compTop;
+	bool isOpen = false;
+	float rotationY = 0;
 
+	void OpenBox();
 public:
 	virtual void Interaction() override;
 };

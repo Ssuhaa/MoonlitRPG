@@ -54,6 +54,18 @@ void UItemDescriptionWG::SetDescription()
 		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
 		Text_Heal->SetText(FText::AsNumber(inventoryData.iteminfo.HealAmount));
 		break;
+	case EItemType::Consum:
+		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
+		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	case EItemType::Etc:
+		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
+		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	case EItemType::Quest:
+		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
+		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
+		break;
 	}
 
 }

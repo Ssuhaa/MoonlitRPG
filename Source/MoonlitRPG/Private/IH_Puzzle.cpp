@@ -107,7 +107,7 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 			FVector hitLoc = mesh->GetComponentLocation();
 //			hitLoc.Z = 0;
 			SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-			SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 70), FVector(0.5));
+			SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(0.5));
 //			UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 		}
 	}
@@ -118,7 +118,7 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 		FVector hitLoc = mesh->GetComponentLocation();
 //		hitLoc.Z = 0;
 		SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-		SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 70), FVector(0.5));
+		SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(0.5));
 //		UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 	}
 

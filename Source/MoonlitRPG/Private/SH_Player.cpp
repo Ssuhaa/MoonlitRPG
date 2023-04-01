@@ -130,7 +130,6 @@ void ASH_Player::BeginPlay()
 void ASH_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -284,6 +283,12 @@ void ASH_Player::FloatingPlayerDamage()
 {
 	float randLocX = FMath::RandRange(-15, 15);
 	damageUI = GetWorld()->SpawnActor<AIH_DamageActor>(damageActor, GetActorLocation() + GetActorRightVector() * randLocX, GetActorRotation());
+}
+
+void ASH_Player::SkillCameraFollow(USceneComponent* attachLoc, FName socketName)
+{
+	SpringArmComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	SpringArmComp->AttachToComponent(attachLoc, FAttachmentTransformRules::KeepWorldTransform, socketName);
 }
 
 void ASH_Player::CompleteQuest(FQuestInfo Questinfo)

@@ -90,9 +90,9 @@ void AItemBase::BeginPlay()
 	currGrade = DataManager->itemList[iteminfoIndex].itemgrade;
 	switch (currGrade)
 	{
-		case EItemgrade::Common:
-		itemEffect->SetTemplate(particleArr[0]);
-		break;
+// 		case EItemgrade::Common:
+// 		itemEffect->SetTemplate(particleArr[0]);
+// 		break;
 		case EItemgrade::Rare:
 		itemEffect->SetTemplate(particleArr[1]);
 		break;

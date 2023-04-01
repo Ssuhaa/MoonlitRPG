@@ -7,53 +7,70 @@
 
 AIH_TreasureBox::AIH_TreasureBox()
 {
-// 	spawnEffect_1 = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Spawn Effect_1"));
-// 	spawnEffect_1->SetupAttachment(RootComponent);
-// 	spawnEffect_1->SetActive(false);
-// 
-// 	spawnEffect_2 = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Spawn Effect_2"));
-// 	spawnEffect_2->SetupAttachment(RootComponent);
-// 	spawnEffect_2->SetActive(false);
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempSpawn(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Confetti.P_Confetti'"));
-// 	if (tempSpawn.Succeeded())
-// 	{
-// 		particleArr.Add(tempSpawn.Object);
-// 	}
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempSpawn2(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/SimpleCartoonFX/FX/Land_Smoke.Land_Smoke'"));
-// 	if (tempSpawn2.Succeeded())
-// 	{
-// 		particleArr.Add(tempSpawn2.Object);
-// 	}
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempSpawn3(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/GoodFXLevelUp/FX/Particles/PS_GFXLU_Holy.PS_GFXLU_Holy'"));
-// 	if (tempSpawn3.Succeeded())
-// 	{
-// 		particleArr.Add(tempSpawn3.Object);
-// 	}
+	compTop = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Box Top Component"));
+	compTop->SetupAttachment(RootComponent);
 }
 
 void AIH_TreasureBox::BeginPlay()
 {
 	Super::BeginPlay();
 
-// 	spawnEffect_1->SetTemplate(particleArr[2]);
-// 	spawnEffect_1->SetActive(true);
-// 	spawnEffect_2->SetTemplate(particleArr[1]);
-// 	spawnEffect_2->SetActive(true);
 }
 
 void AIH_TreasureBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (isOpen)
+	{
+		compTop->SetRelativeRotation(FRotator(rotationY, 180, 0));
+		rotationY += DeltaTime * 300;
+		if (rotationY > 80)
+		{
+			rotationY=80;
+			OpenBox();
+		}
+	}
+}
+
+void AIH_TreasureBox::OpenBox()
+{
+	if (spawnMoney.IsValidIndex(0))
+	{
+		int32 randCoin = FMath::RandRange(2, 3);
+
+		for (int32 i = 1; i <= randCoin; i++)
+		{
+			float randZ = FMath::RandRange(0, 360);
+			compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
+
+			GetWorld()->SpawnActor<AMoney>(spawnMoney[0], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+		}
+	}
+
+	if (spawnItems.IsValidIndex(0))
+	{
+		int32 randAmount = FMath::RandRange(3, 4);		// °³¼ö ·£´ý»Ì±â
+
+		for (int32 i = 1; i <= randAmount; i++)
+		{
+			float randZ = FMath::RandRange(0, 360);
+			compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
+
+			int32 randIndex = FMath::RandRange(0, spawnItems.Num() - 1);		// ¹è¿­ ¿ä¼Ò ·£´ý»Ì±â
+			GetWorld()->SpawnActor<AItemBase>(spawnItems[randIndex], compSpawnPos->GetComponentLocation(), compSpawnPos->GetComponentRotation());
+		}
+	}
+
+	if (interactionUI != nullptr)
+	{
+		interactionUI->RemoveFromParent();
+	}
+
+	Destroy();
 }
 
 void AIH_TreasureBox::Interaction()
 {
-// 	spawnEffect_1->SetRelativeScale3D(FVector(0.5, 0.5, 0.2));
-// 	spawnEffect_1->SetTemplate(particleArr[2]);
-// 	spawnEffect_1->SetActive(true);
-
-	Super::Interaction();
+	isOpen = true;
 }

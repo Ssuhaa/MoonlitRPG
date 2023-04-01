@@ -130,7 +130,6 @@ public:
 
 	void NextCombo();
 	void DamageChange(FDamageRange damageRangeType);
-	void SkillDamageChange(FDamageRange damageRangeType);
 	void TargetCheck(FDamageRange damageRange);
 	void ResetAttack();
 	void EnemyAttack(FDamageRange damageRange);

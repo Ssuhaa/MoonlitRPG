@@ -50,7 +50,7 @@ void AIH_EnemyManager::Tick(float DeltaTime)
 		{
 			for (int32 i = 0; i < spawnNumber ; i++)
 			{
-				if (!enemyArr.IsValidIndex(i))
+				if (!enemyArr.IsValidIndex(0))
 				{
 					FActorSpawnParameters param;
 					param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -74,16 +74,17 @@ void AIH_EnemyManager::Tick(float DeltaTime)
 				enemyArr[0]->SetActorRotation(GetActorRotation());
 				enemyArr[0]->SetActive(true);
 
-				if (i == spawnNumber-1)
-				{
-					canSpawn = false;
-				}
+// 				if (i == spawnNumber-1)
+// 				{
+// 					canSpawn = false;
+// 				}
 
 				enemyArr.RemoveAt(0);
 
 				createTime = FMath::RandRange(minTime, maxTime);
 			}
 			currentTime = 0;
+			canSpawn = false;
 		}
 	}
 }
