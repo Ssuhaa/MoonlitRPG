@@ -7,6 +7,7 @@
 #include "PuzzleGuide.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <Kismet/GameplayStatics.h>
+#include "IH_TreasureBox.h"
 
 // Sets default values
 AIH_Puzzle::AIH_Puzzle()
@@ -17,9 +18,8 @@ AIH_Puzzle::AIH_Puzzle()
 	compRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
 	SetRootComponent(compRoot);
 
-	compSpawnPos = CreateDefaultSubobject<USceneComponent>(TEXT("BoxSpawnPos Component"));
-	compSpawnPos->SetupAttachment(RootComponent);
-	compSpawnPos->SetRelativeLocation(FVector(-50, 0, 0));
+	compGuidePos = CreateDefaultSubobject<USceneComponent>(TEXT("Guide Pos Component"));
+	compGuidePos->SetupAttachment(RootComponent);
 
 	for (int32 i = 0; i < componentCount; i++)
 	{
@@ -45,6 +45,21 @@ AIH_Puzzle::AIH_Puzzle()
 	{
 		treasureBoxFactory = tempBox.Class;
 	}
+
+	compRock = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Spawn Rock Component"));
+	compRock->SetupAttachment(RootComponent);
+	compRock->SetRelativeScale3D(FVector(0.8, 0.5, 0.3));
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh>tempRock(TEXT("/Script/Engine.StaticMesh'/Game/Geometry/Meshes/SM_RockCube.SM_RockCube'"));
+	if (tempRock.Succeeded())
+	{
+		compRock->SetStaticMesh(tempRock.Object);
+	}
+
+	compBoxPos = CreateDefaultSubobject<USceneComponent>(TEXT("Box Pos Component"));
+	compBoxPos->SetupAttachment(compRock);
+	compBoxPos->SetRelativeLocation(FVector(25, -40, 115));
+	compBoxPos->SetRelativeRotation(FRotator(0, 90, 0));
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempSpawn1(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/GoodFXLevelUp/FX/Particles/PS_GFXLU_Lightning.PS_GFXLU_Lightning'"));
 	if (tempSpawn1.Succeeded())
@@ -76,7 +91,7 @@ void AIH_Puzzle::BeginPlay()
 {
 	Super::BeginPlay();
 
-	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compSpawnPos->GetComponentLocation()+compSpawnPos->GetUpVector()*90, compSpawnPos->GetComponentRotation());
+	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compGuidePos->GetComponentLocation(), compGuidePos->GetComponentRotation());
 	puzzleGuide->ReceivePuzzleArr(meshArr);
 }
 
@@ -157,11 +172,7 @@ void AIH_Puzzle::CheckAnswer()
 		if (meshArr[meshArr.Num() - 1] == hitMeshArr[hitMeshArr.Num() - 1])
 		{
 //			UE_LOG(LogTemp, Warning, TEXT("Correct!!!!!!!!!!!"));
-			GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compSpawnPos->GetComponentTransform());
-			SpawnEffect(particleArr[0], compSpawnPos->GetComponentLocation(), FVector(0.5));
-			SpawnEffect(particleArr[1], compSpawnPos->GetComponentLocation(), FVector(0.8));
-			isBoxSpawned = true;
-			puzzleGuide->Destroy();
+			SpawnBox();
 		}
 	}
 }
@@ -174,5 +185,17 @@ void AIH_Puzzle::SpawnEffect(class UParticleSystem* particle, FVector loc, FVect
 	if (particle == particleArr[3])
 	{
 		lootArr.Add(compEffect);
+	}
+}
+
+void AIH_Puzzle::SpawnBox()
+{
+	if (!isBoxSpawned)
+	{
+		AInteractiveObjectBase* spawnObject = GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compBoxPos->GetComponentLocation(), compBoxPos->GetComponentRotation());
+		SpawnEffect(particleArr[0], compBoxPos->GetComponentLocation(), FVector(0.5));
+		SpawnEffect(particleArr[1], compBoxPos->GetComponentLocation(), FVector(0.8));
+		isBoxSpawned = true;
+		puzzleGuide->Destroy();
 	}
 }

@@ -332,7 +332,6 @@ void UEnemy_FSM::DieState()
 			{
 				me->Manager->deathCount++;
 				me->SetActive(false);
-				me->Manager->enemyArr.Add(me);	// enemy 배열에 마지막에 죽은 enemy를 Add
 
 				if (me->Manager->deathCount == me->Manager->spawnNumber)	// 죽인 횟수가 스폰된 개수와 같으면
 				{
@@ -342,6 +341,7 @@ void UEnemy_FSM::DieState()
 						target->QuestComp->CompleteMainQuest();
 					}
 
+					me->Manager->enemyArr.Add(me);	// enemy 배열에 마지막에 죽은 enemy를 Add
 					me->Manager->canSpawn = true;	// 다시 스폰 가능
 					me->Manager->deathCount = 0;	// 죽인 횟수 초기화
 				}
@@ -435,6 +435,7 @@ void UEnemy_FSM::ChangeState(EEnemyState state)
 		case EEnemyState::Die:
 		{
 			DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
+			me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			me->compEnemyHP->SetVisibility(false);
 			bDiestart = true;
 			break;

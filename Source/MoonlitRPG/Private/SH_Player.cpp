@@ -130,6 +130,24 @@ void ASH_Player::BeginPlay()
 void ASH_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (AttackComp->hitAnything)
+	{
+		float randomShake = FMath::RandRange(-2.0f, 2.0f);
+
+		currTime += DeltaTime;
+		if (currTime < 0.1f)
+		{
+			CamComp->SetWorldLocation(CamComp->GetComponentLocation()+FVector(randomShake));
+		}
+		else
+		{
+			currTime = 0;
+			AttackComp->hitAnything=false;
+			CamComp->SetRelativeLocation(FVector(-200, 0, 50));
+		}
+	}
+
 }
 
 void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

@@ -21,6 +21,10 @@ protected:
 
 	TArray<UParticleSystemComponent*> lootArr;
 
+	void CheckAnswer();
+	void SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size);
+	void SpawnBox();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,7 +34,13 @@ public:
 	class USceneComponent* compRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USceneComponent* compSpawnPos;
+	class USceneComponent* compGuidePos;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* compBoxPos;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* compRock;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TArray<UStaticMeshComponent*> createMesh;
@@ -63,6 +73,4 @@ public:
 	bool isBoxSpawned = false;
 
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
-	void CheckAnswer();
-	void SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size);
 };

@@ -1,0 +1,56 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "MagoPiece.h"
+#include <Particles/ParticleSystemComponent.h>
+
+AMagoPiece::AMagoPiece()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+	compMago = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mago Parts Component"));
+	compMago->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempEffect1(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_7.P_Loot_7'"));
+	if (tempEffect1.Succeeded())
+	{
+		magoEffect.Add(tempEffect1.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempEffect2(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/GoodFXLevelUp/FX/Particles/PS_GFXLU_Galaxy.PS_GFXLU_Galaxy'"));
+	if (tempEffect2.Succeeded())
+	{
+		magoEffect.Add(tempEffect2.Object);
+	}
+}
+
+void AMagoPiece::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	itemEffect->SetRelativeScale3D(FVector(1.0));
+	itemEffect->SetTemplate(magoEffect[0]);
+}
+
+void AMagoPiece::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	rotateZ += DeltaTime * 100;
+	compMago->SetWorldRotation(FRotator(0, rotateZ, 0));
+
+	float period = 2.0f;
+
+	float DeltaMove = FMath::Sin(2*PI*GetWorld()->GetTimeSeconds()/period);
+
+	FVector NewLoc = GetActorLocation() + FVector(0.0f, 0.0f, DeltaMove);
+
+	SetActorLocation(NewLoc);
+}
+
+void AMagoPiece::GetItem()
+{
+	Super::GetItem();
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), magoEffect[1], GetActorLocation(), GetActorRotation());
+}

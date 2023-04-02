@@ -24,8 +24,17 @@ protected:
 	class UStaticMeshComponent* compTop;
 	bool isOpen = false;
 	float rotationY = 0;
+	float dissolveTop = 1;
+	float dissolveBottom = 1;
+	float currTime = 0;
+	
+	UPROPERTY()
+	class UMaterialInstanceDynamic* topMat;
+	UPROPERTY()
+	class UMaterialInstanceDynamic* bottomMat;
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* openEffect;
 
-	void OpenBox();
 public:
 	virtual void Interaction() override;
 };

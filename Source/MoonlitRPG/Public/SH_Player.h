@@ -51,6 +51,7 @@ protected:
 	void interactionObject();
 	void OpenScreenshotUI();
 	bool screenShotOpen = false;
+	float currTime = 0;
 
 public:
 
@@ -77,15 +78,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class UQuestComponent* QuestComp;
 
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UIH_DieUI* dieUI;
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UIH_LoadingUI* loadingUI;
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UMainDialogueUI* dialogueUI;
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UIH_WarningUI* warningUI;
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UScreenShotUI* screenshotUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
@@ -97,11 +98,11 @@ public:
 	class UParticleSystem* hitImpact;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<class AIH_DamageActor> damageActor;
-	UPROPERTY(EditAnywhere, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class AIH_DamageActor* damageUI;
 	
 	EPlayerState ChracterState = Idle;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UPlayerMainWG* MainHUD;
 
 	bool bUIOpen = false;

@@ -147,4 +147,5 @@ public:
 	bool goToNextCombo = false;
 	bool coolTimeRunning = false;
 	bool iscriticAttack = false;
+	bool hitAnything = false;
 };

@@ -110,6 +110,4 @@ void AInteractiveObjectBase::Interaction()
 	{
 		interactionUI->RemoveFromParent();
 	}
-
-	Destroy();
 }

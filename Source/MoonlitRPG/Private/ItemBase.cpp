@@ -45,7 +45,7 @@ AItemBase::AItemBase()
 	}
 
 	itemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Item Drop Effect"));
-	itemEffect->SetRelativeScale3D(FVector(0.3));
+	itemEffect->SetRelativeScale3D(FVector(0.7));
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCommon(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_5.P_Loot_5'"));
 	if (tempCommon.Succeeded())

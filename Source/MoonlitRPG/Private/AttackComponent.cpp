@@ -89,7 +89,6 @@ void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 			coolTimeRunning = false;
 		}
 		player->MainHUD->UpdateEtime(intensiveDelay);
-
 	}
 }
 
@@ -278,8 +277,8 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 		{
 			if (hitinfos[i].GetActor()->GetName().Contains(TEXT("Enemy")))
 			{
+				hitAnything = true;
 				Target = Cast<AEnemyBase>(hitinfos[i].GetActor());
-
 				if (Target != nullptr)
 				{
 					switch (damageRange.damageType)
@@ -365,6 +364,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 
 				if (currWeapon != EWeaponType::None &&  HitObject != nullptr)
 				{
+					hitAnything = true;
 					ImpactEffect(HitObject->GetActorLocation() + HitObject->GetActorUpVector()*50);
 					HitObject->DropItem();
 				}
