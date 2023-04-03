@@ -123,6 +123,15 @@ public:
 	class UStaticMeshComponent* EquippedComp2;
 
 	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* GrabComp1;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* GrabComp2;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* GrabComp3;
+
+	UPROPERTY(EditAnywhere)
 	TArray<class UStaticMesh*> weaponMesh;
 
 
@@ -130,5 +139,5 @@ public:
 	class ADataManager* DataManager;
 
 	void CompleteQuest(FQuestInfo Questinfo);
-		
+//	void SetWeaponMesh();
 };

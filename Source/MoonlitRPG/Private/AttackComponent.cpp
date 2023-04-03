@@ -207,15 +207,19 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// °ø°Ý ¸ùÅ¸ÁÖ¸¦ Àç»
 		}
 		case EWeaponType::Dagger:
 		{
-// 			player->EquippedComp1->SetStaticMesh(nullptr);
-// 			player->EquippedComp2->SetStaticMesh(nullptr);
+			player->EquippedComp1->SetStaticMesh(nullptr);
+			player->EquippedComp2->SetStaticMesh(nullptr);
+			player->GrabComp1->SetStaticMesh(player->weaponMesh[1]);
+			player->GrabComp2->SetStaticMesh(player->weaponMesh[1]);
 
 			player->PlayAnimMontage(daggerMontage, 1.0f, FName(*montName));
 			break;
 		}
 		case EWeaponType::Sword:
 		{
-//			player->EquippedComp1->SetStaticMesh(nullptr);
+			player->EquippedComp1->SetStaticMesh(nullptr);
+			player->GrabComp3->SetStaticMesh(player->weaponMesh[0]);
+
 			player->PlayAnimMontage(swordMontage, 1.0f, FName(*montName));
 			break;
 		}

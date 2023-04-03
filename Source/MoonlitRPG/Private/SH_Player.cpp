@@ -56,6 +56,18 @@ ASH_Player::ASH_Player()
 	EquippedComp2->SetupAttachment(GetMesh(), TEXT("Weapon_Socket_2"));
 	EquippedComp2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	GrabComp1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrabComp1"));
+	GrabComp1->SetupAttachment(GetMesh(), TEXT("GrabSocket_R"));
+	GrabComp1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GrabComp2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrabComp2"));
+	GrabComp2->SetupAttachment(GetMesh(), TEXT("GrabSocket_L"));
+	GrabComp2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GrabComp3 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrabComp3"));
+	GrabComp3->SetupAttachment(GetMesh(), TEXT("TwoHandSocket"));
+	GrabComp3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
@@ -143,8 +155,6 @@ void ASH_Player::BeginPlay()
 	playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
-
-
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -216,7 +226,6 @@ void ASH_Player::interactionObject()
 
 	if (bhit)
 	{
-		
 		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
 		if (curritem != nullptr)
 		{
@@ -334,3 +343,24 @@ void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
 	MainHUD->UpdateQuestSummary(Questinfo);
 	dialogueUI->SetStartDialouge(Questinfo.DialougueIndex);
 }
+
+// void ASH_Player::SetWeaponMesh()
+// {
+// 	switch(AttackComp->currWeapon)
+// 	{
+// 	case EWeaponType::Dagger:
+// 		{
+// 			EquippedComp1->SetStaticMesh(nullptr);
+// 			EquippedComp2->SetStaticMesh(nullptr);
+// 			GrabComp1->SetStaticMesh(weaponMesh[1]);
+// 			GrabComp2->SetStaticMesh(weaponMesh[1]);
+// 			break;
+// 		}
+// 		case EWeaponType::Sword:
+// 		{
+// 			EquippedComp1->SetStaticMesh(nullptr);
+// 			GrabComp3->SetStaticMesh(player->weaponMesh[0]);
+// 			break;
+// 		}
+// 	}
+// }

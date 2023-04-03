@@ -49,8 +49,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystemComponent* itemEffect;
 
-	UPROPERTY(EditAnywhere)
-	TArray<UParticleSystem*> particleArr;
+// 	UPROPERTY(EditAnywhere)
+// 	TArray<UParticleSystem*> particleArr;
 
 	EItemgrade currGrade;
 

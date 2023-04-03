@@ -47,29 +47,29 @@ AItemBase::AItemBase()
 	itemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Item Drop Effect"));
 	itemEffect->SetRelativeScale3D(FVector(0.7));
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCommon(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_5.P_Loot_5'"));
-	if (tempCommon.Succeeded())
-	{
-		particleArr.Add(tempCommon.Object);
-	}
-
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRare(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_3.P_Loot_3'"));
-	if (tempRare.Succeeded())
-	{
-		particleArr.Add(tempRare.Object);
-	}
-
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempUnique(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_4.P_Loot_4'"));
-	if (tempUnique.Succeeded())
-	{
-		particleArr.Add(tempUnique.Object);
-	}
-
-	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLegendary(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_1.P_Loot_1'"));
-	if (tempLegendary.Succeeded())
-	{
-		particleArr.Add(tempLegendary.Object);
-	}
+// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCommon(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_5.P_Loot_5'"));
+// 	if (tempCommon.Succeeded())
+// 	{
+// 		particleArr.Add(tempCommon.Object);
+// 	}
+// 
+// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRare(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_3.P_Loot_3'"));
+// 	if (tempRare.Succeeded())
+// 	{
+// 		particleArr.Add(tempRare.Object);
+// 	}
+// 
+// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempUnique(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_4.P_Loot_4'"));
+// 	if (tempUnique.Succeeded())
+// 	{
+// 		particleArr.Add(tempUnique.Object);
+// 	}
+// 
+// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLegendary(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_1.P_Loot_1'"));
+// 	if (tempLegendary.Succeeded())
+// 	{
+// 		particleArr.Add(tempLegendary.Object);
+// 	}
 }
 
 // Called when the game starts or when spawned
@@ -91,16 +91,16 @@ void AItemBase::BeginPlay()
 	switch (currGrade)
 	{
 // 		case EItemgrade::Common:
-// 		itemEffect->SetTemplate(particleArr[0]);
+// 		itemEffect->SetTemplate(DataManager->ItemGradeData[0].Effect);
 // 		break;
 		case EItemgrade::Rare:
-		itemEffect->SetTemplate(particleArr[1]);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[1].Effect);
 		break;
 		case EItemgrade::Unique:
-		itemEffect->SetTemplate(particleArr[2]);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[2].Effect);
 		break;
 		case EItemgrade::Legendary:
-		itemEffect->SetTemplate(particleArr[3]);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[3].Effect);
 		break;
 	}
 }
