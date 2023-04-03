@@ -161,13 +161,16 @@ void USH_PlayerAnim::AnimNotify_Put_In_End()
 
 void USH_PlayerAnim::AnimNotify_Equipped()
 {
-// 	if (currWeapon == EWeaponType::Dagger)
-// 	{
-// 		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[1]);
-// 		Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[1]);
-// 	}
-// 	else
-// 	{
-// 		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[0]);
-// 	}
+	if (currWeapon == EWeaponType::Dagger)
+	{
+		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[1]);
+		Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[1]);
+		Player->GrabComp1->SetStaticMesh(nullptr);
+		Player->GrabComp2->SetStaticMesh(nullptr);
+	}
+	else
+	{
+		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[0]);
+		Player->GrabComp3->SetStaticMesh(nullptr);
+	}
 }

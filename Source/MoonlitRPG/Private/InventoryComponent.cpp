@@ -132,8 +132,8 @@ bool UInventoryComponent::WeaponOff(FInvenItem ChangeItem)
 		invenItemArr[currEquip].WeaponData.isEquip = false;
 		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[3]);
 
-// 		Player->WeaponComp->SetStaticMesh(nullptr);
-// 		Player->WeaponComp2->SetStaticMesh(nullptr);
+		Player->EquippedComp1->SetStaticMesh(nullptr);
+		Player->EquippedComp2->SetStaticMesh(nullptr);
 
 		Player->AttackComp->WeaponChange(-1);
 		return true;
@@ -157,18 +157,18 @@ bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 		//플레이어 어택컴포넌트에 정보를 전달.
 		Player->AttackComp->WeaponChange(invenItemArr[index].WeaponInfoIndex);
 		FinvenData data = DataManager->GetData(ChangeItem);
-		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[int32(data.Weaponinfo.WeaponType)]);
+//		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[int32(data.Weaponinfo.WeaponType)]);
 
-// 		if (data.Weaponinfo.WeaponType == EWeaponType::Dagger)
-// 		{
-// 			Player->WeaponComp->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-// 			Player->WeaponComp2->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-// 		}
-// 		else
-// 		{
-// 			Player->WeaponComp->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-// 			Player->WeaponComp2->SetStaticMesh(nullptr);
-// 		}
+		if (data.Weaponinfo.WeaponType == EWeaponType::Dagger)
+		{
+			Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
+			Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
+		}
+		else
+		{
+			Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
+			Player->EquippedComp2->SetStaticMesh(nullptr);
+		}
 		return true;
 	}
 
