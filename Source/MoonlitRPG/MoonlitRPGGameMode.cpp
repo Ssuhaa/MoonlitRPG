@@ -3,6 +3,7 @@
 #include "MoonlitRPGGameMode.h"
 #include "MoonlitRPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "DataManager.h"
 
 AMoonlitRPGGameMode::AMoonlitRPGGameMode()
 {
@@ -11,5 +12,7 @@ AMoonlitRPGGameMode::AMoonlitRPGGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
+	}	
 }
+
+

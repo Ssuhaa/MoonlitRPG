@@ -22,7 +22,7 @@ APreviewActor::APreviewActor()
 
 	CaptureCam = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("CaptureCam"));
 	CaptureCam->SetupAttachment(rootComp);
-	CaptureCam->SetRelativeLocation(FVector(-350.0, 85.0, 0.0));
+	CaptureCam->SetRelativeLocation(FVector(-230.0, 85.0, 0.0));
 
 	ConstructorHelpers::FObjectFinder <UTextureRenderTarget2D> tempMat(TEXT("/Script/Engine.TextureRenderTarget2D'/Game/UI/InventoryOutfit/PreViewRenderTarget.PreViewRenderTarget'"));
 	if (tempMat.Succeeded())

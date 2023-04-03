@@ -13,6 +13,7 @@ class AMoonlitRPGGameMode : public AGameModeBase
 
 public:
 	AMoonlitRPGGameMode();
+
 };
 
 

@@ -42,7 +42,7 @@ void UOutfitWG::NativeConstruct()
 
 	ButtonBinding();
 	ReinforceSwitch(EEquipmentState::Detail);
-	OutfitActor = GetWorld()->SpawnActor<APreviewActor>(APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0));
+	OutfitActor = GetWorld()->SpawnActor<APreviewActor>(APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0,180,0));
 	OutfitActor->SetPreviewMesh(inventoryData.Weaponinfo.Mesh);
 }
 
