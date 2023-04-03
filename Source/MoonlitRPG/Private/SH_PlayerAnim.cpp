@@ -37,7 +37,7 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중에 있는지 여부 세팅
 		bAir = Player->GetCharacterMovement()->IsFalling();
 
-		if (bChangePose && currWeapon != EWeaponType::None)
+		if (bEquipWeapon && currWeapon != EWeaponType::None)
 		{
 			currentTime += DeltaSeconds;
 
@@ -149,11 +149,25 @@ void USH_PlayerAnim::AnimNotify_DieEnd()
 
 void USH_PlayerAnim::AnimNotify_Put_In_Start()
 {
-	bChangePose = false;
+	bEquipWeapon = false;
 	Player->GetCharacterMovement()->DisableMovement();
+
 }
 
 void USH_PlayerAnim::AnimNotify_Put_In_End()
 {
 	Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void USH_PlayerAnim::AnimNotify_Equipped()
+{
+// 	if (currWeapon == EWeaponType::Dagger)
+// 	{
+// 		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[1]);
+// 		Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[1]);
+// 	}
+// 	else
+// 	{
+// 		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[0]);
+// 	}
 }

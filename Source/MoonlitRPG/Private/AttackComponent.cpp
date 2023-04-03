@@ -196,7 +196,7 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// °ø°Ý ¸ùÅ¸ÁÖ¸¦ Àç»
 	isAttacking = true;
 
 	player->playerAnim->currWeapon = currWeapon;
-	player->playerAnim->bChangePose = true;
+	player->playerAnim->bEquipWeapon = true;
 
 	switch (currWeapon)
 	{
@@ -207,11 +207,15 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// °ø°Ý ¸ùÅ¸ÁÖ¸¦ Àç»
 		}
 		case EWeaponType::Dagger:
 		{
+// 			player->EquippedComp1->SetStaticMesh(nullptr);
+// 			player->EquippedComp2->SetStaticMesh(nullptr);
+
 			player->PlayAnimMontage(daggerMontage, 1.0f, FName(*montName));
 			break;
 		}
 		case EWeaponType::Sword:
 		{
+//			player->EquippedComp1->SetStaticMesh(nullptr);
 			player->PlayAnimMontage(swordMontage, 1.0f, FName(*montName));
 			break;
 		}

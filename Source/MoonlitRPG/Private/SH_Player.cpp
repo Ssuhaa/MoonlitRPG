@@ -48,6 +48,14 @@ ASH_Player::ASH_Player()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
 
+	EquippedComp1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComp"));
+	EquippedComp1->SetupAttachment(GetMesh(), TEXT("Weapon_Socket_1"));
+	EquippedComp1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	EquippedComp2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComp2"));
+	EquippedComp2->SetupAttachment(GetMesh(), TEXT("Weapon_Socket_2"));
+	EquippedComp2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
@@ -74,6 +82,18 @@ ASH_Player::ASH_Player()
 	if (tempAlt.Succeeded())
 	{
 		altkey = tempAlt.Object; //alt
+	}
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempWeapon1(TEXT("/Script/Engine.StaticMesh'/Game/Animation/Meshes/sword.sword'"));
+	if (tempWeapon1.Succeeded())
+	{
+		weaponMesh.Add(tempWeapon1.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempWeapon2(TEXT("/Script/Engine.StaticMesh'/Game/Animation/Meshes/Dagger.Dagger'"));
+	if (tempWeapon2.Succeeded())
+	{
+		weaponMesh.Add(tempWeapon2.Object);
 	}
 
 	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));

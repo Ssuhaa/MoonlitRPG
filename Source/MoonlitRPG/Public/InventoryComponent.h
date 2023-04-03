@@ -65,5 +65,4 @@ public:
 	TArray<FInvenItem> FindAllItemsType(EItemType itemType);
 
 	int32 CountItem();
-
 };
