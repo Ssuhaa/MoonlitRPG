@@ -24,9 +24,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<UParticleSystem*> magoEffect;
 
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* compMago;
 
 	virtual void GetItem() override;
+
 };

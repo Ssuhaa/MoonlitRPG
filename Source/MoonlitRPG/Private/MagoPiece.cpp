@@ -30,6 +30,8 @@ void AMagoPiece::BeginPlay()
 	
 	itemEffect->SetRelativeScale3D(FVector(1.0));
 	itemEffect->SetTemplate(magoEffect[0]);
+
+	interactionUI=nullptr;
 }
 
 void AMagoPiece::Tick(float DeltaTime)
@@ -46,6 +48,16 @@ void AMagoPiece::Tick(float DeltaTime)
 	FVector NewLoc = GetActorLocation() + FVector(0.0f, 0.0f, DeltaMove);
 
 	SetActorLocation(NewLoc);
+}
+
+void AMagoPiece::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	ASH_Player* player = Cast<ASH_Player>(OtherActor);
+	
+	if (player != nullptr)
+	{
+		GetItem();
+	}
 }
 
 void AMagoPiece::GetItem()
