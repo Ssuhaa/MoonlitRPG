@@ -111,6 +111,15 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> PlayerMesh;
 
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* EquippedComp1;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* EquippedComp2;
+
+	UPROPERTY(EditAnywhere)
+	TArray<class UStaticMesh*> weaponMesh;
+
 
 	UPROPERTY()
 	class ADataManager* DataManager;

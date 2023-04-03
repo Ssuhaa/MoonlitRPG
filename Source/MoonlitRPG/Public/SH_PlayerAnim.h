@@ -32,7 +32,7 @@ public:
 	bool bAir = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bChangePose = false;
+	bool bEquipWeapon = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bPutInPlay = false;
@@ -70,4 +70,6 @@ public:
 	void AnimNotify_Put_In_Start();
 	UFUNCTION()
 	void AnimNotify_Put_In_End();
+	UFUNCTION()
+	void AnimNotify_Equipped();
 };
