@@ -61,6 +61,11 @@ public:
 	float PlayercurrHP = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
 	float PlayerTotalHP = 120.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+	int32 AdventureLevel = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+	int32 AdventureEXP = 0;
+
 	void DamagedPlayer(float DamageValue);
 	void HealPlayer(float HealValue);
 	void RevivePlayer();

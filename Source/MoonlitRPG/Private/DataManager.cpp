@@ -20,6 +20,7 @@ ADataManager::ADataManager()
 	npcList = LoadTable<FNpcInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/NpcList.NpcList'"));
 	EnemyPlaceList = LoadTable<FEnemyManagerInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/EnemyManagerList.EnemyManagerList'"));
 	UpgradeMoneyData = LoadTable<FUpGradeMoneyData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/UpGradeMoneyData.UpGradeMoneyData'"));
+	DangsanData = LoadTable<FDangsanRewardData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/DangsanRewardData.DangsanRewardData'"));
 	ItemGradeData = LoadTable<FItemGradeData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/ItemGradeData.ItemGradeData'"));
 	MainQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/MainQuestList.MainQuestList'"));
 	TodayQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/TodayQuestList.TodayQuestList'"));

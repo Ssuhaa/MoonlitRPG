@@ -145,8 +145,10 @@ struct FWeaponinfo : public FTableRowBase //무기 아이템 기본 정보
 	FString WeaponName = "None";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 타입
 	EWeaponType WeaponType = EWeaponType::None;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 스태딕메쉬
-	TObjectPtr<class UStaticMesh> Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기 프리뷰 메쉬
+	TObjectPtr<class UStaticMesh> PreviewMesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) //무기착용 스태딕메쉬
+	TObjectPtr<class UStaticMesh> EquipMesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //돌파에 필요한 재료 리스트
 	TArray<FWeaponNeedItem> UpgradeItemList;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) //공격력 초기값 (38-40, 41-48, 49-60, 61-83 )
@@ -156,7 +158,8 @@ struct FWeaponinfo : public FTableRowBase //무기 아이템 기본 정보
 	{
 		return WeaponName == Other.WeaponName && 
 			WeaponType == Other.WeaponType &&
-			Mesh == Other.Mesh &&
+			PreviewMesh == Other.PreviewMesh &&
+			EquipMesh == Other.EquipMesh &&
 			UpgradeItemList == Other.UpgradeItemList &&
 			initPower == Other.initPower;
 	}
@@ -398,7 +401,27 @@ public:
 	FUpGradeMoneyData UpGradeMoneyData;
 };
 
+//[DangsanTreeData]---------------------------------------------------------------------//
+USTRUCT(BlueprintType)
+struct FDangsanRewardData : public FTableRowBase
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	int32 MaxMago = 10;
+	UPROPERTY(EditAnyWhere)
+	int32 currMago = 0;
+	UPROPERTY(EditAnywhere)
+	TArray<FRewarditem> RewardItems;
+	UPROPERTY(EditAnywhere)
+	int32 RewardMoney;
+	UPROPERTY(EditAnywhere)
+	int32 RewardEXP;
+	UPROPERTY(EditAnywhere)
+	int32 RewardStamina;
 
+};
+ 
 //[DataManager]---------------------------------------------------------------------//
 
 UCLASS()
@@ -433,6 +456,8 @@ public:
 	TArray<FUpGradeMoneyData> UpgradeMoneyData;
 	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FItemGradeData> ItemGradeData;
+	UPROPERTY(VisibleAnywhere, category = Data)
+	TArray<FDangsanRewardData> DangsanData;
 
 	//UPROPERTY()
 	TArray<FQuestInfo*> ToTalQuestList;
