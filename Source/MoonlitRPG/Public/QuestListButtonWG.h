@@ -29,8 +29,10 @@ protected:
 public:
 	void SetQuestListWG(FQuestInfo* Questinfo);
 
+
 	UPROPERTY()
 	class UQuestWG* QuestWG;
 	
+	//TSharedPtr<FQuestInfo> SelectQuest;
 	FQuestInfo* SelectQuest;
 };

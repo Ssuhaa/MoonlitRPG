@@ -13,7 +13,7 @@ void UQuestListButtonWG::NativeConstruct()
 }
 
 void UQuestListButtonWG::SetQuestListWG(FQuestInfo* Questinfo)
-{
+{	
 	SelectQuest = Questinfo;
 	TB_QuestName->SetText(FText::FromString(Questinfo->QuestName));
 }
@@ -22,3 +22,4 @@ void UQuestListButtonWG::SendSelectQuest()
 {
 	QuestWG->ReciveSelectQuest(SelectQuest);
 }
+

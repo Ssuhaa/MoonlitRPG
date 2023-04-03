@@ -434,6 +434,10 @@ public:
 	UPROPERTY(VisibleAnywhere, category = Data)
 	TArray<FItemGradeData> ItemGradeData;
 
+	//UPROPERTY()
+	TArray<FQuestInfo*> ToTalQuestList;
+	void MakeTotalQuestList();
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<FQuestInfo> MainQuestList;
 	UPROPERTY(VisibleAnywhere)

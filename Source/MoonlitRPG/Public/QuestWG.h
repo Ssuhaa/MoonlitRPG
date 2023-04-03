@@ -62,6 +62,7 @@ protected:
 	
 	void SetQuestWG();
 	void ChangeQuestList(EQuestType ChangeType);
+	void SetQuestList(TArray<FQuestInfo> QuestList);
 
 	EQuestType CurrQuestType = EQuestType::Total;
 

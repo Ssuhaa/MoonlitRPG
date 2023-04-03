@@ -101,6 +101,23 @@ void UQuestWG::ChangeQuestList(EQuestType ChangeType)
 	UpdateQuestList();
 }
 
+void UQuestWG::SetQuestList(TArray<FQuestInfo> QuestList)
+{
+	for (int32 i = 0; i < QuestList.Num(); i++)
+	{
+		if (QuestList[i].Queststate != EQuestState::Continue) continue;
+		if (!QuestButtons.IsValidIndex(i))
+		{
+			UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
+			QuestButtons.Add(CurrList);
+		}
+		QuestButtons[i]->QuestWG = this;
+	
+		QuestButtons[i]->SetQuestListWG(&QuestList[i]);
+		VB_QuestList->AddChild(QuestButtons[i]);
+	}
+}
+
 void UQuestWG::UpdateQuestList()
 {
 	VB_QuestList->ClearChildren();
@@ -108,41 +125,28 @@ void UQuestWG::UpdateQuestList()
 	switch (CurrQuestType)
 	{
 	case EQuestType::Main:
-		for (int32 i = 0; i < DataManager->MainQuestList.Num(); i++)
-		{
-			if (DataManager->MainQuestList[i].Queststate != EQuestState::Continue) continue;
-			if (!QuestButtons.IsValidIndex(i))
-			{
-				UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
-				QuestButtons.Add(CurrList);
-			}
-			QuestButtons[i]->QuestWG = this;
-			QuestButtons[i]->SetQuestListWG(&DataManager->MainQuestList[i]);
-			VB_QuestList->AddChild(QuestButtons[i]);
-		}
+		SetQuestList(DataManager->MainQuestList);
+
 		break;
 	case EQuestType::Today:
-		for (int32 i = 0; i < DataManager->TodayQuestList.Num(); i++)
-		{
-			if (DataManager->TodayQuestList[i].Queststate != EQuestState::Continue) continue;
-			if (!QuestButtons.IsValidIndex(i))
-			{
-				UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
-				QuestButtons.Add(CurrList);
-			}
-			QuestButtons[i]->QuestWG = this;
-			QuestButtons[i]->SetQuestListWG(&DataManager->TodayQuestList[i]);
-			VB_QuestList->AddChild(QuestButtons[i]);
-		}
+		SetQuestList(DataManager->TodayQuestList);
+
 		break;
 	case EQuestType::Sub:
 		break;
 	case EQuestType::Total:
-
-		break;
-	case EQuestType::None:
-		break;
-	default:
+		for (int32 i = 0; i < DataManager->ToTalQuestList.Num(); i++)
+		{
+			if (DataManager->ToTalQuestList[i]->Queststate != EQuestState::Continue) continue;
+			if (!QuestButtons.IsValidIndex(i))
+			{
+				UQuestListButtonWG* CurrList = CreateWidget<UQuestListButtonWG>(GetWorld(), WGFactory[0]);
+				QuestButtons.Add(CurrList);
+			}
+			QuestButtons[i]->QuestWG = this;
+			QuestButtons[i]->SetQuestListWG(DataManager->ToTalQuestList[i]);
+			VB_QuestList->AddChild(QuestButtons[i]);
+ 		}
 		break;
 	}
 

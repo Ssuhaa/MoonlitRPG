@@ -35,6 +35,8 @@ ADataManager::ADataManager()
 void ADataManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MakeTotalQuestList();
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
 	SpawnInteractObjects = GetAllActorOfClass<AInteractiveObjectBase>();
 	SpawnEnemyManagers = GetAllActorOfClass<AIH_EnemyManager>();
@@ -47,6 +49,18 @@ void ADataManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADataManager::MakeTotalQuestList()
+{
+	for (int32 i = 0; i < MainQuestList.Num(); i++)
+	{
+		ToTalQuestList.Add(&MainQuestList[i]);
+	}
+	for (int32 i = 0; i < TodayQuestList.Num(); i++)
+	{
+		ToTalQuestList.Add(&TodayQuestList[i]);
+	}
 }
 
 template<typename T>
@@ -186,7 +200,7 @@ void ADataManager::NavigateTarget(FQuestInfo CurrQuest)
 template<typename T>
 T ADataManager::GetInfo(int32 Index, const TArray<T> List)
 {
-	if(Index < 0 || List.IsEmpty())
+	if(Index < 0 || List.IsEmpty() || List.Num() <= Index)
 	{
 		T null;
 		return null;
