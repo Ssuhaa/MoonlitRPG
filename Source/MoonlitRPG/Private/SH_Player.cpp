@@ -421,15 +421,16 @@ void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
 
 void ASH_Player::SwitchWeaponPos()		
 {
+	if(currEquipWeapon.Weaponinfo == nullptr) return;
 	if (playerAnim->bHoldingWeapon)  // 무기를 휘둘렀으면
 	{
 		ClearEquipWeapon();
-		switch (currEquipWeapon.Weaponinfo.WeaponType)  // 무기가 등에서 손으로 이동
+		switch (currEquipWeapon.Weaponinfo->WeaponType)  // 무기가 등에서 손으로 이동
 		{
 			case EWeaponType::Dagger:
 			{
-				GrabComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
-				GrabComp2->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				GrabComp1->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
+				GrabComp2->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
 				GrabComp3->SetStaticMesh(nullptr);
 				break;
 			}
@@ -437,7 +438,7 @@ void ASH_Player::SwitchWeaponPos()
 			{
 				GrabComp1->SetStaticMesh(nullptr);
 				GrabComp2->SetStaticMesh(nullptr);
-				GrabComp3->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				GrabComp3->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
 				break;
 			}
 		}
@@ -445,17 +446,17 @@ void ASH_Player::SwitchWeaponPos()
 	else
 	{
 		ClearGrabWeapon();
-		switch (currEquipWeapon.Weaponinfo.WeaponType)  // 무기가 손에서 등으로 이동
+		switch (currEquipWeapon.Weaponinfo->WeaponType)  // 무기가 손에서 등으로 이동
 		{
 			case EWeaponType::Dagger:
 			{
-				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
-				EquippedComp2->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
+				EquippedComp2->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
 				break;
 			}
 			case EWeaponType::Sword:
 			{
-				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo->EquipMesh);
 				EquippedComp2->SetStaticMesh(nullptr);
 				break;
 			}
