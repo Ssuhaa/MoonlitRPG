@@ -24,6 +24,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<UParticleSystem*> magoEffect;
 
+	FVector originPos;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 public:
 	UPROPERTY(EditAnywhere)

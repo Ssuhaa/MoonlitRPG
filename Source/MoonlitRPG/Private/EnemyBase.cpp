@@ -15,6 +15,7 @@
 #include "AttackComponent.h"
 #include "Materials/MaterialParameterCollection.h"
 #include <Kismet/KismetMaterialLibrary.h>
+#include "Kismet/GameplayStatics.h"
 
 AEnemyBase::AEnemyBase()
 {

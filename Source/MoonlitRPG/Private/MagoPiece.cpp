@@ -32,6 +32,8 @@ void AMagoPiece::BeginPlay()
 	itemEffect->SetTemplate(magoEffect[0]);
 
 	interactionUI=nullptr;
+
+	originPos = GetActorLocation();
 }
 
 void AMagoPiece::Tick(float DeltaTime)
@@ -41,11 +43,12 @@ void AMagoPiece::Tick(float DeltaTime)
 	rotateZ += DeltaTime * 100;
 	compMago->SetWorldRotation(FRotator(0, rotateZ, 0));
 
-	float period = 2.0f;
+	float period = 3.0f;
+	float amplitude = 10.0f;
 
-	float DeltaMove = FMath::Sin(2*PI*GetWorld()->GetTimeSeconds()/period);
+	float DeltaMove = amplitude*FMath::Sin(2*PI*GetWorld()->GetTimeSeconds()/period);
 
-	FVector NewLoc = GetActorLocation() + FVector(0.0f, 0.0f, DeltaMove);
+	FVector NewLoc = originPos + FVector(0.0f, 0.0f, DeltaMove);
 
 	SetActorLocation(NewLoc);
 }

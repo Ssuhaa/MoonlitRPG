@@ -21,6 +21,7 @@
 #include "IH_Puzzle.h"
 #include <Particles/ParticleSystemComponent.h>
 #include "DataManager.h"
+#include <Components/PostProcessComponent.h>
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -167,6 +168,7 @@ void UAttackComponent::SpecialAttack()
 		{	
 			PlayAttackMontage("SpecialAttack");
 			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
+			player->ActiveBlur(true);
 			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
 		}
 	}
@@ -196,7 +198,7 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재�
 	isAttacking = true;
 
 	player->playerAnim->currWeapon = currWeapon;
-	player->playerAnim->bEquipWeapon = true;
+	player->playerAnim->bHoldingWeapon = true;
 
 	switch (currWeapon)
 	{
@@ -207,18 +209,14 @@ void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재�
 		}
 		case EWeaponType::Dagger:
 		{
-			player->EquippedComp1->SetStaticMesh(nullptr);
-			player->EquippedComp2->SetStaticMesh(nullptr);
-			player->GrabComp1->SetStaticMesh(player->weaponMesh[1]);
-			player->GrabComp2->SetStaticMesh(player->weaponMesh[1]);
+			player->SwitchWeaponPos();
 
 			player->PlayAnimMontage(daggerMontage, 1.0f, FName(*montName));
 			break;
 		}
 		case EWeaponType::Sword:
 		{
-			player->EquippedComp1->SetStaticMesh(nullptr);
-			player->GrabComp3->SetStaticMesh(player->weaponMesh[0]);
+			player->SwitchWeaponPos();
 
 			player->PlayAnimMontage(swordMontage, 1.0f, FName(*montName));
 			break;

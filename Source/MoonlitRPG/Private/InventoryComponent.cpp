@@ -157,18 +157,12 @@ bool UInventoryComponent::WeaponSwitch(FInvenItem ChangeItem)
 		//플레이어 어택컴포넌트에 정보를 전달.
 		Player->AttackComp->WeaponChange(invenItemArr[index].WeaponInfoIndex);
 		FinvenData data = DataManager->GetData(ChangeItem);
+		Player->currEquipWeapon = data;
 //		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[int32(data.Weaponinfo.WeaponType)]);
 
-		if (data.Weaponinfo.WeaponType == EWeaponType::Dagger)
-		{
-			Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-			Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-		}
-		else
-		{
-			Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[int32(data.Weaponinfo.WeaponType)]);
-			Player->EquippedComp2->SetStaticMesh(nullptr);
-		}
+		// 무기가 등 소켓에 부착
+		Player->SwitchWeaponPos();
+
 		return true;
 	}
 

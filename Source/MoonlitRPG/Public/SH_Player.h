@@ -50,6 +50,9 @@ protected:
 	class UInputAction* altkey;
 	void interactionObject();
 	void OpenScreenshotUI();
+	void CameraShake(float deltaTime, float delayTime, float shakeTime);
+	void ActiveVignette(float deltaTime);
+
 	bool screenShotOpen = false;
 	float currTime = 0;
 
@@ -71,6 +74,7 @@ public:
 	void RevivePlayer();
 	void FloatingPlayerDamage();
 	void SkillCameraFollow(USceneComponent* attachLoc, FName socketName = NAME_None);
+	void ActiveBlur(bool Active);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USH_PlayerAnim* playerAnim;
@@ -112,6 +116,7 @@ public:
 
 	bool bUIOpen = false;
 	bool bFighting = false;
+	float vignetteValue = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> PlayerMesh;
@@ -134,10 +139,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<class UStaticMesh*> weaponMesh;
 
+	UPROPERTY(EditAnywhere)
+	class UPostProcessComponent* PlayerPostProcess;
 
 	UPROPERTY()
 	class ADataManager* DataManager;
 
 	void CompleteQuest(FQuestInfo Questinfo);
-//	void SetWeaponMesh();
+	void SwitchWeaponPos();
+	void ClearEquipWeapon();
+	void ClearGrabWeapon();
+
+	FinvenData currEquipWeapon;
 };

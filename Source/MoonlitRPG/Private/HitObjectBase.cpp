@@ -45,8 +45,7 @@ void AHitObjectBase::Tick(float DeltaTime)
 
 		float DeltaMove = AnimationAmplitude * FMath::Sin(2 * PI * GetWorld()->GetTimeSeconds() * 50 / AnimationPeriod);
  
-		FVector CurrentPos = GetActorLocation();
-		FVector NewPos = CurrentPos + FVector(DeltaMove, DeltaMove, 0.0f);
+		FVector NewPos = originActorPos + FVector(DeltaMove, DeltaMove, 0.0f);
  
 		SetActorLocation(NewPos);
 

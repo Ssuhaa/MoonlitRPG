@@ -106,7 +106,12 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 	if(Player->bUIOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.Y += Axis;
-	Player->playerAnim->bEquipWeapon = false;
+	Player->playerAnim->bHoldingWeapon = false;
+
+	if (!Player->AttackComp->isAttacking)
+	{
+		Player->SwitchWeaponPos();
+	}
 }
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
@@ -114,7 +119,12 @@ void UMoveComponent::Vertical(const FInputActionValue& value)
 	if (Player->bUIOpen == true) return;
 	float Axis = value.Get<float>();
 	dir.X += Axis;
-	Player->playerAnim->bEquipWeapon = false;
+	Player->playerAnim->bHoldingWeapon = false;
+
+	if (!Player->AttackComp->isAttacking)
+	{
+		Player->SwitchWeaponPos();
+	}
 }
 
 void UMoveComponent::Look(const FInputActionValue& value)
@@ -130,7 +140,12 @@ void UMoveComponent::Jump()
 {
 	if (Player->bUIOpen == true) return;
 	Player->Jump();
-	Player->playerAnim->bEquipWeapon = false;
+	Player->playerAnim->bHoldingWeapon = false;
+
+	if (!Player->AttackComp->isAttacking)
+	{
+		Player->SwitchWeaponPos();
+	}
 }
 
 

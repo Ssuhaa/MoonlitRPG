@@ -29,6 +29,7 @@
 #include "PuzzleGuide.h"
 #include "IH_DamageActor.h"
 #include <UMG/Public/Blueprint/UserWidget.h>
+#include <Components/PostProcessComponent.h>
 
 
 ASH_Player::ASH_Player()
@@ -68,6 +69,9 @@ ASH_Player::ASH_Player()
 	GrabComp3->SetupAttachment(GetMesh(), TEXT("TwoHandSocket"));
 	GrabComp3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	PlayerPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Player Post Process Component"));
+	PlayerPostProcess->SetupAttachment(RootComponent);
+
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
@@ -101,7 +105,7 @@ ASH_Player::ASH_Player()
 	{
 		weaponMesh.Add(tempWeapon1.Object);
 	}
-
+	
 	ConstructorHelpers::FObjectFinder<UStaticMesh> tempWeapon2(TEXT("/Script/Engine.StaticMesh'/Game/Animation/Meshes/Dagger.Dagger'"));
 	if (tempWeapon2.Succeeded())
 	{
@@ -155,6 +159,11 @@ void ASH_Player::BeginPlay()
 	playerCon = GetWorld()->GetFirstPlayerController();
 	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
 	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
+
+	PlayerPostProcess->Settings.VignetteIntensity = 0.5f;
+	PlayerPostProcess->Settings.MotionBlurAmount = 1.0f;
+	PlayerPostProcess->Settings.MotionBlurMax = 50.0f;
+	PlayerPostProcess->Settings.BloomIntensity = 4.0f;
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -163,21 +172,22 @@ void ASH_Player::Tick(float DeltaTime)
 
 	if (AttackComp->hitAnything)
 	{
-		float randomShake = FMath::RandRange(-2.0f, 2.0f);
+		float randomShake = FMath::RandRange(-3.0f, 3.0f);
+		float specialShake = FMath::RandRange(-5.0f, 5.0f);
 
-		currTime += DeltaTime;
-		if (currTime < 0.1f)
+ 		currTime += DeltaTime;
+		
+		if (AttackComp->isSpecialAttacking)
 		{
-			CamComp->SetWorldLocation(CamComp->GetComponentLocation()+FVector(randomShake));
+			CameraShake(DeltaTime, 0.5f, specialShake);
 		}
 		else
 		{
-			currTime = 0;
-			AttackComp->hitAnything=false;
-			CamComp->SetRelativeLocation(FVector(-200, 0, 50));
+			CameraShake(DeltaTime, 0.2f, randomShake);
 		}
 	}
 
+	ActiveVignette(DeltaTime);
 }
 
 void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -210,6 +220,70 @@ void ASH_Player::OpenScreenshotUI()
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		screenshotUI->RemoveFromParent();
 		screenShotOpen = false;
+	}
+}
+
+void ASH_Player::CameraShake(float deltaTime, float delayTime, float shakeTime)
+{
+	currTime += deltaTime;
+
+	if (currTime < delayTime)
+	{
+		CamComp->SetWorldLocation(CamComp->GetComponentLocation() + FVector(shakeTime));
+	}
+	else
+	{
+		currTime = 0;
+		AttackComp->hitAnything = false;
+		CamComp->SetRelativeLocation(FVector(-200, 0, 50));
+	}
+}
+
+void ASH_Player::ActiveVignette(float deltaTime)
+{
+	if (AttackComp->isSpecialAttacking)
+	{
+		PlayerPostProcess->Settings.bOverride_VignetteIntensity = true;
+		vignetteValue += deltaTime * 5;
+
+		if (vignetteValue >= 1.0)
+		{
+			vignetteValue = 1.0;
+		}
+
+		PlayerPostProcess->Settings.VignetteIntensity = vignetteValue;
+	}
+	else
+	{
+		vignetteValue -= deltaTime * 5;
+
+		if (vignetteValue <= 0.5)
+		{
+			vignetteValue = 0.5;
+			PlayerPostProcess->Settings.bOverride_VignetteIntensity = false;
+		}
+
+		PlayerPostProcess->Settings.VignetteIntensity = vignetteValue;
+	}
+}
+
+void ASH_Player::ActiveBlur(bool Active)
+{
+	if (Active)
+	{
+		PlayerPostProcess->Settings.bOverride_MotionBlurAmount = true;
+		PlayerPostProcess->Settings.bOverride_MotionBlurMax = true;
+
+		PlayerPostProcess->Settings.bOverride_BloomMethod = true;
+		PlayerPostProcess->Settings.bOverride_BloomIntensity = true;
+	}
+	else
+	{
+		PlayerPostProcess->Settings.bOverride_MotionBlurAmount = false;
+		PlayerPostProcess->Settings.bOverride_MotionBlurMax = false;
+
+		PlayerPostProcess->Settings.bOverride_BloomMethod = false;
+		PlayerPostProcess->Settings.bOverride_BloomIntensity = false;
 	}
 }
 
@@ -344,23 +418,59 @@ void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
 	dialogueUI->SetStartDialouge(Questinfo.DialougueIndex);
 }
 
-// void ASH_Player::SetWeaponMesh()
-// {
-// 	switch(AttackComp->currWeapon)
-// 	{
-// 	case EWeaponType::Dagger:
-// 		{
-// 			EquippedComp1->SetStaticMesh(nullptr);
-// 			EquippedComp2->SetStaticMesh(nullptr);
-// 			GrabComp1->SetStaticMesh(weaponMesh[1]);
-// 			GrabComp2->SetStaticMesh(weaponMesh[1]);
-// 			break;
-// 		}
-// 		case EWeaponType::Sword:
-// 		{
-// 			EquippedComp1->SetStaticMesh(nullptr);
-// 			GrabComp3->SetStaticMesh(player->weaponMesh[0]);
-// 			break;
-// 		}
-// 	}
-// }
+void ASH_Player::SwitchWeaponPos()		
+{
+	if (playerAnim->bHoldingWeapon)  // 무기를 휘둘렀으면
+	{
+		ClearEquipWeapon();
+		switch (currEquipWeapon.Weaponinfo.WeaponType)  // 무기가 등에서 손으로 이동
+		{
+			case EWeaponType::Dagger:
+			{
+				GrabComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				GrabComp2->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				GrabComp3->SetStaticMesh(nullptr);
+				break;
+			}
+			case EWeaponType::Sword:
+			{
+				GrabComp1->SetStaticMesh(nullptr);
+				GrabComp2->SetStaticMesh(nullptr);
+				GrabComp3->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				break;
+			}
+		}
+	}
+	else
+	{
+		ClearGrabWeapon();
+		switch (currEquipWeapon.Weaponinfo.WeaponType)  // 무기가 손에서 등으로 이동
+		{
+			case EWeaponType::Dagger:
+			{
+				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				EquippedComp2->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				break;
+			}
+			case EWeaponType::Sword:
+			{
+				EquippedComp1->SetStaticMesh(currEquipWeapon.Weaponinfo.EquipMesh);
+				EquippedComp2->SetStaticMesh(nullptr);
+				break;
+			}
+		}
+	}
+}
+
+void ASH_Player::ClearEquipWeapon()
+{
+	EquippedComp1->SetStaticMesh(nullptr);
+	EquippedComp2->SetStaticMesh(nullptr);
+}
+
+void ASH_Player::ClearGrabWeapon()
+{
+	GrabComp1->SetStaticMesh(nullptr);
+	GrabComp2->SetStaticMesh(nullptr);
+	GrabComp3->SetStaticMesh(nullptr);
+}

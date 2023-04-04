@@ -37,7 +37,7 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중에 있는지 여부 세팅
 		bAir = Player->GetCharacterMovement()->IsFalling();
 
-		if (bEquipWeapon && currWeapon != EWeaponType::None)
+		if (bHoldingWeapon && currWeapon != EWeaponType::None)
 		{
 			currentTime += DeltaSeconds;
 
@@ -94,6 +94,7 @@ void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
 	Player->AttackComp->ResetAttack();
 	Player->SkillCameraFollow(Player->GetRootComponent());
+	Player->ActiveBlur(false);
 }
 
 void USH_PlayerAnim::AnimNotify_NextCombo()
@@ -149,9 +150,8 @@ void USH_PlayerAnim::AnimNotify_DieEnd()
 
 void USH_PlayerAnim::AnimNotify_Put_In_Start()
 {
-	bEquipWeapon = false;
+	bHoldingWeapon = false;
 	Player->GetCharacterMovement()->DisableMovement();
-
 }
 
 void USH_PlayerAnim::AnimNotify_Put_In_End()
@@ -161,16 +161,5 @@ void USH_PlayerAnim::AnimNotify_Put_In_End()
 
 void USH_PlayerAnim::AnimNotify_Equipped()
 {
-	if (currWeapon == EWeaponType::Dagger)
-	{
-		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[1]);
-		Player->EquippedComp2->SetStaticMesh(Player->weaponMesh[1]);
-		Player->GrabComp1->SetStaticMesh(nullptr);
-		Player->GrabComp2->SetStaticMesh(nullptr);
-	}
-	else
-	{
-		Player->EquippedComp1->SetStaticMesh(Player->weaponMesh[0]);
-		Player->GrabComp3->SetStaticMesh(nullptr);
-	}
+	Player->SwitchWeaponPos();
 }

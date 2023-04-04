@@ -32,7 +32,7 @@ public:
 	bool bAir = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bEquipWeapon = false;
+	bool bHoldingWeapon = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bPutInPlay = false;
