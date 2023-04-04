@@ -418,6 +418,7 @@ void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
 	dialogueUI->SetStartDialouge(Questinfo.DialougueIndex);
 }
 
+
 void ASH_Player::SwitchWeaponPos()		
 {
 	if (playerAnim->bHoldingWeapon)  // 무기를 휘둘렀으면
@@ -474,3 +475,10 @@ void ASH_Player::ClearGrabWeapon()
 	GrabComp2->SetStaticMesh(nullptr);
 	GrabComp3->SetStaticMesh(nullptr);
 }
+
+void ASH_Player::DangSanLevelUp(int32 PlusStamina)
+{
+	DansanLevel++;
+	MoveComp->maxStamina += PlusStamina;
+}
+

@@ -30,10 +30,10 @@ void UWidgetSlotBase::SlotClicked()
 
 }
 
-void UWidgetSlotBase::UpdateSlot(FInvenItem invenitem)
+void UWidgetSlotBase::UpdateSlot(FInvenItem* invenitem)
 {
 	invenData = DataManager->GetData(invenitem);
-	ItemImage->SetBrushFromTexture(invenData.iteminfo.itemImage);
-	SlotBG->SetBrushFromTexture(invenData.itemGradeData.Slotlmage, true);
+	ItemImage->SetBrushFromTexture(invenData.iteminfo->itemImage);
+	SlotBG->SetBrushFromTexture(invenData.itemGradeData->Slotlmage, true);
 }
 

@@ -14,21 +14,21 @@
 
 void UItemDescriptionWG::SetDescription()
 {
-	ItemImage->SetBrushFromTexture(inventoryData.iteminfo.itemImage);
-	ItemName->SetText(FText::FromString(inventoryData.iteminfo.ItemName));
-	Description->SetText(FText::FromString(inventoryData.iteminfo.itemDescription));
-	BG->SetBrushFromTexture(inventoryData.itemGradeData.DiscriptionImage, true);
+	ItemImage->SetBrushFromTexture(inventoryData->iteminfo->itemImage);
+	ItemName->SetText(FText::FromString(inventoryData->iteminfo->ItemName));
+	Description->SetText(FText::FromString(inventoryData->iteminfo->itemDescription));
+	BG->SetBrushFromTexture(inventoryData->itemGradeData->DiscriptionImage, true);
 
 	FText weaponType;
 	int32 currPower;
-	switch (inventoryData.iteminfo.itemType)
+	switch (inventoryData->iteminfo->itemType)
 	{
 	case EItemType::Outfit:
 
 		Panel_Weapon->SetVisibility(ESlateVisibility::Visible);
 		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
 
-		switch (int32(inventoryData.Weaponinfo.WeaponType))
+		switch (int32(inventoryData->Weaponinfo->WeaponType))
 		{
 		case 0:
 			weaponType = FText::FromString(TEXT("두손 검"));
@@ -42,7 +42,7 @@ void UItemDescriptionWG::SetDescription()
 		}
 
 		Text_WeaponType->SetText(weaponType);
-		currPower = inventoryData.invenitem.WeaponData.CurrPower;
+		currPower = inventoryData->invenitem->WeaponData.CurrPower;
 		Text_Power->SetText(FText::AsNumber(currPower));
 		ShowEquip();
 
@@ -52,7 +52,7 @@ void UItemDescriptionWG::SetDescription()
 
 		Panel_Food->SetVisibility(ESlateVisibility::Visible);
 		Panel_Weapon->SetVisibility(ESlateVisibility::Hidden);
-		Text_Heal->SetText(FText::AsNumber(inventoryData.iteminfo.HealAmount));
+		Text_Heal->SetText(FText::AsNumber(inventoryData->iteminfo->HealAmount));
 		break;
 	case EItemType::Consum:
 		Panel_Food->SetVisibility(ESlateVisibility::Hidden);
@@ -76,7 +76,7 @@ void UItemDescriptionWG::ShowEquip()
 	int32 value = Player->InvenComp->CheckWeaponisEquip(); //착용하고 있는 아이템 체크
 	if (value > -1) //있으면
 	{
-		if (Player->InvenComp->invenItemArr[value] == inventoryData.invenitem) //나온것이 현재 장비창에 띄운 인포랑 같은지
+		if (Player->InvenComp->invenItemArr[value] == *inventoryData->invenitem) //나온것이 현재 장비창에 띄운 인포랑 같은지
 		{
 			Border_Equip->SetVisibility(ESlateVisibility::Visible);
 			return;
@@ -86,7 +86,7 @@ void UItemDescriptionWG::ShowEquip()
 	Border_Equip->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UItemDescriptionWG::ReceiveSelectSlotData(FinvenData invenData)
+void UItemDescriptionWG::ReceiveSelectSlotData(FinvenData* invenData)
 {
 	inventoryData = invenData;
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));

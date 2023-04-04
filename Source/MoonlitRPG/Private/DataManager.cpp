@@ -24,10 +24,11 @@ ADataManager::ADataManager()
 	ItemGradeData = LoadTable<FItemGradeData>(TEXT("/Script/Engine.DataTable'/Game/TableSample/ItemGradeData.ItemGradeData'"));
 	MainQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/MainQuestList.MainQuestList'"));
 	TodayQuestList = LoadTable<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/TodayQuestList.TodayQuestList'"));
+	//TestList = LoadTablePtr<FQuestInfo>(TEXT("/Script/Engine.DataTable'/Game/TableSample/TodayQuestList.TodayQuestList'"));
 
 	for (int32 i = 0; i < MainQuestList.Num(); i++)
 	{
-		(&MainQuestList[i])->SetDescription(this);
+		MainQuestList[i]->SetDescription(this);
 	}
 
 }
@@ -56,18 +57,18 @@ void ADataManager::MakeTotalQuestList()
 {
 	for (int32 i = 0; i < MainQuestList.Num(); i++)
 	{
-		ToTalQuestList.Add(&MainQuestList[i]);
+		ToTalQuestList.Add(MainQuestList[i]);
 	}
 	for (int32 i = 0; i < TodayQuestList.Num(); i++)
 	{
-		ToTalQuestList.Add(&TodayQuestList[i]);
+		ToTalQuestList.Add(TodayQuestList[i]);
 	}
 }
 
 template<typename T>
-TArray<T>  ADataManager::LoadTable(FString path)
+TArray<T*>  ADataManager::LoadTable(FString path)
 {
-	TArray<T> data;
+	TArray<T*> data;
 	ConstructorHelpers::FObjectFinder<UDataTable> tempTable(*path);
 	if (tempTable.Succeeded())
 	{
@@ -76,7 +77,24 @@ TArray<T>  ADataManager::LoadTable(FString path)
 		for (int32 i = 0; i < names.Num(); i++)
 		{
 			T* pInfo = table->FindRow<T>(names[i], TEXT(""));
-			data.Add(*pInfo);
+			data.Add(pInfo);
+		}
+	}
+	return data;
+}
+template<typename T>
+TArray<T*> ADataManager::LoadTablePtr(FString path)
+{
+	TArray<T*> data;
+	ConstructorHelpers::FObjectFinder<UDataTable> tempTable(*path);
+	if (tempTable.Succeeded())
+	{
+		UDataTable* table = tempTable.Object;
+		TArray<FName> names = table->GetRowNames();
+		for (int32 i = 0; i < names.Num(); i++)
+		{
+			T* pInfo = table->FindRow<T>(names[i], TEXT(""));
+			data.Add(pInfo);
 		}
 	}
 	return data;
@@ -152,17 +170,17 @@ TArray<T*> ADataManager::GetAllActorOfClass()
 	return Managers;
 }
 
-FinvenData ADataManager::GetData(FInvenItem invenitem)
-{
-	FinvenData invenData;
-	invenData.invenitem = invenitem;
-	invenData.iteminfo = GetInfo(invenitem.ItemInfoIndex, itemList);
-	invenData.Weaponinfo = GetInfo(invenitem.WeaponInfoIndex, WeaponList);
-	invenData.itemGradeData = GetInfo(int32(invenData.iteminfo.itemgrade), ItemGradeData);
-	invenData.UpGradeMoneyData = GetInfo(invenitem.WeaponData.UpgradeCount, UpgradeMoneyData);
-
-	return invenData;
-}
+ FinvenData ADataManager::GetData(FInvenItem* invenitem)
+ {
+ 	FinvenData invenData;
+ 	invenData.invenitem = invenitem;
+ 	invenData.iteminfo = GetInfo(invenitem->ItemInfoIndex, itemList);
+ 	invenData.Weaponinfo = GetInfo(invenitem->WeaponInfoIndex, WeaponList);
+ 	invenData.itemGradeData = GetInfo(int32(invenData.iteminfo->itemgrade), ItemGradeData);
+ 	invenData.UpGradeMoneyData = GetInfo(invenitem->WeaponData.UpgradeCount, UpgradeMoneyData);
+ 
+ 	return invenData;
+ }
 
 void ADataManager::NavigateTarget(FQuestInfo CurrQuest)
 {
@@ -199,11 +217,11 @@ void ADataManager::NavigateTarget(FQuestInfo CurrQuest)
 }
 
 template<typename T>
-T ADataManager::GetInfo(int32 Index, const TArray<T> List)
+T* ADataManager::GetInfo(int32 Index, const TArray<T*> List)
 {
 	if(Index < 0 || List.IsEmpty() || List.Num() <= Index)
 	{
-		T null;
+		T* null =  nullptr;
 		return null;
 	}
 	return List[Index];
@@ -214,7 +232,7 @@ T ADataManager::GetInfo(int32 Index, const TArray<T> List)
 
 void FInvenItem::SetWeaponPower(ADataManager* DataManager)
 {
-	WeaponData.CurrPower = DataManager->GetInfo(WeaponInfoIndex, DataManager->WeaponList).initPower;
+	WeaponData.CurrPower = DataManager->GetInfo(WeaponInfoIndex, DataManager->WeaponList)->initPower;
 }
 
 bool FInvenItem::PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMoney, FItemGradeData GradeData)
@@ -227,7 +245,7 @@ bool FInvenItem::PlusCurrEXP(int32 TotalEXP, int32 TotalAmount, int32* playerMon
 		levelUP(GradeData);
 		return true;
 	}
-	SendLevelUpClear.Broadcast();
+	//SendLevelUpClear.Broadcast();
 	return false;
 }
 
@@ -240,12 +258,12 @@ void  FInvenItem::levelUP(FItemGradeData GradeData)
 		WeaponData.CurrEXP = WeaponData.CurrEXP - WeaponData.MaxEXP;
 		WeaponData.CurrPower += GradeData.PlusPower;
 	}
-	SendLevelUpClear.Broadcast();
+	//SendLevelUpClear.Broadcast();
 }
 
 bool FInvenItem::Upgrade(int32* playerMoney, bool isHaveAllItem, ADataManager* DataManager)
 {
-	int32 UpgradeMoney = DataManager->UpgradeMoneyData[WeaponData.UpgradeCount].UpgradeNeedMoney;
+	int32 UpgradeMoney = DataManager->UpgradeMoneyData[WeaponData.UpgradeCount]->UpgradeNeedMoney;
 	if (*playerMoney >= UpgradeMoney && isHaveAllItem == true)
 	{
 		*playerMoney -= UpgradeMoney;
@@ -274,12 +292,12 @@ void FQuestInfo::SetDescription(ADataManager* DataManager)
 		{
 			if (i == indexs.Num() - 1)
 			{
-				FString Name  = FString::Printf(TEXT("%s"), *DataManager->npcList[indexs[i]].NPCName);
+				FString Name  = FString::Printf(TEXT("%s"), *DataManager->npcList[indexs[i]]->NPCName);
 				RequirementsName += Name;
 			}
 			else
 			{
-				FString Name = FString::Printf(TEXT("%s,"), *DataManager->npcList[indexs[i]].NPCName);
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->npcList[indexs[i]]->NPCName);
 				RequirementsName += Name;
 			}
 		}
@@ -290,12 +308,12 @@ void FQuestInfo::SetDescription(ADataManager* DataManager)
 		{
 			if (i == indexs.Num() - 1)
 			{
-				FString Name = FString::Printf(TEXT("%s"), *DataManager->EnemyPlaceList[indexs[i]].EnemyPlaceName);
+				FString Name = FString::Printf(TEXT("%s"), *DataManager->EnemyPlaceList[indexs[i]]->EnemyPlaceName);
 				RequirementsName += Name;
 			}
 			else
 			{
-				FString Name = FString::Printf(TEXT("%s,"), *DataManager->EnemyPlaceList[indexs[i]].EnemyPlaceName);
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->EnemyPlaceList[indexs[i]]->EnemyPlaceName);
 				RequirementsName += Name;
 			}
 		}
@@ -306,12 +324,12 @@ void FQuestInfo::SetDescription(ADataManager* DataManager)
 		{
 			if (i == indexs.Num() - 1)
 			{
-				FString Name = FString::Printf(TEXT("%s"), *DataManager->itemList[indexs[i]].ItemName);
+				FString Name = FString::Printf(TEXT("%s"), *DataManager->itemList[indexs[i]]->ItemName);
 				RequirementsName += Name;
 			}
 			else
 			{
-				FString Name = FString::Printf(TEXT("%s,"), *DataManager->itemList[indexs[i]].ItemName);
+				FString Name = FString::Printf(TEXT("%s,"), *DataManager->itemList[indexs[i]]->ItemName);
 				RequirementsName += Name;
 			}
 		

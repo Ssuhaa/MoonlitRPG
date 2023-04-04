@@ -46,7 +46,7 @@ protected:
 	UPROPERTY()
 	class ADataManager* DataManager;
 
-	FinvenData inventoryData;
+	FinvenData* inventoryData;
 
 	UFUNCTION()
 	void UpGrade();
@@ -58,8 +58,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* Button_Upgrade;
 
-	UFUNCTION()
-	void SetUpGradeWG(FinvenData InvenData);
+	//UFUNCTION()
+	void SetUpGradeWG(FinvenData* InvenData);
 	
 	void ButtonBinding();
 

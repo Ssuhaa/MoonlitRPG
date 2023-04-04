@@ -61,7 +61,7 @@ void UQuestComponent::GiveQuestReward(FQuestInfo* Questinfo)
 	for (int32 i = 0; i < Questinfo->Reward.RewardItems.Num(); i++)
 	{
 		FRewarditem item = Questinfo->Reward.RewardItems[i];
-		if (DataManager->itemList[item.RewardItem].itemType == EItemType::Outfit)
+		if (DataManager->itemList[item.RewardItem]->itemType == EItemType::Outfit)
 		{
 			Player->InvenComp->WeaponAddItemToinven(item.RewardItem, item.WeaponData);
 		}
@@ -80,6 +80,7 @@ void UQuestComponent::RandomTodayQuest()
 	TArray<int32> SelectIndex;
 	for (int32 i = 0; i < DataManager->TodayQuestList.Num(); i++)
 	{
+		DataManager->TodayQuestList[i]->Queststate = EQuestState::None;
 		Random.Add(i);
 	}
 	for (int32 i = 0; i < 2; i++)
@@ -91,7 +92,7 @@ void UQuestComponent::RandomTodayQuest()
 
 	for (int32 i = 0; i < SelectIndex.Num(); i++)
 	{
-		DataManager->TodayQuestList[SelectIndex[i]].Queststate = EQuestState::Continue;
+		DataManager->TodayQuestList[SelectIndex[i]]->Queststate = EQuestState::Continue;
 	}
 
 }
@@ -113,7 +114,7 @@ void UQuestComponent::CompleteMainQuest()
 			GiveQuestReward(MainQuest);
 
 			MainQuestIDX++;
-			MainQuest = &DataManager->MainQuestList[MainQuestIDX];
+			MainQuest = DataManager->MainQuestList[MainQuestIDX];
 			MainQuest->Queststate = EQuestState::Continue;
 			NaviClear();
 			DataManager->NavigateTarget(*MainQuest);
@@ -126,7 +127,7 @@ void UQuestComponent::CompleteMainQuest()
 	else // 첫 퀘스트.
 	{
 		MainQuestIDX++;
-		MainQuest = &DataManager->MainQuestList[MainQuestIDX];
+		MainQuest = DataManager->MainQuestList[MainQuestIDX];
 		MainQuest-> Queststate = EQuestState::Continue;
 		NaviClear();
 		DataManager->NavigateTarget(*MainQuest);

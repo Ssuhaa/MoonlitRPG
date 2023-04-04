@@ -89,12 +89,18 @@ void UInventoryWG::ButtonBinding()
 	Button_Right->OnPressed.AddUniqueDynamic(this, &UInventoryWG::RightMenu);
 	Button_Left->OnPressed.AddUniqueDynamic(this, &UInventoryWG::LeftMenu);
 	ButtonWG->Button_Use->OnPressed.AddUniqueDynamic(this, &UInventoryWG::ClickedUseButton);
+
+	Buttons.Add(Button_Consum);
+	Buttons.Add(Button_Outfit);
+	Buttons.Add(Button_Quest);
+	Buttons.Add(Button_Food);
+	Buttons.Add(Button_ETC);
 }
 
 
 
 //아이템을 클릭했을 때 
-void UInventoryWG::ItemSlotClicked(FinvenData invenData)
+void UInventoryWG::ItemSlotClicked(FinvenData* invenData)
 {	
 	//선택된 슬랏의 정보를 보낸다.
 	if (SendInvenData.IsBound())
@@ -108,7 +114,7 @@ void UInventoryWG::ItemSlotClicked(FinvenData invenData)
 
 	//선택한 아이템의 타입에 따라 사용 버튼이 뜬다.
 	Overlay_Use->ClearChildren();
-	switch (invenData.iteminfo.itemType)
+	switch (invenData->iteminfo->itemType)
 	{
 	case EItemType::Food:
 		ButtonWG->SetText(TEXT("사용하기"));
@@ -123,6 +129,17 @@ void UInventoryWG::ItemSlotClicked(FinvenData invenData)
 }
 
 
+
+void UInventoryWG::ChangeButtonColor(class UButton* SelectButton)
+{
+	for (int32 i = 0; i < Buttons.Num(); i++)
+	{
+		Buttons[i]->SetColorAndOpacity(White);
+		Buttons[i]->SetBackgroundColor(Gray);
+	}
+	SelectButton->SetColorAndOpacity(Gray);
+	SelectButton->SetBackgroundColor(White);
+}
 
 void UInventoryWG::ClickedUseButton()
 {
@@ -140,27 +157,32 @@ void UInventoryWG::ClickedUseButton()
 void UInventoryWG::ClickedConsum()
 {
 	ChangeInven(EItemType::Consum);
+	ChangeButtonColor(Button_Consum);
+
 }
 
 void UInventoryWG::ClickedOutfit()
 {
-
 	ChangeInven(EItemType::Outfit);
+	ChangeButtonColor(Button_Outfit);
 }
 
 void UInventoryWG::ClickedFood()
 {
 	ChangeInven(EItemType::Food);
+	ChangeButtonColor(Button_Food);
 }
 
 void UInventoryWG::ClickedQuest()
 {
 	ChangeInven(EItemType::Quest);
+	ChangeButtonColor(Button_Quest);
 }
 
 void UInventoryWG::ClickedETC()
 {
 	ChangeInven(EItemType::Etc);
+	ChangeButtonColor(Button_ETC);
 }
 
 void UInventoryWG::LeftMenu()
@@ -203,7 +225,7 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 	currinventype = ChangeInvenType;
 	ClearInvenWGChild();
 	WrapBox->ClearChildren();
-	TArray<FInvenItem> FindArr = InvenComp->FindAllItemsType(ChangeInvenType);
+	TArray<FInvenItem*> FindArr = InvenComp->FindAllItemsType(ChangeInvenType);
 	if (!FindArr.IsEmpty())
 	{
 		for (int32 i = 0; i < FindArr.Num(); i++)
@@ -221,7 +243,7 @@ void UInventoryWG::ChangeInven(EItemType ChangeInvenType)
 	if (WrapBox->GetChildrenCount() != 0)
 	{
 		UInventorySlotWG* First = Cast<UInventorySlotWG>(WrapBox->GetChildAt(0));
-		ItemSlotClicked(First->invenData);
+		ItemSlotClicked(&First->invenData);
 	}
 
 	FText currslotName;

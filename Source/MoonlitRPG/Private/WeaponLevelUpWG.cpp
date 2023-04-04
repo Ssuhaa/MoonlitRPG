@@ -52,13 +52,13 @@ void UWeaponLevelUpWG::NativeDestruct()
 
 void UWeaponLevelUpWG::UpdateLevelUpWG()
 {
-	TB_CurrLevel->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.Level));
-	TB_currEXP->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrEXP));
-	TB_MaxEXP->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.MaxEXP));
-	TB_CurrPower->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrPower));
-	TB_UpgradePower->SetText(FText::AsNumber(inventoryData.invenitem.WeaponData.CurrPower+ inventoryData.itemGradeData.PlusPower));
+	TB_CurrLevel->SetText(FText::AsNumber(inventoryData->invenitem->WeaponData.Level));
+	TB_currEXP->SetText(FText::AsNumber(inventoryData->invenitem->WeaponData.CurrEXP));
+	TB_MaxEXP->SetText(FText::AsNumber(inventoryData->invenitem->WeaponData.MaxEXP));
+	TB_CurrPower->SetText(FText::AsNumber(inventoryData->invenitem->WeaponData.CurrPower));
+	TB_UpgradePower->SetText(FText::AsNumber(inventoryData->invenitem->WeaponData.CurrPower+ inventoryData->itemGradeData->PlusPower));
 
-	float CurrEXP = float(inventoryData.invenitem.WeaponData.CurrEXP) / float(inventoryData.invenitem.WeaponData.MaxEXP);
+	float CurrEXP = float(inventoryData->invenitem->WeaponData.CurrEXP) / float(inventoryData->invenitem->WeaponData.MaxEXP);
 	Progress_EXP->SetPercent(CurrEXP);
 
 	//15개의 비어있는 슬랏을 리스트에 올린다.
@@ -81,10 +81,9 @@ void UWeaponLevelUpWG::UpdateLevelUpWG()
 
 }
 
-void UWeaponLevelUpWG::ReceiveSelectSlotData(FinvenData invenData)
+void UWeaponLevelUpWG::ReceiveSelectSlotData(FinvenData* invenData)
 {
 	inventoryData = invenData;
-	invenData.invenitem.SendLevelUpClear.AddUObject(this, &UWeaponLevelUpWG::UpdateLevelUpWG);
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	UpdateLevelUpWG();
 }
@@ -101,8 +100,8 @@ void UWeaponLevelUpWG::UpdateUseMoney()
 		if (LevelUpSlots[i]->isFill)
 		{
 			SetCount++;
-			UseTempItems.Add(LevelUpSlots[i]->invenData.invenitem);
-			ToTalEXP += LevelUpSlots[i]->invenData.itemGradeData.PlusEXP * LevelUpSlots[i]->invenData.invenitem.WeaponData.Level;
+			UseTempItems.Add(*LevelUpSlots[i]->invenData.invenitem);
+			ToTalEXP += LevelUpSlots[i]->invenData.itemGradeData->PlusEXP * LevelUpSlots[i]->invenData.invenitem->WeaponData.Level;
 		}
 	}
 
@@ -119,14 +118,16 @@ void UWeaponLevelUpWG::LevelUp() //레벨업 버튼을 누르면 실행.
 {
 	if (Player != nullptr)
 	{
-		int32 index = Player->InvenComp->FindItem(inventoryData.invenitem);
+		int32 index = Player->InvenComp->FindItem(inventoryData->invenitem);
 		if(index < 0 || SetCount <= 0) return;
-		bool result = Player->InvenComp->invenItemArr[index].PlusCurrEXP(ToTalEXP, SetCount, &Player->InvenComp->Money, inventoryData.itemGradeData);
+		bool result = Player->InvenComp->invenItemArr[index].PlusCurrEXP(ToTalEXP, SetCount, &Player->InvenComp->Money, *inventoryData->itemGradeData);
 		if (result)
 		{
-			inventoryData.invenitem = Player->InvenComp->invenItemArr[index];
+			inventoryData->invenitem = &Player->InvenComp->invenItemArr[index];
 			SendUseditem();
-			OutfitWG->ReceiveUseItem(inventoryData.invenitem);
+			OutfitWG->ReceiveUseItem(inventoryData->invenitem);
+			ToTalEXP = 0;
+			SetCount = 0;
 		}
 
 	}
@@ -136,7 +137,7 @@ void UWeaponLevelUpWG::SendUseditem()
 {
 	for (int32 i = 0; i < UseTempItems.Num(); i++)
 	{
-		Player->InvenComp->MinusItemAmount(UseTempItems[i], 1);
+		Player->InvenComp->MinusItemAmount(UseTempItems[i].ItemInfoIndex, 1);
 	}
 	for (int32 i = 0; i < LevelUpSlots.Num(); i++)
 	{

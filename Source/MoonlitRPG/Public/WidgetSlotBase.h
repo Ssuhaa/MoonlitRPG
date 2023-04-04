@@ -32,7 +32,7 @@ protected:
 
 	UFUNCTION()
 	virtual void SlotClicked();
-	virtual void UpdateSlot(FInvenItem invenitem);
+	virtual void UpdateSlot(FInvenItem* invenitem);
 
 public:
 	FinvenData invenData;

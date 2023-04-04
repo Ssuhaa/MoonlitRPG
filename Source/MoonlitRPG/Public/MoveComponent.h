@@ -50,14 +50,7 @@ protected:
 	void DashToWalk();
 	void SetWalkSpped(float MinSpeed, float MaxSpeed, float MinusSpeed);
 
-	UPROPERTY(VisibleAnywhere, Category = Stamina)
-	float minStamina = 0.0f;
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float maxStamina = 100.0f;
-	UPROPERTY(VisibleAnywhere, Category = Stamina)
-	float Stamina = 100.0f;
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float decreaseStamina = 0.3f;
+
 
 	bool isStaminaUse = false;
 	void StaminaUpdate();
@@ -75,7 +68,16 @@ protected:
 	float dirH;
 	float dirV;
 
+	UPROPERTY(VisibleAnywhere, Category = Stamina)
+	float minStamina = 0.0f;
+	UPROPERTY(VisibleAnywhere, Category = Stamina)
+	float Stamina = 100.0f;
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float decreaseStamina = 0.3f;
+
 public:	
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float maxStamina = 100.0f;
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 	float currentStamina;
 };

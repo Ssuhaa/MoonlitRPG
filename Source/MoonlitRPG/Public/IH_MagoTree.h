@@ -21,10 +21,13 @@ public:
 	
 	virtual void Interaction() override;
 
-public:
+protected:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UMainDialogueUI> dialogueUIFactory;
+	TSubclassOf<class UDangsanWG> WGFactory;
 
 	UPROPERTY(EditAnywhere)
-	class UMainDialogueUI* dialogueUI;
+	class UDangsanWG* WG_Dangsan;
+
+	UPROPERTY(EditAnywhere)
+	class ASH_Player* Player;
 };

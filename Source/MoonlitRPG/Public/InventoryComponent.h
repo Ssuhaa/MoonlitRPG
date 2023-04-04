@@ -49,20 +49,21 @@ public:
 
 
 	int32 CheckWeaponisEquip();
-	bool WeaponSwitch(FInvenItem ChangeItem);
-	bool WeaponOff(FInvenItem ChangeItem);
+	bool WeaponSwitch(FInvenItem* ChangeItem);
+	bool WeaponOff(FInvenItem* ChangeItem);
 
 
 	void CommonCheckSameItemAfterAdd(int32 ItemInfoIndex, int32 Amount);
 	void WeaponAddItemToinven(int32 ItemInfoIndex, int32 WeaponInfoIndex);
 
 
-	int32 MinusItemAmount(FInvenItem MinusInvenItem, int32 Amount);
+	int32 MinusItemAmount(int32 MinusInvenItem, int32 Amount);
+	int32 GiveAllItem(int32 MinusItem);
 
 	int32 FindItem(int32 iteminfoindex);
-	int32 FindItem(FInvenItem invenitem);
-	TArray<FInvenItem> FindAllItems(FIteminfo iteminfo);
-	TArray<FInvenItem> FindAllItemsType(EItemType itemType);
+	int32 FindItem(FInvenItem* invenitem);
+	TArray<FInvenItem*> FindAllItems(int32 itemindex);
+	TArray<FInvenItem*> FindAllItemsType(EItemType itemType);
 
 	int32 CountItem();
 };

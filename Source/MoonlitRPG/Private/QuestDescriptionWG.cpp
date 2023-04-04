@@ -43,6 +43,7 @@ void UQuestDescriptionWG::OnPressedNavi()
 	DataManager->NavigateTarget(*CurrQuest);
 }
 
+
 void UQuestDescriptionWG::SetQuestDescription(FQuestInfo* QuestInfo)
 {
 	CurrQuest = QuestInfo;
@@ -55,10 +56,10 @@ void UQuestDescriptionWG::SetQuestDescription(FQuestInfo* QuestInfo)
 	HB_Reward->ClearChildren();
 	for (int32 i = 0; i < QuestInfo->Reward.RewardItems.Num(); i++)
 	{
+		HB_Reward->AddChild(RewardSlots[i]);
 		FInvenItem RewardItem;
 		RewardItem.ItemInfoIndex = QuestInfo->Reward.RewardItems[i].RewardItem;
 		RewardItem.itemAmount = QuestInfo->Reward.RewardItems[i].Amount;
-		RewardSlots[i]->UpdateSlot(RewardItem);
-		HB_Reward->AddChild(RewardSlots[i]);
+		RewardSlots[i]->UpdateSlot(&RewardItem);
  	}
 }

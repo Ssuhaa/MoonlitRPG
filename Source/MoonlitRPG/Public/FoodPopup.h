@@ -69,13 +69,13 @@ protected:
 	void ButtonBinding();
 
 
-	FinvenData inventoryData;
+	FinvenData* inventoryData;
 
 public:
 
 	UPROPERTY()
 	class UInventoryWG* invenWG;
 
-	UFUNCTION()
-	void ReceiveSelectSlotData(FinvenData invenData);
+	//UFUNCTION()
+	void ReceiveSelectSlotData(FinvenData* invenData);
 };

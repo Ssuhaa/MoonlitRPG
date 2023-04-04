@@ -17,6 +17,7 @@
 #include <Kismet/KismetMaterialLibrary.h>
 #include "Kismet/GameplayStatics.h"
 
+
 AEnemyBase::AEnemyBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
