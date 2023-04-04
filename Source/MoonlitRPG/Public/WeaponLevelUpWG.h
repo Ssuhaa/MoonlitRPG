@@ -60,14 +60,14 @@ protected:
 	class ASH_Player* Player;
 
 
-	FinvenData inventoryData;
+	FinvenData* inventoryData;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UHorizontalBox* SelectListBox;
 
-	UFUNCTION()
-	void ReceiveSelectSlotData(FinvenData invenData);
+	//UFUNCTION()
+	void ReceiveSelectSlotData(FinvenData* invenData);
 
 	void UpdateUseMoney();
 

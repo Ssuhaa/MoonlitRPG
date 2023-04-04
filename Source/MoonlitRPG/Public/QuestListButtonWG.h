@@ -34,5 +34,6 @@ public:
 	class UQuestWG* QuestWG;
 	
 	//TSharedPtr<FQuestInfo> SelectQuest;
+	//TWeakPtr
 	FQuestInfo* SelectQuest;
 };

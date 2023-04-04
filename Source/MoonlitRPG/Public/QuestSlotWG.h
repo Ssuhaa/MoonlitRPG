@@ -19,6 +19,6 @@ protected:
 	class UTextBlock* TB_Amont;
 
 public:
-	virtual void UpdateSlot(FInvenItem invenitem) override;
+	virtual void UpdateSlot(FInvenItem* invenitem) override;
 
 };

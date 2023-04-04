@@ -43,7 +43,7 @@ void UOutfitWG::NativeConstruct()
 	ButtonBinding();
 	ReinforceSwitch(EEquipmentState::Detail);
 	OutfitActor = GetWorld()->SpawnActor<APreviewActor>(APreviewActor::StaticClass(), FVector(0, 0, 10000), FRotator(0,180,0));
-	OutfitActor->SetPreviewMesh(inventoryData.Weaponinfo.PreviewMesh);
+	OutfitActor->SetPreviewMesh(inventoryData->Weaponinfo->PreviewMesh);
 }
 
 void UOutfitWG::NativeDestruct()
@@ -72,10 +72,9 @@ void UOutfitWG::ButtonBinding()
 }
 
 
-void UOutfitWG::ReceiveSelectSlotData(FinvenData invenData)
+void UOutfitWG::ReceiveSelectSlotData(FinvenData* invenData)
 {
 	inventoryData = invenData;
-	inventoryData.invenitem.SendLevelUpClear.AddUObject(this, &UOutfitWG::UpdateOutfitWG);
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 
 	SetOutfItWG();
@@ -85,7 +84,7 @@ void UOutfitWG::ReceiveSelectSlotData(FinvenData invenData)
 void UOutfitWG::UpdateOutfitWG()
 {
 	//현재레벨에 따라서 강화/ 돌파버튼 스위치 업데이트
-	inventoryData.invenitem.WeaponData.Level == inventoryData.invenitem.WeaponData.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
+	inventoryData->invenitem->WeaponData.Level == inventoryData->invenitem->WeaponData.MaxLevel ? ButtonSwitch(true) : ButtonSwitch(false);
 	
 	//플레이어의 현재 잔액 업데이트
 	if (player != nullptr)
@@ -97,6 +96,7 @@ void UOutfitWG::UpdateOutfitWG()
 
 void UOutfitWG::SetOutfItWG()
 {
+	if(inventoryData->Weaponinfo == nullptr) return;
 	UpgradeWG->OutfitWG = this;
 	LevelUpWG->OutfitWG = this;
 
@@ -105,7 +105,7 @@ void UOutfitWG::SetOutfItWG()
 	itemDescription->AddChild(description);
 
 	FText weaponType;
-	switch (int32(inventoryData.Weaponinfo.WeaponType))
+	switch (int32(inventoryData->Weaponinfo->WeaponType))
 	{
 	case 1:
 		weaponType = FText::FromString(TEXT("두손 검"));
@@ -119,7 +119,7 @@ void UOutfitWG::SetOutfItWG()
 	}
 	Text_WeaponType->SetText(weaponType);
 
-	FText itemname = FText::FromString(inventoryData.iteminfo.ItemName);
+	FText itemname = FText::FromString(inventoryData->iteminfo->ItemName);
 	Text_WeaponName->SetText(itemname);
 }
 
@@ -142,10 +142,10 @@ void UOutfitWG::OnclickedWearing()
 {
 	if (player != nullptr)
 	{
-		bool result = player->InvenComp->WeaponSwitch(inventoryData.invenitem);
+		bool result = player->InvenComp->WeaponSwitch(inventoryData->invenitem);
 		if (result)
 		{
-			inventoryData.invenitem.WeaponData.isEquip = true;
+			inventoryData->invenitem->WeaponData.isEquip = true;
 		}
 		WearingSwitch();
 	}
@@ -156,10 +156,10 @@ void UOutfitWG::OnclickedOff()
 {
 	if (player != nullptr)
 	{
-		bool result = player->InvenComp->WeaponOff(inventoryData.invenitem);
+		bool result = player->InvenComp->WeaponOff(inventoryData->invenitem);
 		if (result)
 		{
-			inventoryData.invenitem.WeaponData.isEquip = false;
+			inventoryData->invenitem->WeaponData.isEquip = false;
 		}
 		WearingSwitch();
 	}
@@ -211,7 +211,7 @@ void UOutfitWG::WearingSwitch()
 	int32 value = player->InvenComp->CheckWeaponisEquip(); //착용하고 있는 아이템 체크
 	if (value > -1) //있으면
 	{
-		if (player->InvenComp->invenItemArr[value] == inventoryData.invenitem) //나온것이 현재 장비창에 띄운 인포랑 같은지
+		if (player->InvenComp->invenItemArr[value] == *inventoryData->invenitem) //나온것이 현재 장비창에 띄운 인포랑 같은지
 		{
 			//맞으면 해체를 활성화 시킨다.
 			// 교체을 비활성화 시킨다.
@@ -240,9 +240,9 @@ void UOutfitWG::WearingSwitch()
 }
 
 
-void UOutfitWG::ReceiveUseItem(FInvenItem ModifiedItem)
+void UOutfitWG::ReceiveUseItem(FInvenItem* ModifiedItem)
 {
-	inventoryData.invenitem = ModifiedItem;
+	inventoryData->invenitem = ModifiedItem;
 	SendToInvenInfo.Broadcast(inventoryData);
 	UpdateOutfitWG();
 }

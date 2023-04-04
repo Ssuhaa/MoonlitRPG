@@ -9,16 +9,16 @@
 #include "InventoryComponent.h"
 
 
-void UUpgradeSlotWG::UpdateSlot(FInvenItem invenitem)
+void UUpgradeSlotWG::UpdateSlot(FInvenItem *invenitem)
 {
 	Super::UpdateSlot(invenitem);
-	int32 UpgradeCount = invenData.invenitem.WeaponData.UpgradeCount;
-	if (invenData.Weaponinfo.UpgradeItemList.IsValidIndex(UpgradeCount))
+	int32 UpgradeCount = invenData.invenitem->WeaponData.UpgradeCount;
+	if (invenData.Weaponinfo->UpgradeItemList.IsValidIndex(UpgradeCount))
 	{
-		FUpgradeNeedItem item = invenData.Weaponinfo.UpgradeItemList[UpgradeCount].UpgradeNeedItem[Index];
-		FIteminfo info = DataManager->itemList[item.iteminfoIndex];
+		FUpgradeNeedItem item = invenData.Weaponinfo->UpgradeItemList[UpgradeCount].UpgradeNeedItem[Index];
+		FIteminfo info = *DataManager->itemList[item.iteminfoIndex];
 		ItemImage->SetBrushFromTexture(info.itemImage);
-		FItemGradeData GradeData = DataManager->ItemGradeData[int32(info.itemgrade)];
+		FItemGradeData GradeData = *DataManager->ItemGradeData[int32(info.itemgrade)];
 		SlotBG->SetBrushFromTexture(GradeData.Slotlmage, true);
 		UseAmount = item.UseAmont;
 		TB_NeedAmount->SetText(FText::AsNumber(UseAmount));

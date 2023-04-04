@@ -44,10 +44,10 @@ void UNeedItemSlotWG::SlotClicked()
 
 }
 
-void UNeedItemSlotWG::UpdateSlot(FInvenItem invenitem)
+void UNeedItemSlotWG::UpdateSlot(FInvenItem* invenitem)
 {	
 	Super::UpdateSlot(invenitem);
-	TB_WeaponLevel->SetText(FText::AsNumber(invenData.invenitem.WeaponData.Level));
+	TB_WeaponLevel->SetText(FText::AsNumber(invenData.invenitem->WeaponData.Level));
 }
 
 void UNeedItemSlotWG::ResetSlot()

@@ -180,7 +180,7 @@ void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 	}
 	else
 	{
-		currWeapon = DataManager->WeaponList[WeaponinfoIndex].WeaponType;
+		currWeapon = DataManager->WeaponList[WeaponinfoIndex]->WeaponType;
 	}
 }
 

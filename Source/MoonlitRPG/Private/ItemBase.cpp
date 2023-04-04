@@ -80,27 +80,24 @@ void AItemBase::BeginPlay()
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 	interactionUI = CreateWidget<UIH_InteractionUI>(GetWorld(), interactUIFactory[0]);
-	interactionUI->txt_Interaction->SetText(FText::FromString(DataManager->itemList[iteminfoIndex].ItemName));
-	interactionUI->img_Interact->SetBrushFromTexture(DataManager->itemList[iteminfoIndex].itemImage);
+	interactionUI->txt_Interaction->SetText(FText::FromString(DataManager->itemList[iteminfoIndex]->ItemName));
+	interactionUI->img_Interact->SetBrushFromTexture(DataManager->itemList[iteminfoIndex]->itemImage);
 
 	getItemUI = CreateWidget< UIH_GetItemUI>(GetWorld(), interactUIFactory[1]);
-	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *DataManager->itemList[iteminfoIndex].ItemName, 1)));
-	getItemUI->img_Get->SetBrushFromTexture(DataManager->itemList[iteminfoIndex].itemImage);
+	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *DataManager->itemList[iteminfoIndex]->ItemName, 1)));
+	getItemUI->img_Get->SetBrushFromTexture(DataManager->itemList[iteminfoIndex]->itemImage);
 
-	currGrade = DataManager->itemList[iteminfoIndex].itemgrade;
+	currGrade = DataManager->itemList[iteminfoIndex]->itemgrade;
 	switch (currGrade)
 	{
-// 		case EItemgrade::Common:
-// 		itemEffect->SetTemplate(DataManager->ItemGradeData[0].Effect);
-// 		break;
 		case EItemgrade::Rare:
-		itemEffect->SetTemplate(DataManager->ItemGradeData[1].Effect);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[1]->Effect);
 		break;
 		case EItemgrade::Unique:
-		itemEffect->SetTemplate(DataManager->ItemGradeData[2].Effect);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[2]->Effect);
 		break;
 		case EItemgrade::Legendary:
-		itemEffect->SetTemplate(DataManager->ItemGradeData[3].Effect);
+		itemEffect->SetTemplate(DataManager->ItemGradeData[3]->Effect);
 		break;
 	}
 }

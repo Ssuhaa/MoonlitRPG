@@ -2,27 +2,36 @@
 
 
 #include "IH_MagoTree.h"
-#include "MainDialogueUI.h"
-#include <UMG/Public/Components/TextBlock.h>
+#include "DangsanWG.h"
+#include "SH_Player.h"
+#include <Kismet/GameplayStatics.h>
 
 AIH_MagoTree::AIH_MagoTree()
 {
-	ConstructorHelpers::FClassFinder<UMainDialogueUI>tempdialogueUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
-	if (tempdialogueUI.Succeeded())
+	ConstructorHelpers::FClassFinder<UDangsanWG> tempWG(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_DangSan.BP_DangSan_C'"));
+	if (tempWG.Succeeded())
 	{
-		dialogueUIFactory = tempdialogueUI.Class;
+		WGFactory = tempWG.Class;
 	}
+	WG_Dangsan = CreateWidget<UDangsanWG>(GetWorld(), WGFactory);
 }
 
 void AIH_MagoTree::BeginPlay()
 {
 	Super::BeginPlay();
 
-	dialogueUI = CreateWidget<UMainDialogueUI>(GetWorld(), dialogueUIFactory);
+	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(),ASH_Player::StaticClass()));
+
 }
 
 void AIH_MagoTree::Interaction()
 {
-	dialogueUI->AddToViewport();
-	dialogueUI->Name->SetText(FText(InteractName));
+	if (Player->bUIOpen == false && !WG_Dangsan->IsInViewport())
+	{
+		WG_Dangsan->AddToViewport();
+	}
+	else
+	{
+		WG_Dangsan->RemoveWG();
+	}
 }

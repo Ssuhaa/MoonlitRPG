@@ -53,8 +53,10 @@ protected:
 	bool screenShotOpen = false;
 	float currTime = 0;
 
-public:
+	UPROPERTY()
+	class ADataManager* DataManager;
 
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Component)
 	class USpringArmComponent* SpringArmComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HP)
@@ -65,6 +67,8 @@ public:
 	int32 AdventureLevel = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 	int32 AdventureEXP = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DangSan)
+	int32 DansanLevel = 1;
 
 	void DamagedPlayer(float DamageValue);
 	void HealPlayer(float HealValue);
@@ -135,9 +139,8 @@ public:
 	TArray<class UStaticMesh*> weaponMesh;
 
 
-	UPROPERTY()
-	class ADataManager* DataManager;
 
 	void CompleteQuest(FQuestInfo Questinfo);
+	void DangSanLevelUp(int32 PlusStamina);
 //	void SetWeaponMesh();
 };

@@ -23,11 +23,11 @@ void ULevelUpSlotWG::SlotClicked()
 	}
 }
 
-void ULevelUpSlotWG::UpdateSlot(FInvenItem invenitem)
+void ULevelUpSlotWG::UpdateSlot(FInvenItem* invenitem)
 {
 	Super::UpdateSlot(invenitem);
 	Panal_Level->SetVisibility(ESlateVisibility::Visible);
-	TB_WeaponLevel->SetText(FText::AsNumber(invenData.invenitem.WeaponData.Level));
+	TB_WeaponLevel->SetText(FText::AsNumber(invenData.invenitem->WeaponData.Level));
 	isFill = true;
 	WeaponLevelUpWG->UpdateUseMoney();
 }
@@ -36,7 +36,7 @@ void ULevelUpSlotWG::ResetSlot()
 {
 	Panal_Level->SetVisibility(ESlateVisibility::Hidden);
 	ItemImage->SetBrushFromTexture(resetImage);
-	SlotBG->SetBrushFromTexture(DataManager->ItemGradeData[0].Slotlmage, true);
+	SlotBG->SetBrushFromTexture(DataManager->ItemGradeData[0]->Slotlmage, true);
 	isFill =false;
 
 

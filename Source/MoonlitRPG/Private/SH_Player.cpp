@@ -344,6 +344,12 @@ void ASH_Player::CompleteQuest(FQuestInfo Questinfo)
 	dialogueUI->SetStartDialouge(Questinfo.DialougueIndex);
 }
 
+void ASH_Player::DangSanLevelUp(int32 PlusStamina)
+{
+	DansanLevel++;
+	MoveComp->maxStamina += PlusStamina;
+}
+
 // void ASH_Player::SetWeaponMesh()
 // {
 // 	switch(AttackComp->currWeapon)

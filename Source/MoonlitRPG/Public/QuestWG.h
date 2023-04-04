@@ -60,9 +60,8 @@ protected:
 	UPROPERTY()
 	class ADataManager* DataManager;
 	
-	void SetQuestWG();
 	void ChangeQuestList(EQuestType ChangeType);
-	void SetQuestList(TArray<FQuestInfo> QuestList);
+	void SetQuestList(TArray<FQuestInfo*> QuestList);
 
 	EQuestType CurrQuestType = EQuestType::Total;
 
@@ -72,6 +71,7 @@ public:
 
 	void UpdateQuestList();
 	void RemoveQuestWG();
+
 
 	void ReciveSelectQuest(FQuestInfo* SelectQuest);
 	

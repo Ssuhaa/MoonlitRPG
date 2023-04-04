@@ -65,10 +65,10 @@ void UNeedItemSelectWG::SetNeedItemSelectWG()
 	
 	if (player != nullptr)
 	{
-		TArray <FInvenItem> WeaponArray = player->InvenComp->FindAllItemsType(EItemType::Outfit);
+		TArray <FInvenItem*> WeaponArray = player->InvenComp->FindAllItemsType(EItemType::Outfit);
 		for (int32 i = 0; i < WeaponArray.Num(); i++)
 		{
-			if (WeaponArray[i].InvenID == inventoryData.invenitem.InvenID)
+			if (WeaponArray[i]->InvenID == inventoryData->invenitem->InvenID)
 			{
 				WeaponArray.RemoveAt(i);
 				break;

@@ -29,7 +29,7 @@ protected:
 
 public:
 
-	virtual void UpdateSlot(FInvenItem invenitem) override;
+	virtual void UpdateSlot(FInvenItem* invenitem) override;
 	UPROPERTY()
 	class UInventoryWG* InvenWG;
 };

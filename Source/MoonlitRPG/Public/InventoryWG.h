@@ -13,7 +13,7 @@
  * 
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FSendSlot, FinvenData);
+DECLARE_MULTICAST_DELEGATE_OneParam(FSendSlot, FinvenData*);
 
 UCLASS()
 class MOONLITRPG_API UInventoryWG : public UUserWidget
@@ -108,18 +108,24 @@ protected:
 	UPROPERTY()
 	class ADataManager* DataManager;
 
+	UPROPERTY()
+	TArray<class UButton*> Buttons;
+	FLinearColor Gray = { 0.040915, 0.040915, 0.040915, 1.000000 };
+	FLinearColor White = { 0.838799, 0.838799, 0.838799, 1.000000 };
+
 public:
 	void Setinventory();
 	void ClearInvenWGChild();
 	void RemoveInventory();
 
-	UFUNCTION()
-	void ItemSlotClicked(FinvenData invenData);
+	//UFUNCTION()
+	void ItemSlotClicked(FinvenData* invenData);
 
 	UPROPERTY()
 	class UInventoryComponent* InvenComp;
 
 	FSendSlot SendInvenData;
 
+	void ChangeButtonColor(class UButton* SelectButton);
  };
 

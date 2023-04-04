@@ -27,6 +27,7 @@ enum  class EItemgrade : uint8 // 아이템 등급 분류
 	Legendary,
 	None,
 };
+
 USTRUCT(BlueprintType)
 struct FIteminfo : public FTableRowBase //아이템 기본 정보
 {
@@ -228,7 +229,7 @@ public:
 	}
 
 
-	FlevelUpDel SendLevelUpClear;
+	//FlevelUpDel SendLevelUpClear;
 
 public:
 	void SetWeaponPower(ADataManager* DataManager);
@@ -389,16 +390,16 @@ struct FinvenData
 {
 	GENERATED_BODY()
 public: 
-	UPROPERTY(EditAnywhere)
-	FInvenItem invenitem;
-	UPROPERTY(EditAnywhere)
-	FIteminfo iteminfo;
-	UPROPERTY(EditAnywhere)
-	FWeaponinfo Weaponinfo;
-	UPROPERTY(EditAnywhere)
-	FItemGradeData itemGradeData;
-	UPROPERTY(EditAnywhere)
-	FUpGradeMoneyData UpGradeMoneyData;
+	//UPROPERTY(EditAnywhere)
+	FInvenItem* invenitem;
+	//UPROPERTY(EditAnywhere)
+	FIteminfo* iteminfo;
+	//UPROPERTY(EditAnywhere)
+	FWeaponinfo* Weaponinfo;
+	//UPROPERTY(EditAnywhere)
+	FItemGradeData* itemGradeData;
+	//UPROPERTY(EditAnywhere)
+	FUpGradeMoneyData* UpGradeMoneyData;
 };
 
 //[DangsanTreeData]---------------------------------------------------------------------//
@@ -444,29 +445,23 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FIteminfo> itemList;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FNpcInfo> npcList;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FEnemyManagerInfo> EnemyPlaceList;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FWeaponinfo> WeaponList;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FUpGradeMoneyData> UpgradeMoneyData;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FItemGradeData> ItemGradeData;
-	UPROPERTY(VisibleAnywhere, category = Data)
-	TArray<FDangsanRewardData> DangsanData;
+	
+	TArray<FIteminfo*> itemList;
+	TArray<FNpcInfo*> npcList;
+	TArray<FEnemyManagerInfo*> EnemyPlaceList;
+	TArray<FWeaponinfo*> WeaponList;
+	TArray<FUpGradeMoneyData*> UpgradeMoneyData;
+	TArray<FItemGradeData*> ItemGradeData;
+	TArray<FDangsanRewardData*> DangsanData;
 
-	//UPROPERTY()
-	TArray<FQuestInfo*> ToTalQuestList;
+
 	void MakeTotalQuestList();
+	TArray<FQuestInfo*> ToTalQuestList;
+	TArray<FQuestInfo*> MainQuestList;
+	TArray<FQuestInfo*> TodayQuestList;
 
-	UPROPERTY(VisibleAnywhere)
-	TArray<FQuestInfo> MainQuestList;
-	UPROPERTY(VisibleAnywhere)
-	TArray<FQuestInfo> TodayQuestList;
+	
+
 
 	TArray<FInvenItem>* InventoryItemList;
 
@@ -478,17 +473,22 @@ public:
 	TArray<class AInteractiveObjectBase*> SpawnInteractObjects;
 
 	template<typename T>
-	TArray<T> LoadTable(FString path); //데이터테이블 불러오는 함수
+	TArray<T*> LoadTable(FString path); //데이터테이블 불러오는 함수
+
+	template<typename T>
+	TArray<T*> LoadTablePtr(FString path);
+
 	template<typename T>
 	TArray<T> Parse(FString path, UScriptStruct* pScriptStruct); //CSV파일 Struct 어레이로 반환하는 함수
 	template<typename T>
 	TArray<T*> GetAllActorOfClass(); //원하는 액터를 찾아 액터클래스 어레이로 반환하는 함수.
 
 	template<typename T>
-	T GetInfo(int32 Index, const TArray<T> List);
+	T* GetInfo(int32 Index, const TArray<T*> List);
 
-	FinvenData GetData(FInvenItem invenitem);
+	FinvenData GetData(FInvenItem* invenitem);
 
 	void NavigateTarget(FQuestInfo CurrQuest);
 
 };
+

@@ -37,7 +37,7 @@ protected:
 	class UBorder* Border_Equip;
 
 
-	FinvenData inventoryData;
+	FinvenData* inventoryData;
 
 	UPROPERTY()
 	class ASH_Player* Player;
@@ -46,6 +46,6 @@ protected:
 	void ShowEquip();
 public:
 
-	UFUNCTION()
-	void ReceiveSelectSlotData(FinvenData invenData);
+
+	void ReceiveSelectSlotData(FinvenData* invenData);
 };

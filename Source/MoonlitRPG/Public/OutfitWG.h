@@ -11,7 +11,7 @@
  * 
  */
 
- DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, FinvenData);
+ DECLARE_MULTICAST_DELEGATE_OneParam(FSendInvenData, FinvenData*);
 
 UENUM(BlueprintType)
 enum class EEquipmentState : uint8
@@ -90,7 +90,7 @@ protected:
 	class APreviewActor* OutfitActor;
 
 
-	FinvenData inventoryData;
+	FinvenData* inventoryData;
 
 	void ButtonBinding();
 
@@ -102,7 +102,7 @@ protected:
 public:
 	UFUNCTION()
 	void UpdateOutfitWG();
-	void ReceiveSelectSlotData(FinvenData invenData);
-	void ReceiveUseItem(FInvenItem ModifiedItem);
+	void ReceiveSelectSlotData(FinvenData* invenData);
+	void ReceiveUseItem(FInvenItem* ModifiedItem);
 };
 
