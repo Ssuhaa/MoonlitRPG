@@ -93,6 +93,7 @@ void USH_PlayerAnim::SwitchCheck(FDamageRange handRange, FDamageRange daggerRang
 void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
 	Player->AttackComp->ResetAttack();
+	Player->playerCon->SetViewTargetWithBlend(Player, 0.2f, VTBlend_EaseInOut, 1.0f);
 	Player->SkillCameraFollow(Player->GetRootComponent());
 	Player->ActiveBlur(false);
 }

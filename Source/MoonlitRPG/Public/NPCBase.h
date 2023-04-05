@@ -62,7 +62,8 @@ public:
 
 	FString MakeCSVPath();
 
-
+	UPROPERTY(EditAnywhere)
+	class UCameraComponent* NPCCamComp;
 	
 };
 

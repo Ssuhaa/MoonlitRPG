@@ -165,11 +165,12 @@ void UAttackComponent::SpecialAttack()
 	if (!isAttacking && !player->playerAnim->bAir && !isSpecialAttacking)
 	{
 		if (specialCount == 100)
-		{	
-			PlayAttackMontage("SpecialAttack");
-			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
-			player->ActiveBlur(true);
+		{
 			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
+			player->ActiveBlur(true);
+			player->PlaySkillSequence();
+			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
+			PlayAttackMontage("SpecialAttack");
 		}
 	}
 }

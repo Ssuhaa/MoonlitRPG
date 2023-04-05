@@ -13,6 +13,7 @@
 #include <UMG/Public/Components/TextBlock.h>
 #include "MainDialogueUI.h"
 #include <UMG/Public/Components/Image.h>
+#include <Camera/CameraComponent.h>
 
 
 // Sets default values
@@ -27,6 +28,9 @@ ANPCBase::ANPCBase()
 	
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Compoennt"));
 	Mesh->SetupAttachment(RootComponent);
+
+	NPCCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Interaction Camera"));
+	NPCCamComp->SetupAttachment(RootComponent);
 
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractUI.Succeeded())
@@ -88,6 +92,9 @@ void ANPCBase::InteractNPC()
 	}
 
 	bTalking = true;
+	
+	SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(player->GetActorLocation()-GetActorLocation(), FVector::UpVector));
+
 	player->dialogueUI->npc = this;
 	player->dialogueUI->ReadCSVFile(MakeCSVPath());
 	player->dialogueUI->AddToViewport();

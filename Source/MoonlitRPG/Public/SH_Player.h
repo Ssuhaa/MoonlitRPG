@@ -124,31 +124,22 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> PlayerMesh;
-
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* EquippedComp1;
-
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* EquippedComp2;
-
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* GrabComp1;
-
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* GrabComp2;
-
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* GrabComp3;
-
 	UPROPERTY(EditAnywhere)
 	TArray<class UStaticMesh*> weaponMesh;
-
 	UPROPERTY(EditAnywhere)
 	class UPostProcessComponent* PlayerPostProcess;
 
-
 	void CompleteQuest(FQuestInfo Questinfo);
-
 	void SwitchWeaponPos();
 	void ClearEquipWeapon();
 	void ClearGrabWeapon();
@@ -157,4 +148,14 @@ public:
 
 	void DangSanLevelUp(int32 PlusStamina);
 
+	UPROPERTY(EditAnywhere)
+	class UActorSequenceComponent* SkillSequenceComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UChildActorComponent* SequenceChildComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCameraComponent* SequenceCamComp;
+	UPROPERTY(EditAnywhere)
+	class UActorSequencePlayer* skillPlay;
+
+	void PlaySkillSequence();
 };
