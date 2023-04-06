@@ -87,11 +87,16 @@ ASH_Player::ASH_Player()
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
 	QuestComp = CreateDefaultSubobject<UQuestComponent>(TEXT("QuestComp"));
 
-	
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
 	if (tempHit.Succeeded())
 	{
-		hitImpact = tempHit.Object;
+		playerParticle.Add(tempHit.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCharge(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Lightning_2.P_Lightning_2'"));
+	if (tempCharge.Succeeded())
+	{
+		playerParticle.Add(tempCharge.Object);
 	}
 
 	ConstructorHelpers::FClassFinder<UAnimInstance> tempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrint/ABP_Player.ABP_Player_C'"));
@@ -162,8 +167,9 @@ void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
 	SkillSequenceComp = Cast<UActorSequenceComponent>(GetComponentByClass(UActorSequenceComponent::StaticClass()));
+	skillPlay = SkillSequenceComp->GetSequencePlayer();
+	skillPlay->OnFinished.AddDynamic(this, &ASH_Player::EndSkillSequence);
 
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
@@ -178,10 +184,6 @@ void ASH_Player::BeginPlay()
 	PlayerPostProcess->Settings.MotionBlurAmount = 1.0f;
 	PlayerPostProcess->Settings.MotionBlurMax = 50.0f;
 	PlayerPostProcess->Settings.BloomIntensity = 4.0f;
-
-
-	skillPlay = SkillSequenceComp->GetSequencePlayer();
-	skillPlay->OnFinished.AddDynamic(this, &ASH_Player::EndSkillSequence);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -206,6 +208,21 @@ void ASH_Player::Tick(float DeltaTime)
 	}
 
 	ActiveVignette(DeltaTime);
+
+	if (bTalking)
+	{
+		zoomIn -= DeltaTime*40;
+
+		zoomIn = FMath::Clamp(zoomIn, 75, 90);
+		CamComp->SetFieldOfView(zoomIn);
+	}
+	else
+	{
+		zoomIn += DeltaTime*40;
+
+		zoomIn = FMath::Clamp(zoomIn, 75, 90);
+		CamComp->SetFieldOfView(zoomIn);
+	}
 }
 
 void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -263,21 +280,17 @@ void ASH_Player::ActiveVignette(float deltaTime)
 	{
 		PlayerPostProcess->Settings.bOverride_VignetteIntensity = true;
 		vignetteValue += deltaTime * 5;
-
-		if (vignetteValue >= 1.0)
-		{
-			vignetteValue = 1.0;
-		}
+		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 1.1f);
 
 		PlayerPostProcess->Settings.VignetteIntensity = vignetteValue;
 	}
 	else
 	{
 		vignetteValue -= deltaTime * 5;
+		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 1.1f);
 
 		if (vignetteValue <= 0.5)
 		{
-			vignetteValue = 0.5;
 			PlayerPostProcess->Settings.bOverride_VignetteIntensity = false;
 		}
 
@@ -340,8 +353,9 @@ void ASH_Player::interactionObject()
 				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
 			SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
-			playerCon->SetViewTargetWithBlend(currNPC, 0.5f, VTBlend_EaseInOut, 1.0f);
+			//playerCon->SetViewTargetWithBlend(currNPC, 0.5f, VTBlend_EaseInOut, 1.0f);
 			currNPC->InteractNPC();
+			bTalking = true;
 			return;
 		
 		}
@@ -361,7 +375,7 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 	if (!AttackComp->isSpecialAttacking)
 	{
 		PlayercurrHP -= DamageValue;
-		if (PlayercurrHP >= DamageValue)
+		if (PlayercurrHP > 0)
 		{
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
@@ -395,8 +409,8 @@ void ASH_Player::RevivePlayer()
 {
 	if (warpPoint == nullptr)
 	{
-		SetActorLocation(FVector(0, 0, 100));
-		SetActorRotation(FRotator(0, 0, 0));
+		SetActorLocation(FVector(-80404.0, -59745.0, 1150.0));
+		SetActorRotation(FRotator(0, 25, 0));
 	}
 	else
 	{
@@ -506,11 +520,20 @@ void ASH_Player::DangSanLevelUp(int32 PlusStamina)
 void ASH_Player::PlaySkillSequence()
 {
 	playerCon->SetViewTargetWithBlend(SequenceChildComp->GetChildActor(), 0.0f, VTBlend_EaseInOut, 1.0f);
-	
+	chargeComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), playerParticle[1], GetActorLocation()-GetActorUpVector()*30);
+	chargeComp->SetRelativeScale3D(FVector(0.5f));
+
+	if (!playerAnim->bHoldingWeapon)
+	{
+		playerAnim->bHoldingWeapon = true;
+		SwitchWeaponPos();
+	}
+
  	skillPlay->Play();
 }
 
 void ASH_Player::EndSkillSequence()
 {
-	AttackComp->SkillMontagePlay();
+	chargeComp->DestroyComponent();
+	AttackComp->SkillMontStart();
 }

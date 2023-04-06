@@ -66,6 +66,7 @@ void UMainDialogueUI::CloseButton()
 	if (npc != nullptr)
 	{
 		npc->bTalking = false;
+		player->bTalking = false;
 		npc = nullptr;
 	}
 
