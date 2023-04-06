@@ -170,6 +170,7 @@ void UAttackComponent::SpecialAttack()
 			player->ActiveBlur(true);
 			player->PlaySkillSequence();
 			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
+
 			PlayAttackMontage("SpecialAttack");
 		}
 	}
