@@ -61,7 +61,7 @@ void ANPCBase::Tick(float DeltaTime)
 	float dot = FVector::DotProduct(GetActorForwardVector(), direction.GetSafeNormal());
 	float degree = UKismetMathLibrary::DegAcos(dot);
 
-	if (!bTalking)
+	if (!player->bTalking)
 	{
 		if (degree < 180 && distance <= 150)
 		{
@@ -91,7 +91,7 @@ void ANPCBase::InteractNPC()
 		interactionUI->RemoveFromParent();
 	}
 
-	bTalking = true;
+	//bTalking = true;
 	
 	SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(player->GetActorLocation()-GetActorLocation(), FVector::UpVector));
 

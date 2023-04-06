@@ -37,7 +37,7 @@ void USH_PlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중에 있는지 여부 세팅
 		bAir = Player->GetCharacterMovement()->IsFalling();
 
-		if (bHoldingWeapon && currWeapon != EWeaponType::None)
+		if (bHoldingWeapon && currWeapon != EWeaponType::None && !Player->AttackComp->isSpecialAttacking)
 		{
 			currentTime += DeltaSeconds;
 
@@ -93,7 +93,6 @@ void USH_PlayerAnim::SwitchCheck(FDamageRange handRange, FDamageRange daggerRang
 void USH_PlayerAnim::AnimNotify_AttackEnd()
 {
 	Player->AttackComp->ResetAttack();
-	Player->playerCon->SetViewTargetWithBlend(Player, 0.3f, VTBlend_EaseInOut, 1.0f);
 	Player->SkillCameraFollow(Player->GetRootComponent());
 	Player->ActiveBlur(false);
 }

@@ -36,13 +36,13 @@ AItemBase::AItemBase()
 
 	Particle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle"));
 	Particle->SetupAttachment(RootComponent);
+
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> TempNS(TEXT("/Script/Niagara.NiagaraSystem'/Game/UI/UIMaterial/N_Item.N_Item'"));
 	if (TempNS.Succeeded())
 	{
 		PickNS = TempNS.Object;
+		Particle->SetAsset(PickNS);
 	}
-	Particle->SetRelativeLocation(FVector(0,0,50));
-	Particle->SetAsset(PickNS);
 	
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractUI.Succeeded())

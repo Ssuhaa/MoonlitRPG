@@ -170,11 +170,16 @@ void UAttackComponent::SpecialAttack()
 			player->ActiveBlur(true);
 			player->PlaySkillSequence();
 			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
-
-			PlayAttackMontage("SpecialAttack");
 		}
 	}
 }
+
+void UAttackComponent::SkillMontStart()
+{
+	player->playerCon->SetViewTargetWithBlend(player, 0.0f, VTBlend_EaseInOut, 1.0f);
+	PlayAttackMontage("SpecialAttack");
+}
+
 
 void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 {
@@ -190,7 +195,7 @@ void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 
 void UAttackComponent::ImpactEffect(FVector impactLoc)
 {
-	UParticleSystemComponent* compHitEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), player->hitImpact, impactLoc);
+	UParticleSystemComponent* compHitEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), player->playerParticle[0], impactLoc);
 	compHitEffect->SetRelativeScale3D(FVector(0.8));
 }
 

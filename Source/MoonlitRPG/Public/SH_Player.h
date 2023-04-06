@@ -55,6 +55,7 @@ protected:
 
 	bool screenShotOpen = false;
 	float currTime = 0;
+	float zoomIn = 90;
 
 	UPROPERTY()
 	class ADataManager* DataManager;
@@ -108,7 +109,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class AInteractiveObjectBase* InteractiveObjects;
 	UPROPERTY(EditAnywhere)
-	class UParticleSystem* hitImpact;
+	TArray<UParticleSystem*> playerParticle;
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* chargeComp;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<class AIH_DamageActor> damageActor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
@@ -120,6 +123,7 @@ public:
 
 	bool bUIOpen = false;
 	bool bFighting = false;
+	bool bTalking = false;
 	float vignetteValue = 0;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -158,4 +162,7 @@ public:
 	class UActorSequencePlayer* skillPlay;
 
 	void PlaySkillSequence();
+
+	UFUNCTION()
+	void EndSkillSequence();
 };
