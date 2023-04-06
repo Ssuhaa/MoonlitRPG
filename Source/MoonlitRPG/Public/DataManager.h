@@ -456,9 +456,9 @@ public:
 
 
 	void MakeTotalQuestList();
-	TArray<FQuestInfo*> ToTalQuestList;
-	TArray<FQuestInfo*> MainQuestList;
-	TArray<FQuestInfo*> TodayQuestList;
+	TArray<TObjectPtr<FQuestInfo>> ToTalQuestList;
+	TArray<TObjectPtr<FQuestInfo>> MainQuestList;
+	TArray<TObjectPtr<FQuestInfo>> TodayQuestList;
 
 	
 

@@ -14,6 +14,8 @@
 #include <UMG/Public/Components/Image.h>
 #include <Cascade/Classes/CascadeParticleSystemComponent.h>
 #include "DataManager.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 
 
 // Sets default values
@@ -32,6 +34,16 @@ AItemBase::AItemBase()
 	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);
 
+	Particle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle"));
+	Particle->SetupAttachment(RootComponent);
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> TempNS(TEXT("/Script/Niagara.NiagaraSystem'/Game/UI/UIMaterial/N_Item.N_Item'"));
+	if (TempNS.Succeeded())
+	{
+		PickNS = TempNS.Object;
+	}
+	Particle->SetRelativeLocation(FVector(0,0,50));
+	Particle->SetAsset(PickNS);
+	
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractUI.Succeeded())
 	{
@@ -47,29 +59,7 @@ AItemBase::AItemBase()
 	itemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Item Drop Effect"));
 	itemEffect->SetRelativeScale3D(FVector(0.7));
 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempCommon(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_5.P_Loot_5'"));
-// 	if (tempCommon.Succeeded())
-// 	{
-// 		particleArr.Add(tempCommon.Object);
-// 	}
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempRare(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_3.P_Loot_3'"));
-// 	if (tempRare.Succeeded())
-// 	{
-// 		particleArr.Add(tempRare.Object);
-// 	}
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempUnique(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_4.P_Loot_4'"));
-// 	if (tempUnique.Succeeded())
-// 	{
-// 		particleArr.Add(tempUnique.Object);
-// 	}
-// 
-// 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempLegendary(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Loot_1.P_Loot_1'"));
-// 	if (tempLegendary.Succeeded())
-// 	{
-// 		particleArr.Add(tempLegendary.Object);
-// 	}
+
 }
 
 // Called when the game starts or when spawned

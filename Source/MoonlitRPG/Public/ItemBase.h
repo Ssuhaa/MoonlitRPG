@@ -26,8 +26,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
 	class UStaticMeshComponent* Mesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component)
+	class UNiagaraComponent* Particle;
+
+	UPROPERTY()
+	class UNiagaraSystem* PickNS;
+
 	UPROPERTY()
 	class ASH_Player* Player;
+
 
 	UPROPERTY()
 	class ADataManager* DataManager;
