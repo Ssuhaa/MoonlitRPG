@@ -446,13 +446,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	
-	TArray<FIteminfo*> itemList;
-	TArray<FNpcInfo*> npcList;
-	TArray<FEnemyManagerInfo*> EnemyPlaceList;
-	TArray<FWeaponinfo*> WeaponList;
-	TArray<FUpGradeMoneyData*> UpgradeMoneyData;
-	TArray<FItemGradeData*> ItemGradeData;
-	TArray<FDangsanRewardData*> DangsanData;
+	TArray<TObjectPtr<FIteminfo>> itemList;
+	TArray<TObjectPtr<FNpcInfo>> npcList;
+	TArray<TObjectPtr<FEnemyManagerInfo>> EnemyPlaceList;
+	TArray<TObjectPtr<FWeaponinfo>> WeaponList;
+	TArray<TObjectPtr<FUpGradeMoneyData>> UpgradeMoneyData;
+	TArray<TObjectPtr<FItemGradeData>> ItemGradeData;
+	TArray<TObjectPtr<FDangsanRewardData>> DangsanData;
 
 
 	void MakeTotalQuestList();
@@ -484,9 +484,9 @@ public:
 	TArray<T*> GetAllActorOfClass(); //원하는 액터를 찾아 액터클래스 어레이로 반환하는 함수.
 
 	template<typename T>
-	T* GetInfo(int32 Index, const TArray<T*> List);
+	TObjectPtr<T> GetInfo(int32 Index, const TArray<TObjectPtr<T>> List);
 
-	FinvenData GetData(FInvenItem* invenitem);
+	FinvenData GetData(TObjectPtr<FInvenItem> invenitem);
 
 	void NavigateTarget(FQuestInfo CurrQuest);
 

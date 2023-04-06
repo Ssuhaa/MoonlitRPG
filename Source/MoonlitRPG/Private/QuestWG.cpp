@@ -134,7 +134,7 @@ void UQuestWG::UpdateQuestList()
   	}
 }
 
-void UQuestWG::SetQuestList(TArray<FQuestInfo*> QuestList)
+void UQuestWG::SetQuestList(TArray<TObjectPtr<FQuestInfo>> QuestList)
 {
 	for (int32 i = 0; i < QuestList.Num(); i++)
 	{
@@ -159,7 +159,7 @@ void UQuestWG::RemoveQuestWG()
 	RemoveFromParent();
 }
 
-void UQuestWG::ReciveSelectQuest(FQuestInfo* SelectQuest)
+void UQuestWG::ReciveSelectQuest(TObjectPtr<FQuestInfo> SelectQuest)
 {
 	SB_Description->ClearChildren();
 	SB_Description->AddChild(QuestDescription);

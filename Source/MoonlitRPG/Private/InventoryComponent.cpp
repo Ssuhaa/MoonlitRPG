@@ -124,7 +124,7 @@ int32 UInventoryComponent::CheckWeaponisEquip()
 	return -1;
 }
 
-bool UInventoryComponent::WeaponOff(FInvenItem* ChangeItem)
+bool UInventoryComponent::WeaponOff(TObjectPtr <FInvenItem> ChangeItem)
 {
 	int32 currEquip = FindItem(ChangeItem); //착용한 무기가 인벤토리에 존재하는지 확인
 	if (currEquip > -1) //해당 무기는 해제 시킴.
@@ -141,7 +141,7 @@ bool UInventoryComponent::WeaponOff(FInvenItem* ChangeItem)
 	return false;
 }
 
-bool UInventoryComponent::WeaponSwitch(FInvenItem* ChangeItem)
+bool UInventoryComponent::WeaponSwitch(TObjectPtr <FInvenItem> ChangeItem)
 {	
 	int32 currEquip = CheckWeaponisEquip(); //착용한 무기가 있는지 체크후
 	if (currEquip > -1) //해당 무기는 해제 시킴.
@@ -198,7 +198,7 @@ int32 UInventoryComponent::GiveAllItem(int32 MinusItem) //모든 아이템을 빼고 몇�
 	return 0;
 }
 
-int32 UInventoryComponent::FindItem(FInvenItem* invenitem)
+int32 UInventoryComponent::FindItem(TObjectPtr<FInvenItem> invenitem)
 {
 	for (int32 i = 0; i < invenItemArr.Num(); i++)
 	{

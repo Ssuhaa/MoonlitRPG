@@ -162,6 +162,7 @@ void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
 	SkillSequenceComp = Cast<UActorSequenceComponent>(GetComponentByClass(UActorSequenceComponent::StaticClass()));
 
 	MainHUD->AddToViewport();
@@ -177,6 +178,10 @@ void ASH_Player::BeginPlay()
 	PlayerPostProcess->Settings.MotionBlurAmount = 1.0f;
 	PlayerPostProcess->Settings.MotionBlurMax = 50.0f;
 	PlayerPostProcess->Settings.BloomIntensity = 4.0f;
+
+
+	skillPlay = SkillSequenceComp->GetSequencePlayer();
+	skillPlay->OnFinished.AddDynamic(this, &ASH_Player::EndSkillSequence);
 }
 
 void ASH_Player::Tick(float DeltaTime)
@@ -501,6 +506,11 @@ void ASH_Player::DangSanLevelUp(int32 PlusStamina)
 void ASH_Player::PlaySkillSequence()
 {
 	playerCon->SetViewTargetWithBlend(SequenceChildComp->GetChildActor(), 0.0f, VTBlend_EaseInOut, 1.0f);
-	skillPlay = SkillSequenceComp->GetSequencePlayer();
+	
  	skillPlay->Play();
+}
+
+void ASH_Player::EndSkillSequence()
+{
+	AttackComp->SkillMontagePlay();
 }

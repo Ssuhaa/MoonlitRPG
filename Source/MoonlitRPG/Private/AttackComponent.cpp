@@ -71,8 +71,8 @@ UAttackComponent::UAttackComponent()
 void UAttackComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	player = Cast<ASH_Player>(GetOwner());
+	
 	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 }
 
@@ -171,10 +171,15 @@ void UAttackComponent::SpecialAttack()
 			player->PlaySkillSequence();
 			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
 
-			PlayAttackMontage("SpecialAttack");
 		}
 	}
 }
+
+void UAttackComponent::SkillMontagePlay()
+{
+	PlayAttackMontage("SpecialAttack");
+}
+
 
 void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 {

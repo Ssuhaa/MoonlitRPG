@@ -158,4 +158,6 @@ public:
 	class UActorSequencePlayer* skillPlay;
 
 	void PlaySkillSequence();
+	UFUNCTION()
+	void EndSkillSequence();
 };

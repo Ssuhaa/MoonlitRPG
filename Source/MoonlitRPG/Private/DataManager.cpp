@@ -170,7 +170,7 @@ TArray<T*> ADataManager::GetAllActorOfClass()
 	return Managers;
 }
 
- FinvenData ADataManager::GetData(FInvenItem* invenitem)
+ FinvenData ADataManager::GetData(TObjectPtr<FInvenItem> invenitem)
  {
  	FinvenData invenData;
  	invenData.invenitem = invenitem;
@@ -217,11 +217,11 @@ void ADataManager::NavigateTarget(FQuestInfo CurrQuest)
 }
 
 template<typename T>
-T* ADataManager::GetInfo(int32 Index, const TArray<T*> List)
+TObjectPtr<T> ADataManager::GetInfo(int32 Index, const TArray<TObjectPtr<T>> List)
 {
 	if(Index < 0 || List.IsEmpty() || List.Num() <= Index)
 	{
-		T* null =  nullptr;
+		TObjectPtr<T> null =  nullptr;
 		return null;
 	}
 	return List[Index];

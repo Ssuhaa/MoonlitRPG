@@ -61,7 +61,7 @@ protected:
 	class ADataManager* DataManager;
 	
 	void ChangeQuestList(EQuestType ChangeType);
-	void SetQuestList(TArray<FQuestInfo*> QuestList);
+	void SetQuestList(TArray<TObjectPtr<FQuestInfo>> QuestList);
 
 	EQuestType CurrQuestType = EQuestType::Total;
 
@@ -73,6 +73,6 @@ public:
 	void RemoveQuestWG();
 
 
-	void ReciveSelectQuest(FQuestInfo* SelectQuest);
+	void ReciveSelectQuest(TObjectPtr<FQuestInfo> SelectQuest);
 	
 };

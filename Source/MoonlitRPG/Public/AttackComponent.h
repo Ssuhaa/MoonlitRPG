@@ -148,4 +148,7 @@ public:
 	bool coolTimeRunning = false;
 	bool iscriticAttack = false;
 	bool hitAnything = false;
+
+	UFUNCTION()
+	void SkillMontagePlay();
 };

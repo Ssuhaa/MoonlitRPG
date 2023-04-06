@@ -49,8 +49,8 @@ public:
 
 
 	int32 CheckWeaponisEquip();
-	bool WeaponSwitch(FInvenItem* ChangeItem);
-	bool WeaponOff(FInvenItem* ChangeItem);
+	bool WeaponSwitch(TObjectPtr<FInvenItem> ChangeItem);
+	bool WeaponOff(TObjectPtr<FInvenItem> ChangeItem);
 
 
 	void CommonCheckSameItemAfterAdd(int32 ItemInfoIndex, int32 Amount);
@@ -61,7 +61,7 @@ public:
 	int32 GiveAllItem(int32 MinusItem);
 
 	int32 FindItem(int32 iteminfoindex);
-	int32 FindItem(FInvenItem* invenitem);
+	int32 FindItem(TObjectPtr<FInvenItem> invenitem);
 	TArray<FInvenItem*> FindAllItems(int32 itemindex);
 	TArray<FInvenItem*> FindAllItemsType(EItemType itemType);
 
