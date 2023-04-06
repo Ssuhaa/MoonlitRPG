@@ -71,6 +71,7 @@ void UMainDialogueUI::CloseButton()
 
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
+	player->playerCon->SetViewTargetWithBlend(player, 0.5f, VTBlend_EaseInOut, 1.0f);
 	RemoveFromParent();
 }
 

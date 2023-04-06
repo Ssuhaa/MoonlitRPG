@@ -30,6 +30,11 @@
 #include "IH_DamageActor.h"
 #include <UMG/Public/Blueprint/UserWidget.h>
 #include <Components/PostProcessComponent.h>
+#include <Camera/CameraActor.h>
+#include <Kismet/KismetMathLibrary.h>
+#include <../Plugins/MovieScene/ActorSequence/Source/ActorSequence/Public/ActorSequenceComponent.h>
+#include <MovieScene/Public/MovieSceneSequencePlayer.h>
+#include <../Plugins/MovieScene/ActorSequence/Source/ActorSequence/Public/ActorSequencePlayer.h>
 
 
 ASH_Player::ASH_Player()
@@ -71,6 +76,12 @@ ASH_Player::ASH_Player()
 
 	PlayerPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Player Post Process Component"));
 	PlayerPostProcess->SetupAttachment(RootComponent);
+
+	SequenceCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Sequence Camera"));
+	SequenceCamComp->SetupAttachment(RootComponent);
+
+	SequenceChildComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("Skill Sequence Child"));
+	SequenceChildComp->SetupAttachment(SequenceCamComp);
 
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
@@ -150,6 +161,8 @@ void ASH_Player::SkeletalMeshFinder(FString path)
 void ASH_Player::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	SkillSequenceComp = Cast<UActorSequenceComponent>(GetComponentByClass(UActorSequenceComponent::StaticClass()));
 
 	MainHUD->AddToViewport();
 	playerAnim = Cast<USH_PlayerAnim>(GetMesh()->GetAnimInstance());
@@ -321,6 +334,8 @@ void ASH_Player::interactionObject()
 			{
 				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
+			SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
+			playerCon->SetViewTargetWithBlend(currNPC, 0.5f, VTBlend_EaseInOut, 1.0f);
 			currNPC->InteractNPC();
 			return;
 		
@@ -483,3 +498,9 @@ void ASH_Player::DangSanLevelUp(int32 PlusStamina)
 	MoveComp->maxStamina += PlusStamina;
 }
 
+void ASH_Player::PlaySkillSequence()
+{
+	playerCon->SetViewTargetWithBlend(SequenceChildComp->GetChildActor(), 0.0f, VTBlend_EaseInOut, 1.0f);
+	skillPlay = SkillSequenceComp->GetSequencePlayer();
+ 	skillPlay->Play();
+}
