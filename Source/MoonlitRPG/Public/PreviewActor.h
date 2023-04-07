@@ -29,6 +29,8 @@ protected:
 	class USceneCaptureComponent2D* CaptureCam;
 	UPROPERTY(EditAnywhere)
 	class UTextureRenderTarget2D* RenderTarget;
+	UPROPERTY(EditAnywhere)
+	class URectLightComponent* Light;
 
 	UPROPERTY(EditAnywhere)
 	float RotattionSpeed = 0.5;

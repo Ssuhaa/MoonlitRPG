@@ -15,6 +15,7 @@
 #include <UMG/Public/Components/VerticalBox.h>
 #include "QuestComponent.h"
 #include "DataManager.h"
+#include <UMG/Public/Components/CanvasPanelSlot.h>
 
 UMainDialogueUI::UMainDialogueUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -42,7 +43,6 @@ void UMainDialogueUI::NativeConstruct()
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
 	
-	btn_Close->OnPressed.AddUniqueDynamic(this, &UMainDialogueUI::CloseButton);
 	PlayAnimation(DialogueOpenAnim);
 
 
@@ -61,7 +61,7 @@ FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 }
 
 
-void UMainDialogueUI::CloseButton()
+void UMainDialogueUI::ClosedDialouge()
 {
 	if (npc != nullptr)
 	{
@@ -69,7 +69,6 @@ void UMainDialogueUI::CloseButton()
 		player->bTalking = false;
 		npc = nullptr;
 	}
-
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
 	player->playerCon->SetViewTargetWithBlend(player, 0.5f, VTBlend_EaseInOut, 1.0f);
@@ -103,14 +102,14 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	}
 	else 
 	{
-		CloseButton();
+		ClosedDialouge();
 		return;
 	}
 
 	if (CsvColumns[0] == TEXT("Cut"))
 	{
 		player->QuestComp->CompleteMainQuest();
-		CloseButton();
+		ClosedDialouge();
 		return;
 	}
 
@@ -129,12 +128,17 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	Dialogue->SetText(FText::FromString(CsvColumns[1]));
 
 	VB_Choices->ClearChildren();
+	UPanelSlot* pSlot = VB_Choices->Slot;
+	UCanvasPanelSlot* canvas = Cast<UCanvasPanelSlot>(pSlot);
 
 	if(CsvColumns[2] != TEXT("None"))
 	{
 
 		Buttons[0]->SetText(CsvColumns[2]);
 		Buttons[0]->DialogueWG = this;
+	
+		canvas->SetPosition(FVector2D(232.0, 12.0));
+		
 		VB_Choices->AddChild(Buttons[0]);
 	
 		Buttons[0]->NextIndex = FCString::Atoi(*CsvColumns[3]);
@@ -152,7 +156,8 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	{
 		Buttons[1]->SetText(CsvColumns[4]);
 		Buttons[1]->DialogueWG = this;
-		VB_Choices->AddChild(Buttons[1]);
+		VB_Choices->InsertChildAt(0, Buttons[1]);
+		canvas->SetPosition(FVector2D(232.0, -40.0));
 
 		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
 	}
@@ -164,7 +169,8 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 		Buttons[2]->SetText(CsvColumns[6]);
 		Buttons[2]->DialogueWG = this;
-		VB_Choices->AddChild(Buttons[2]);
+		VB_Choices->InsertChildAt(0, Buttons[2]);
+		canvas->SetPosition(FVector2D(232.0, -96.0));
 
 		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);
 	}

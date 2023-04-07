@@ -84,12 +84,13 @@ void UAttackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	if (coolTimeRunning)
 	{
 		intensiveDelay -= DeltaTime;
+
 		if (intensiveDelay <= 0)
 		{
 			intensiveDelay = 0;
 			coolTimeRunning = false;
 		}
-		player->MainHUD->UpdateEtime(intensiveDelay);
+		player->MainHUD->UpdateEtime(intensiveDelay, Maxintensive);
 	}
 }
 
@@ -153,7 +154,7 @@ void UAttackComponent::intensiveAttack()
 		{
 			PlayAttackMontage("IntensiveAttack");
 			coolTimeRunning = true;
-			intensiveDelay = 5;
+			intensiveDelay = Maxintensive;
 		}
 	}
 }

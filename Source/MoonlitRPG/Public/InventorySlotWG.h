@@ -23,6 +23,11 @@ protected:
 	class UButton* ItemButton;
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* AddSlot;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* Click; 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* Select;
+	
 
 	virtual void SlotClicked() override;
 	virtual void ButtonBinding() override;
@@ -32,4 +37,7 @@ public:
 	virtual void UpdateSlot(FInvenItem* invenitem) override;
 	UPROPERTY()
 	class UInventoryWG* InvenWG;
+
+	void StopSelectAnim();
+	void PlaySelectAnim();
 };

@@ -83,7 +83,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = AttackValue) //Q 값 올라가는거
 	float addPercent = 35.0f; 
 	UPROPERTY(EditAnywhere, Category = AttackValue) //e딜레이 타임
-	float intensiveDelay = 5;
+	float intensiveDelay = 0;
+	UPROPERTY(EditAnywhere, Category = AttackValue)
+	float Maxintensive = 5; //e딜레이 타임
 
 	float specialCount = 0;
 	int32 currDamage = 0;

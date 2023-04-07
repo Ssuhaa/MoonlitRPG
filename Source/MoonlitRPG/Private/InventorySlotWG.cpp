@@ -7,12 +7,16 @@
 #include "ItemDescriptionWG.h"
 #include "InventoryWG.h"
 
-
-
+void UInventorySlotWG::NativeConstruct()
+{
+	Super::NativeConstruct();
+	PlayAnimation(AddSlot);
+}
 
 void UInventorySlotWG::ButtonBinding()
 {
 	ItemButton->OnPressed.AddUniqueDynamic(this, &UInventorySlotWG::SlotClicked);
+
 }
 
 
@@ -25,13 +29,21 @@ void UInventorySlotWG::UpdateSlot(FInvenItem* invenitem)
 }
 
 
-void UInventorySlotWG::NativeConstruct()
+void UInventorySlotWG::StopSelectAnim()
 {
-	Super::NativeConstruct();
-	PlayAnimation(AddSlot);
+	StopAnimation(Select);
 }
+
+void UInventorySlotWG::PlaySelectAnim()
+{
+	PlayAnimation(Select, 0.0, 0);
+}
+
 
 void UInventorySlotWG::SlotClicked()
 {
+	InvenWG->StopSelectAnim();
+	PlayAnimation(Click);
+	PlaySelectAnim();
 	InvenWG->ItemSlotClicked(&invenData);
 }

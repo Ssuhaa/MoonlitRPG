@@ -11,12 +11,25 @@
 #include <UMG/Public/Animation/WidgetAnimation.h>
 #include "AttackComponent.h"
 #include "QuestSummaryWG.h"
+#include <UMG/Public/Components/Overlay.h>
+#include <UMG/Public/Components/Image.h>
 
 
 
 UPlayerMainWG::UPlayerMainWG(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	QuestSummary = CreateWGClass<UQuestSummaryWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_QuestSummary.WG_QuestSummary_C'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempE(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/UI/UIMaterial/MI_PrograssCycle_E.MI_PrograssCycle_E'"));
+	if (tempE.Succeeded())
+	{
+		EMat = tempE.Object;
+	}	
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> tempQ(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/UI/UIMaterial/Mi_PrograssCycle_Q.Mi_PrograssCycle_Q'"));
+	if (tempQ.Succeeded())
+	{
+		QMat = tempQ.Object;
+	}
+	
 }
 
 template<typename T>
@@ -34,6 +47,11 @@ T* UPlayerMainWG::CreateWGClass(FString path)
 void UPlayerMainWG::NativeConstruct()
 {
 	Super::NativeConstruct();
+	DynamicEMat = UMaterialInstanceDynamic::Create(EMat, this);
+	DynamicQMat = UMaterialInstanceDynamic::Create(QMat, this);
+	Prograss_E->SetBrushFromMaterial(DynamicEMat);
+	Prograss_Q->SetBrushFromMaterial(DynamicQMat);
+
 	Player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	if (Player != nullptr)
 	{
@@ -60,17 +78,18 @@ void UPlayerMainWG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		VisibleStaminaBar(true);
 	}
 
+
 	
 	if (Player->AttackComp->currWeapon != EWeaponType::None)
 	{
-		if (!Text_E->IsVisible())
+		if (!Overlay_E->IsVisible())
 		{
 			VisibleSkillText(false);		// false일 때 Text가 보임
 		}
 	}
 	else
 	{
-		if (Text_E->IsVisible())
+		if (Overlay_E->IsVisible())
 		{
 			VisibleSkillText(true);
 		}
@@ -97,34 +116,41 @@ void UPlayerMainWG::UpdateStamina(float Stamina, float MaxStamina)
 	StaminaBar->SetFillColorAndOpacity(FLinearColor::LerpUsingHSV(FLinearColor::Red, FLinearColor::Green, percent));
 }
 
-void UPlayerMainWG::UpdateEtime(float Etime)
+void UPlayerMainWG::UpdateEtime(float Etime, float maxTime)
 {
 	FNumberFormattingOptions NumOption = FNumberFormattingOptions();
 	NumOption.MaximumFractionalDigits = 1;
 	NumOption.MinimumFractionalDigits = 1;
 
+
+	DynamicEMat->SetScalarParameterValue(TEXT("Percent"), (maxTime - Etime) / 5);
+
 	if (Etime == 0)
 	{
-		Text_E->SetColorAndOpacity(FLinearColor::Red);
 		Text_ETime->SetText(FText::FromString((TEXT(" "))));
+		PlayAnimation(EReady);
 	}
 	else
 	{
-		Text_E->SetColorAndOpacity(FLinearColor::White);
+		icon_E->SetColorAndOpacity(FLinearColor(1.0, 1.0, 1.0, 0.3));
+		Text_E->SetColorAndOpacity(FLinearColor(1.0, 1.0, 1.0, 0.3));
 		Text_ETime->SetText(FText::AsNumber(Etime, &NumOption));
 	}
 }
 
 void UPlayerMainWG::UpdateQPercent(float Qpercent) 
 {
+	UE_LOG(LogTemp,Warning,TEXT(" %f"), Qpercent/100);
+	DynamicQMat->SetScalarParameterValue(TEXT("Percent"), Qpercent/100);
+
 	if (Qpercent == 100)
 	{
-		Text_Q->SetColorAndOpacity(FLinearColor::Red);
+		PlayAnimation(QReady);
 		Text_Qpercent->SetText(FText::FromString((TEXT(" "))));
 	}
 	else if (Qpercent == 0)
 	{
-		Text_Q->SetColorAndOpacity(FLinearColor::White);
+		PlayAnimation(QNotReady);
 		Text_Qpercent->SetText(FText::FromString((TEXT(" "))));
 	}
 	else
@@ -159,12 +185,13 @@ void UPlayerMainWG::VisibleSkillText(bool isHand)
 {
 	if (isHand)
 	{
-		Text_E->SetVisibility(ESlateVisibility::Hidden);
-		Text_Q->SetVisibility(ESlateVisibility::Hidden);
+		
+		Overlay_E->SetVisibility(ESlateVisibility::Hidden);
+		Overlay_Q->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
-		Text_E->SetVisibility(ESlateVisibility::Visible);
-		Text_Q->SetVisibility(ESlateVisibility::Visible);
+		Overlay_E->SetVisibility(ESlateVisibility::Visible);
+		Overlay_Q->SetVisibility(ESlateVisibility::Visible);
 	}
 }

@@ -26,6 +26,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UProgressBar* StaminaBar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UOverlay* Overlay_E;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UOverlay* Overlay_Q;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_ETime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_Qpercent;
@@ -41,6 +45,27 @@ protected:
 	class UProgressBar* HPBar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UVerticalBox* QuestSummaryBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UImage* Prograss_E; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UImage* Prograss_Q;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UImage* icon_E;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* EReady;	
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* QReady;
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* QNotReady;
+
+	UPROPERTY()
+	class UMaterialInstance* EMat;
+	UPROPERTY()
+	class UMaterialInstance* QMat;
+	UPROPERTY()
+	class UMaterialInstanceDynamic* DynamicEMat;
+	UPROPERTY()
+	class UMaterialInstanceDynamic* DynamicQMat;
 
 	void VisibleStaminaBar(bool isUseStamina);
 	void VisibleSkillText(bool isHand);
@@ -63,7 +88,7 @@ public:
 	void RemoveSummary();
 	
 	void UpdateStamina(float Stamina, float MaxStamina);
-	void UpdateEtime(float Etime);
+	void UpdateEtime(float Etime, float maxTime);
 	void UpdateQPercent(float Qpercent);
 	void UpdateHP(float CurrHP, float TotalHP);
 };

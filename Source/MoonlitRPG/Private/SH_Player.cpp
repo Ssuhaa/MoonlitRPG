@@ -177,8 +177,8 @@ void ASH_Player::BeginPlay()
 	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 
 	playerCon = GetWorld()->GetFirstPlayerController();
-	playerCon->PlayerCameraManager->ViewPitchMin = -30.0f;
-	playerCon->PlayerCameraManager->ViewPitchMax = 60.0f;
+	playerCon->PlayerCameraManager->ViewPitchMin = -50.0f;
+	playerCon->PlayerCameraManager->ViewPitchMax = 0.0f;
 
 	PlayerPostProcess->Settings.VignetteIntensity = 0.5f;
 	PlayerPostProcess->Settings.MotionBlurAmount = 1.0f;

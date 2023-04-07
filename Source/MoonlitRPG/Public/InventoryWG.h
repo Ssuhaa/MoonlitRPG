@@ -127,5 +127,6 @@ public:
 	FSendSlot SendInvenData;
 
 	void ChangeButtonColor(class UButton* SelectButton);
+	void StopSelectAnim();
  };
 

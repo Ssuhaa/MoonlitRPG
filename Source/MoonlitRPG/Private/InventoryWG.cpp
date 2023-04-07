@@ -141,6 +141,14 @@ void UInventoryWG::ChangeButtonColor(class UButton* SelectButton)
 	SelectButton->SetBackgroundColor(White);
 }
 
+void UInventoryWG::StopSelectAnim()
+{
+	for (int32 i = 0; i < Slots.Num(); i++)
+	{
+		Slots[i]->StopSelectAnim();
+	}
+}
+
 void UInventoryWG::ClickedUseButton()
 {
 	switch (currinventype)

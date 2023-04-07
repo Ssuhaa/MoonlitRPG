@@ -20,8 +20,6 @@ public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UButton* btn_Close;
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Name;
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Dialogue;
@@ -43,7 +41,7 @@ public:
 	class ANPCBase* npc;
 
 	UFUNCTION()
-	void CloseButton();
+	void ClosedDialouge();
 
 	TSubclassOf<class UDialogueButtonWG> buttonFactory;
 
