@@ -109,7 +109,7 @@ void USH_PlayerAnim::AnimNotify_CommonAttack()
 
 void USH_PlayerAnim::AnimNotify_IntensiveAttack1()
 {
-	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_IntensiveRange1, Player->AttackComp->GS_IntensiveRange1);	
+	SwitchCheck(FDamageRange{}, Player->AttackComp->DG_IntensiveRange1, Player->AttackComp->GS_IntensiveRange1);
 }
 
 void USH_PlayerAnim::AnimNotify_IntensiveAttack2()

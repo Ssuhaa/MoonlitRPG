@@ -152,14 +152,17 @@ public:
 
 	void DangSanLevelUp(int32 PlusStamina);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UActorSequenceComponent* SkillSequenceComp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UChildActorComponent* SequenceChildComp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UCameraComponent* SequenceCamComp;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UActorSequencePlayer* skillPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	TArray<USoundBase*>impactSoundArr;
 
 	void PlaySkillSequence();
 
