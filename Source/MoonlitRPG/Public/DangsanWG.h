@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DataManager.h"
 #include "DangsanWG.generated.h"
 
 /**
