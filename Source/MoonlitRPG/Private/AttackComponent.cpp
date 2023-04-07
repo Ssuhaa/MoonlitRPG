@@ -174,6 +174,11 @@ void UAttackComponent::SpecialAttack()
 	}
 }
 
+void UAttackComponent::PlayImpactSound(USoundBase* sound)
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), sound, Target->GetActorLocation());
+}
+
 void UAttackComponent::SkillMontStart()
 {
 	player->playerCon->SetViewTargetWithBlend(player, 0.0f, VTBlend_EaseInOut, 1.0f);
@@ -299,6 +304,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 						case EDamageType::Hand_Common:
 						{
 							EnemyAttack(CommonRange);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						// ************************************* 단검 공격
@@ -306,7 +312,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 						{
  							intensiveDelay -= 1.0f;
 							EnemyAttack(DG_CommonRange);
-
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::DG_Intensive1:
@@ -316,11 +322,13 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 							player->MainHUD->UpdateQPercent(specialCount);
 
 							EnemyAttack(DG_IntensiveRange1);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::DG_Intensive2:
 						{
 							EnemyAttack(DG_IntensiveRange2);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::DG_Special1:
@@ -328,11 +336,13 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 							specialCount = 0;
 							player->MainHUD->UpdateQPercent(specialCount);
 							EnemyAttack(DG_SpecialRange1);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::DG_Special2:
 						{
 							EnemyAttack(DG_SpecialRange2);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						// ************************************* 두손검 공격
@@ -340,6 +350,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 						{
 							intensiveDelay -= 1.0f;
 							EnemyAttack(GS_CommonRange);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::GS_Intensive1:
@@ -349,11 +360,13 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 							player->MainHUD->UpdateQPercent(specialCount);
 
 							EnemyAttack(GS_IntensiveRange1);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::GS_Intensive2:
 						{
 							EnemyAttack(GS_IntensiveRange2);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::GS_Special1:
@@ -361,11 +374,13 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 							specialCount = 0;
 							player->MainHUD->UpdateQPercent(specialCount);
 							EnemyAttack(GS_SpecialRange1);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 						case EDamageType::GS_Special2:
 						{
 							EnemyAttack(GS_SpecialRange2);
+							PlayImpactSound(player->impactSoundArr[0]);
 							break;
 						}
 					}

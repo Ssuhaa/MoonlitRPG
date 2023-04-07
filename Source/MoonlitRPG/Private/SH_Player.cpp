@@ -35,6 +35,7 @@
 #include <../Plugins/MovieScene/ActorSequence/Source/ActorSequence/Public/ActorSequenceComponent.h>
 #include <MovieScene/Public/MovieSceneSequencePlayer.h>
 #include <../Plugins/MovieScene/ActorSequence/Source/ActorSequence/Public/ActorSequencePlayer.h>
+#include <Sound/SoundCue.h>
 
 
 ASH_Player::ASH_Player()
@@ -126,6 +127,18 @@ ASH_Player::ASH_Player()
 	if (tempWeapon2.Succeeded())
 	{
 		weaponMesh.Add(tempWeapon2.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound1(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_SFX_Impact.sc_SFX_Impact'"));
+	if (tempImpactSound1.Succeeded())
+	{
+		impactSoundArr.Add(tempImpactSound1.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound2(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_SFX_LargeImpact.sc_SFX_LargeImpact'"));
+	if (tempImpactSound2.Succeeded())
+	{
+		impactSoundArr.Add(tempImpactSound2.Object);
 	}
 
 	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));

@@ -136,6 +136,7 @@ public:
 	void PlayAttackMontage(FString montName);
 	void WeaponChange(int32 WeaponinfoIndex);
 	void ImpactEffect(FVector impactLoc);
+	void PlayImpactSound(USoundBase* sound);
 	
 	FVector direction;
 	FVector force;
