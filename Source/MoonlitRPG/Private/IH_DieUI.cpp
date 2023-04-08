@@ -25,7 +25,7 @@ void UIH_DieUI::NativeConstruct()
 void UIH_DieUI::ReviveButton()
 {
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive,5.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive, 3.0f, false);
 	player->loadingUI->AddToViewport();
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	RemoveFromParent();
@@ -33,12 +33,11 @@ void UIH_DieUI::ReviveButton()
 
 void UIH_DieUI::CallRevive()
 {
-	player->loadingUI->PlayAnimationReverse(player->loadingUI->LoadingAnim);
 	FindWarpPoint();
 	player->RevivePlayer();
 
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::LoadingRemove, 3.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::LoadingRemove, 5.0f, false);
 }
 
 void UIH_DieUI::LoadingRemove()
