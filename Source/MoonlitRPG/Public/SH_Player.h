@@ -163,7 +163,7 @@ public:
 	class UActorSequencePlayer* skillPlay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
-	TArray<USoundBase*>impactSoundArr;
+	TArray<USoundBase*>SoundArr;
 
 	void PlaySkillSequence();
 

@@ -38,7 +38,7 @@ protected:
 	UPROPERTY()
 	class ADataManager* DataManager;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	class USoundBase* getSound;
 
 public:

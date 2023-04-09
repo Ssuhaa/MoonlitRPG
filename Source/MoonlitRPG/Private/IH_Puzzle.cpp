@@ -193,6 +193,13 @@ void AIH_Puzzle::SpawnBox()
 	if (!isBoxSpawned)
 	{
 		AInteractiveObjectBase* spawnObject = GetWorld()->SpawnActor<AInteractiveObjectBase>(treasureBoxFactory, compBoxPos->GetComponentLocation(), compBoxPos->GetComponentRotation());
+		AIH_TreasureBox* treasureBox = Cast<AIH_TreasureBox>(spawnObject);
+
+		if (treasureBox->chestSoundArr.IsValidIndex(1))
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), treasureBox->chestSoundArr[1], compBoxPos->GetComponentLocation());
+		}
+
 		SpawnEffect(particleArr[0], compBoxPos->GetComponentLocation(), FVector(0.5));
 		SpawnEffect(particleArr[1], compBoxPos->GetComponentLocation(), FVector(0.8));
 		isBoxSpawned = true;

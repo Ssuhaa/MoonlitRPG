@@ -100,6 +100,11 @@ void AIH_TreasureBox::Interaction()
 {
 	Super::Interaction();
 	
+	if (chestSoundArr.IsValidIndex(0))
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), chestSoundArr[0], GetActorLocation());
+	}
+
 	isOpen = true;
 	compMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	compTop->SetCollisionEnabled(ECollisionEnabled::NoCollision);

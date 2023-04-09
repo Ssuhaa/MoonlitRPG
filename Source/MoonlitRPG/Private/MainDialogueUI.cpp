@@ -53,6 +53,7 @@ FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
 	if (CsvColumns[2] == TEXT("None"))
 	{
+		UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[3]);
 		CurrNext ++;
 		SetDialogue(CurrNext);
 		return FReply::Handled();

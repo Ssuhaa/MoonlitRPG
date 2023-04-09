@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<UParticleSystem*> magoEffect;
 
+	UPROPERTY(EditAnywhere)
+	class UAudioComponent* floatSoundComp;
+
 	FVector originPos;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 public:

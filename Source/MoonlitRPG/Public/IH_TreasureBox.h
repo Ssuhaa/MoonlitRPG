@@ -37,4 +37,7 @@ protected:
 
 public:
 	virtual void Interaction() override;
+
+	UPROPERTY(EditAnywhere)
+	TArray<USoundBase*> chestSoundArr;
 };

@@ -131,13 +131,25 @@ ASH_Player::ASH_Player()
 	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound1(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_Impact.sc_Impact'"));
 	if (tempImpactSound1.Succeeded())
 	{
-		impactSoundArr.Add(tempImpactSound1.Object);
+		SoundArr.Add(tempImpactSound1.Object);
 	}
 
 	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound2(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_LargeImpact.sc_LargeImpact'"));
 	if (tempImpactSound2.Succeeded())
 	{
-		impactSoundArr.Add(tempImpactSound2.Object);
+		SoundArr.Add(tempImpactSound2.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempClickSound1(TEXT("/Script/Engine.SoundWave'/Game/Sound/SFX/FX_Click_1.FX_Click_1'"));
+	if (tempClickSound1.Succeeded())
+	{
+		SoundArr.Add(tempClickSound1.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempClickSound2(TEXT("/Script/Engine.SoundWave'/Game/Sound/SFX/FX_Click_2.FX_Click_2'"));
+	if (tempClickSound2.Succeeded())
+	{
+		SoundArr.Add(tempClickSound2.Object);
 	}
 
 	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter_WGS.SK_SdCharacter_WGS'"));
@@ -342,6 +354,7 @@ void ASH_Player::interactionObject()
 
 	if (bhit)
 	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
 		if (curritem != nullptr)
 		{
@@ -390,7 +403,7 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
 			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(*sectionName));
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSoundArr[0], GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundArr[0], GetActorLocation());
 
 			FloatingPlayerDamage();
 			damageUI->UpdateDamage(DamageValue);
