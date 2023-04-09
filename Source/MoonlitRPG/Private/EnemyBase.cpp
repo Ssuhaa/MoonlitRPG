@@ -74,7 +74,7 @@ AEnemyBase::AEnemyBase()
 	hitImpact=CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Hit Impact"));
 	hitImpact->SetupAttachment(RootComponent);
 	hitImpact->SetRelativeLocation(FVector(30, 0, -20));
-	hitImpact->SetRelativeScale3D(FVector(0.8));
+	hitImpact->SetRelativeScale3D(FVector(1.0));
 	hitImpact->SetActive(false);
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem>tempHit(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/Stylized_Mobile_Effects/Particles/P_Impact_2.P_Impact_2'"));
@@ -153,12 +153,12 @@ void AEnemyBase::ImpactEffect()
 	if (FSM->target->AttackComp->iscriticAttack)
 	{
 		hitImpact->SetTemplate(impactEffectArr[1]);
+		hitImpact->SetRelativeScale3D(FVector(1.2));
 		hitImpact->SetActive(true);
 	}
 	else
 	{
 		hitImpact->SetTemplate(impactEffectArr[0]);
-		hitImpact->SetRelativeScale3D(FVector(0.5));
 		hitImpact->SetActive(true);
 	}
 }
@@ -166,5 +166,5 @@ void AEnemyBase::ImpactEffect()
 void AEnemyBase::RandomHitImpact(FVector loc)
 {
 	UParticleSystemComponent* playerhit = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), impactEffectArr[2], loc);
-	playerhit->SetRelativeScale3D(FVector(0.5));
+	playerhit->SetRelativeScale3D(FVector(1.0));
 }

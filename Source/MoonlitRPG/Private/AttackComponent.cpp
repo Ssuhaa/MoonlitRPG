@@ -202,7 +202,6 @@ void UAttackComponent::WeaponChange(int32 WeaponinfoIndex)
 void UAttackComponent::ImpactEffect(FVector impactLoc)
 {
 	UParticleSystemComponent* compHitEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), player->playerParticle[0], impactLoc);
-	compHitEffect->SetRelativeScale3D(FVector(0.8));
 }
 
 void UAttackComponent::PlayAttackMontage(FString montName)		// 공격 몽타주를 재생하는 함수
@@ -286,6 +285,7 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	float halfHeight = damageRange.attackLength * 0.5f + damageRange.attackRadius;
 	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
 
+	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, damageRange.attackRadius, capsuleRot, FColor::Cyan, false, 0.5f);
 
 	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(),
 	player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);

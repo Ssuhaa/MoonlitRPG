@@ -6,7 +6,6 @@
 #include <Kismet/GameplayStatics.h>
 #include "SH_Player.h"
 #include <GameFramework/PlayerController.h>
-#include "IH_LoadingUI.h"
 #include "IH_WarpPoint.h"
 
 void UIH_DieUI::NativeConstruct()
@@ -26,7 +25,7 @@ void UIH_DieUI::ReviveButton()
 {
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::CallRevive, 3.0f, false);
-	player->loadingUI->AddToViewport();
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, 1.5f, FColor::Black, true, true);
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	RemoveFromParent();
 }
@@ -35,17 +34,7 @@ void UIH_DieUI::CallRevive()
 {
 	FindWarpPoint();
 	player->RevivePlayer();
-
-	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &UIH_DieUI::LoadingRemove, 5.0f, false);
-}
-
-void UIH_DieUI::LoadingRemove()
-{
-	if (player->loadingUI != nullptr)
-	{
-		player->loadingUI->RemoveFromParent();
-	}
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.5f, FColor::Black, true, true);
 }
 
 void UIH_DieUI::FindWarpPoint()

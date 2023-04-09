@@ -65,13 +65,12 @@ void UMainDialogueUI::ClosedDialouge()
 {
 	if (npc != nullptr)
 	{
-		npc->bTalking = false;
 		player->bTalking = false;
-		npc = nullptr;
+		//npc->bTalking = false;
+		//npc = nullptr;
 	}
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
-	player->playerCon->SetViewTargetWithBlend(player, 0.5f, VTBlend_EaseInOut, 1.0f);
 	RemoveFromParent();
 }
 

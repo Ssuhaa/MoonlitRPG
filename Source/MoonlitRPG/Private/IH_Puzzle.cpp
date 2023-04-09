@@ -40,7 +40,7 @@ AIH_Puzzle::AIH_Puzzle()
 		guideFactory = tempGuide.Class;
 	}
 
-	ConstructorHelpers::FClassFinder<AInteractiveObjectBase>tempBox(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_Treasure.BP_Treasure_C'"));
+	ConstructorHelpers::FClassFinder<AInteractiveObjectBase>tempBox(TEXT("/Script/Engine.Blueprint'/Game/BluePrint/BP_PuzzleTreasureBox.BP_PuzzleTreasureBox_C'"));
 	if (tempBox.Succeeded())
 	{
 		treasureBoxFactory = tempBox.Class;

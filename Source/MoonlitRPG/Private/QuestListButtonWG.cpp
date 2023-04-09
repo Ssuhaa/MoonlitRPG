@@ -22,4 +22,3 @@ void UQuestListButtonWG::SendSelectQuest()
 {
 	QuestWG->ReciveSelectQuest(SelectQuest);
 }
-

@@ -103,7 +103,7 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* En
 
 void UMoveComponent::Horizontal(const FInputActionValue& value)
 {
-	if(Player->bUIOpen == true) return;
+	if(Player->bUIOpen == true || Player->AttackComp->isSpecialAttacking) return;
 	float Axis = value.Get<float>();
 	dir.Y += Axis;
 	Player->playerAnim->bHoldingWeapon = false;
@@ -116,7 +116,7 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
 {
-	if (Player->bUIOpen == true) return;
+	if (Player->bUIOpen == true || Player->AttackComp->isSpecialAttacking) return;
 	float Axis = value.Get<float>();
 	dir.X += Axis;
 	Player->playerAnim->bHoldingWeapon = false;

@@ -19,6 +19,9 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_SelectLog;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASH_Player* player;
+
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Click;
@@ -29,9 +32,10 @@ public:
 	UPROPERTY()
 	int32 NextIndex;
 
-
 	UFUNCTION()
 	void ClickedButton();
+
+	void TeleportILsub();
 
 	UPROPERTY()
 	class UMainDialogueUI* DialogueWG;

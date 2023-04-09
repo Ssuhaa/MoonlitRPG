@@ -15,7 +15,6 @@
 #include <Animation/AnimMontage.h>
 #include <Components/CapsuleComponent.h>
 #include "IH_DieUI.h"
-#include "IH_LoadingUI.h"
 #include "IH_WarpPoint.h"
 #include "NPCBase.h"
 #include "MainDialogueUI.h"
@@ -129,13 +128,13 @@ ASH_Player::ASH_Player()
 		weaponMesh.Add(tempWeapon2.Object);
 	}
 
-	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound1(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_SFX_Impact.sc_SFX_Impact'"));
+	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound1(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_Impact.sc_Impact'"));
 	if (tempImpactSound1.Succeeded())
 	{
 		impactSoundArr.Add(tempImpactSound1.Object);
 	}
 
-	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound2(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_SFX_LargeImpact.sc_SFX_LargeImpact'"));
+	ConstructorHelpers::FObjectFinder<USoundCue> tempImpactSound2(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_LargeImpact.sc_LargeImpact'"));
 	if (tempImpactSound2.Succeeded())
 	{
 		impactSoundArr.Add(tempImpactSound2.Object);
@@ -147,7 +146,6 @@ ASH_Player::ASH_Player()
 	SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Animation/Meshes/SK_SdCharacter.SK_SdCharacter'"));
 
 	dieUI = CreateWGClass<UIH_DieUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Die.WG_Die_C'"));
-	loadingUI = CreateWGClass<UIH_LoadingUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Loading.WG_Loading_C'"));
 	dialogueUI = CreateWGClass<UMainDialogueUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Dialogue.WG_Dialogue_C'"));
 	warningUI = CreateWGClass<UIH_WarningUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
 	MainHUD = CreateWGClass<UPlayerMainWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
@@ -366,7 +364,6 @@ void ASH_Player::interactionObject()
 				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
 			SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
-			//playerCon->SetViewTargetWithBlend(currNPC, 0.5f, VTBlend_EaseInOut, 1.0f);
 			currNPC->InteractNPC();
 			bTalking = true;
 			return;
@@ -393,6 +390,7 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
 			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(*sectionName));
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSoundArr[0], GetActorLocation());
 
 			FloatingPlayerDamage();
 			damageUI->UpdateDamage(DamageValue);
@@ -522,6 +520,20 @@ void ASH_Player::ClearGrabWeapon()
 	GrabComp1->SetStaticMesh(nullptr);
 	GrabComp2->SetStaticMesh(nullptr);
 	GrabComp3->SetStaticMesh(nullptr);
+}
+
+void ASH_Player::FadeInOut(bool fadeIn)
+{
+	if (fadeIn)
+	{
+		MainHUD->SetVisibility(ESlateVisibility::Hidden);
+		GetCharacterMovement()->DisableMovement();
+	}
+	else
+	{
+		MainHUD->SetVisibility(ESlateVisibility::Visible);
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
 }
 
 void ASH_Player::DangSanLevelUp(int32 PlusStamina)

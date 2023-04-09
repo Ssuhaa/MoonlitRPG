@@ -76,5 +76,5 @@ public:
 	int32 Next2;
 	int32 Next3;
 
-	FString PlayerName = TEXT("익현");
+	FString PlayerName = TEXT("범블비");
 };

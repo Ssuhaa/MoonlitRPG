@@ -9,10 +9,7 @@
 #include "QuestComponent.h"
 #include <LevelSequence/Public/LevelSequence.h>
 #include "SequencerPlayer.h"
-#include "IH_LoadingUI.h"
 #include <LevelSequence/Public/LevelSequencePlayer.h>
-#include <GameFramework/CharacterMovementComponent.h>
-#include "PlayerMainWG.h"
 
 // Sets default values
 AVillageEntrance::AVillageEntrance()
@@ -66,11 +63,10 @@ void AVillageEntrance::GoToVillage(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%d"), player->QuestComp->MainQuestIDX);
 
-		if (player->QuestComp->MainQuestIDX >= 2)
+		if (player->QuestComp->MainQuestIDX == 2)
 		{
-			player->loadingUI->AddToViewport();
-			compBlockBox->DestroyComponent();
-			player->GetCharacterMovement()->DisableMovement();
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(0.1f, 1.0f, 1.5f, FColor::Black, true, true);
+			player->FadeInOut(true);
 
 			FTimerHandle timer;
 			GetWorld()->GetTimerManager().SetTimer(timer, this, &AVillageEntrance::PlaySequence, 3.0f, false);
@@ -86,7 +82,7 @@ void AVillageEntrance::PlaySequence()
 {
 	sequencerActor->SetActorHiddenInGame(false);
 	player->SetActorHiddenInGame(true);
-	player->MainHUD->SetVisibility(ESlateVisibility::Hidden);
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.5f, FColor::Black, true, true);
 	sequencePlayer->Play();
 }
 
@@ -94,7 +90,7 @@ void AVillageEntrance::FinishSequence()
 {
 	sequencerActor->Destroy();
 	player->SetActorHiddenInGame(false);
+	player->FadeInOut(false);
 	player->SetActorLocation(FVector(-67580, -41283, 228));
-	player->MainHUD->SetVisibility(ESlateVisibility::Visible);
 	Destroy();
 }

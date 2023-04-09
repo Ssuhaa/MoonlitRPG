@@ -38,6 +38,5 @@ public:
 	void ReviveButton();
 
 	void CallRevive();
-	void LoadingRemove();
 	void FindWarpPoint();
 };

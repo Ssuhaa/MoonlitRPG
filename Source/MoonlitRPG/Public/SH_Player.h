@@ -147,6 +147,7 @@ public:
 	void SwitchWeaponPos();
 	void ClearEquipWeapon();
 	void ClearGrabWeapon();
+	void FadeInOut(bool fadeIn);
 
 	FinvenData currEquipWeapon;
 
