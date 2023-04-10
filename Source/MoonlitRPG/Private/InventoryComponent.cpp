@@ -130,12 +130,15 @@ bool UInventoryComponent::WeaponOff(TObjectPtr <FInvenItem> ChangeItem)
 	if (currEquip > -1) //해당 무기는 해제 시킴.
 	{
 		invenItemArr[currEquip].WeaponData.isEquip = false;
-		Player->GetMesh()->SetSkeletalMesh(Player->PlayerMesh[3]);
-
-		Player->EquippedComp1->SetStaticMesh(nullptr);
-		Player->EquippedComp2->SetStaticMesh(nullptr);
 
 		Player->AttackComp->WeaponChange(-1);
+
+		FinvenData data = DataManager->GetData(ChangeItem);
+		data.Weaponinfo = nullptr;
+		Player->currEquipWeapon = data;
+
+		Player->ClearGrabWeapon();
+		Player->ClearEquipWeapon();
 		return true;
 	}
 	return false;

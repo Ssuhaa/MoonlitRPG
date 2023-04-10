@@ -56,6 +56,7 @@ protected:
 	bool screenShotOpen = false;
 	float currTime = 0;
 	float zoomIn = 90;
+	float dashZoom = 90;
 
 	UPROPERTY()
 	class ADataManager* DataManager;
@@ -126,6 +127,7 @@ public:
 	bool bTalking = false;
 	float vignetteValue = 0;
 
+	// 무기 교체 시 필요한 스태틱 메시 컴포넌트
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> PlayerMesh;
 	UPROPERTY(EditAnywhere)
@@ -153,6 +155,7 @@ public:
 
 	void DangSanLevelUp(int32 PlusStamina);
 
+	// 시퀀스 연출 카메라
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UActorSequenceComponent* SkillSequenceComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
@@ -161,6 +164,12 @@ public:
 	class UCameraComponent* SequenceCamComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sequence")
 	class UActorSequencePlayer* skillPlay;
+	
+	// 대화창 카메라
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	class UChildActorComponent* DialogueChildComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	class UCameraComponent* DialogueCamComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TArray<USoundBase*>SoundArr;
