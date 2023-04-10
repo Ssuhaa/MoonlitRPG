@@ -70,6 +70,7 @@ void UMainDialogueUI::ClosedDialouge()
 		//npc->bTalking = false;
 		//npc = nullptr;
 	}
+	player->playerCon->SetViewTargetWithBlend(player, 0.5f, VTBlend_EaseInOut, 1.0f);
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
 	player->MainHUD->SetVisibility(ESlateVisibility::Visible);

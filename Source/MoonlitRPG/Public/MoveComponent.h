@@ -80,4 +80,6 @@ public:
 	float maxStamina = 100.0f;
 	virtual void SetupPlayerInputComponent(class UEnhancedInputComponent* EnhancedInputComponent);
 	float currentStamina;
+
+	bool bDash = false;
 };

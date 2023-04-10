@@ -37,7 +37,8 @@ void UDialogueButtonWG::ClickedButton()
 
 void UDialogueButtonWG::TeleportILsub()
 {
-	DialogueWG->npc->SetActorLocation(FVector(0));
+	DialogueWG->npc->SetActorLocation(FVector(-67238,-31936, 875));
+	DialogueWG->npc->SetActorRotation(FRotator(0, -120, 0));
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.5f, FColor::Black, false, true);
 	player->FadeInOut(false);
 }

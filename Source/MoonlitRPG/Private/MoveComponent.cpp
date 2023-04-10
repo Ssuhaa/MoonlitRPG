@@ -112,6 +112,15 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 	{
 		Player->SwitchWeaponPos();
 	}
+
+	if (CurrSpeed >= 800)
+	{
+		bDash = true;
+	}
+	else
+	{
+		bDash = false;
+	}
 }
 
 void UMoveComponent::Vertical(const FInputActionValue& value)
@@ -124,6 +133,15 @@ void UMoveComponent::Vertical(const FInputActionValue& value)
 	if (!Player->AttackComp->isAttacking)
 	{
 		Player->SwitchWeaponPos();
+	}
+
+	if (CurrSpeed >= 1000)
+	{
+		bDash = true;
+	}
+	else
+	{
+		bDash = false;
 	}
 }
 
@@ -182,6 +200,7 @@ void UMoveComponent::DashToWalk()
 	else
 	{
 		SetWalkSpped(WalkSpeed, DashSpeed, 10);
+		bDash = false;
 		isStaminaUse = false;
 	}
 }

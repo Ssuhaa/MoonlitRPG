@@ -35,6 +35,8 @@
 #include <MovieScene/Public/MovieSceneSequencePlayer.h>
 #include <../Plugins/MovieScene/ActorSequence/Source/ActorSequence/Public/ActorSequencePlayer.h>
 #include <Sound/SoundCue.h>
+#include <../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h>
+#include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
 
 
 ASH_Player::ASH_Player()
@@ -54,6 +56,7 @@ ASH_Player::ASH_Player()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
 
+	// 손, 등에 붙는 스태틱메시 컴포넌트
 	EquippedComp1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComp"));
 	EquippedComp1->SetupAttachment(GetMesh(), TEXT("Weapon_Socket_1"));
 	EquippedComp1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -74,14 +77,21 @@ ASH_Player::ASH_Player()
 	GrabComp3->SetupAttachment(GetMesh(), TEXT("TwoHandSocket"));
 	GrabComp3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	// PostProcess
 	PlayerPostProcess = CreateDefaultSubobject<UPostProcessComponent>(TEXT("Player Post Process Component"));
 	PlayerPostProcess->SetupAttachment(RootComponent);
 
+	// 스킬 시퀀스 카메라
 	SequenceCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Sequence Camera"));
 	SequenceCamComp->SetupAttachment(RootComponent);
-
 	SequenceChildComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("Skill Sequence Child"));
 	SequenceChildComp->SetupAttachment(SequenceCamComp);
+
+	// 대화창 카메라
+	DialogueCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Dialogue Camera"));
+	DialogueCamComp->SetupAttachment(SpringArmComp);
+	DialogueChildComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("DialogueCam Child"));
+	DialogueChildComp->SetupAttachment(DialogueCamComp);
 
 	InvenComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InvenComp"));
 	AttackComp = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComp"));
@@ -232,19 +242,36 @@ void ASH_Player::Tick(float DeltaTime)
 
 	ActiveVignette(DeltaTime);
 
-	if (bTalking)
+// 	// 대화했을 때 Zoom In/Out
+// 	if (bTalking)
+// 	{
+// 		zoomIn -= DeltaTime*40;
+// 
+// 		zoomIn = FMath::Clamp(zoomIn, 75, 90);
+// 		CamComp->SetFieldOfView(zoomIn);
+// 	}
+// 	else
+// 	{
+// 		zoomIn += DeltaTime*40;
+// 
+// 		zoomIn = FMath::Clamp(zoomIn, 75, 90);
+// 		CamComp->SetFieldOfView(zoomIn);
+// 	}
+	
+	// 대쉬했을 때 Zoom In/Out
+	if (MoveComp->bDash)
 	{
-		zoomIn -= DeltaTime*40;
+		dashZoom += DeltaTime*50;
 
-		zoomIn = FMath::Clamp(zoomIn, 75, 90);
-		CamComp->SetFieldOfView(zoomIn);
+		dashZoom = FMath::Clamp(dashZoom, 90, 100);
+		CamComp->SetFieldOfView(dashZoom);
 	}
 	else
 	{
-		zoomIn += DeltaTime*40;
+		dashZoom -= DeltaTime*50;
 
-		zoomIn = FMath::Clamp(zoomIn, 75, 90);
-		CamComp->SetFieldOfView(zoomIn);
+		dashZoom = FMath::Clamp(dashZoom, 90, 100);
+		CamComp->SetFieldOfView(dashZoom);
 	}
 }
 
@@ -303,14 +330,14 @@ void ASH_Player::ActiveVignette(float deltaTime)
 	{
 		PlayerPostProcess->Settings.bOverride_VignetteIntensity = true;
 		vignetteValue += deltaTime * 5;
-		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 1.1f);
+		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 0.8f);
 
 		PlayerPostProcess->Settings.VignetteIntensity = vignetteValue;
 	}
 	else
 	{
 		vignetteValue -= deltaTime * 5;
-		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 1.1f);
+		vignetteValue = FMath::Clamp(vignetteValue, 0.0f, 0.8f);
 
 		if (vignetteValue <= 0.5)
 		{
@@ -377,6 +404,7 @@ void ASH_Player::interactionObject()
 				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
 			SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
+			playerCon->SetViewTargetWithBlend(DialogueChildComp->GetChildActor(), 0.5f, VTBlend_EaseInOut, 1.0f);
 			currNPC->InteractNPC();
 			bTalking = true;
 			return;
@@ -403,9 +431,9 @@ void ASH_Player::DamagedPlayer(float DamageValue)
 			int32 randNum = FMath::RandRange(0, 1);
 			FString sectionName = FString::Printf(TEXT("Damaged%d"), randNum);
 			PlayAnimMontage(AttackComp->damagedMontage, 1.0f, FName(*sectionName));
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundArr[0], GetActorLocation());
 
 			FloatingPlayerDamage();
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundArr[0], GetActorLocation());
 			damageUI->UpdateDamage(DamageValue);
 			damageUI->FloatingAnimation();
 
