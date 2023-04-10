@@ -53,6 +53,7 @@ FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
 	if (CsvColumns[2] == TEXT("None"))
 	{
+		UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[3]);
 		CurrNext ++;
 		SetDialogue(CurrNext);
 		return FReply::Handled();
@@ -65,13 +66,12 @@ void UMainDialogueUI::ClosedDialouge()
 {
 	if (npc != nullptr)
 	{
-		npc->bTalking = false;
 		player->bTalking = false;
-		npc = nullptr;
+		//npc->bTalking = false;
+		//npc = nullptr;
 	}
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
-	player->playerCon->SetViewTargetWithBlend(player, 0.5f, VTBlend_EaseInOut, 1.0f);
 	RemoveFromParent();
 }
 

@@ -63,7 +63,7 @@ void UEnemy_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	if(target->bUIOpen || target->dialogueUI->npc != nullptr)
+	if(target->bUIOpen || target->bTalking)
 	{
 		if (currHP <= 0)
 		{

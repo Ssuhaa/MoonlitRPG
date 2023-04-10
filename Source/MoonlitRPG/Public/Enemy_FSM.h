@@ -62,7 +62,7 @@ public:
 	float currentTime = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
-	float traceRange = 700.0f;		// 인지 범위
+	float traceRange = 1500.0f;		// 인지 범위
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Range)
 	float avoidRange = 90.0f;

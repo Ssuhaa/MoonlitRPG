@@ -100,9 +100,20 @@ void AIH_TreasureBox::Interaction()
 {
 	Super::Interaction();
 	
+	if (chestSoundArr.IsValidIndex(0))
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), chestSoundArr[0], GetActorLocation());
+	}
+
 	isOpen = true;
 	compMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	compTop->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+ 	if (interactionUI != nullptr)
+ 	{
+ 		interactionUI->RemoveFromParent();
+		interactionUI = nullptr;
+ 	}
 
 	UParticleSystemComponent* currParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), openEffect, compMesh->GetComponentLocation() + compMesh->GetUpVector() * 60, compMesh->GetComponentRotation());
 	currParticle -> SetRelativeScale3D(FVector(0.8));

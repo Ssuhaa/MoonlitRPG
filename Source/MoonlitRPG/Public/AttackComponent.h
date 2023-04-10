@@ -99,19 +99,19 @@ public:
 
 	//TArray<FDamageRange> damageRangeArr;
 
-	FDamageRange CommonRange = {EDamageType::Hand_Common, 50.0f, 50.0f, 2, 3};
+	FDamageRange CommonRange = {EDamageType::Hand_Common, 50.0f, 50.0f, 5, 6};
 	// 단검 공격
-	FDamageRange DG_CommonRange = {EDamageType::DG_Common, 50.0f, 80.0f, 5, 6};
-	FDamageRange DG_IntensiveRange1 = {EDamageType::DG_Intensive1, 80.0f, 100.0f, 8, 10, 3.0f};
+	FDamageRange DG_CommonRange = {EDamageType::DG_Common, 70.0f, 80.0f, 5, 6};
+	FDamageRange DG_IntensiveRange1 = {EDamageType::DG_Intensive1, 80.0f, 100.0f, 8, 10};
 	FDamageRange DG_IntensiveRange2 = {EDamageType::DG_Intensive2, 80.0f, 100.0f, 10, 12, 5.0f};
-	FDamageRange DG_SpecialRange1 = {EDamageType::DG_Special1, 150.0f, 100.0f, 5, 6, 5.0f};
-	FDamageRange DG_SpecialRange2 = {EDamageType::DG_Special2, 150.0f, 100.0f, 15, 20, 10.0f};
+	FDamageRange DG_SpecialRange1 = {EDamageType::DG_Special1, 200.0f, 125.0f, 5, 6};
+	FDamageRange DG_SpecialRange2 = {EDamageType::DG_Special2, 200.0f, 125.0f, 15, 20, 3.0f};
 	// 두손검 공격
-	FDamageRange GS_CommonRange = {EDamageType::GS_Common, 80.0f, 80.0f, 8, 10, 1.0f};
+	FDamageRange GS_CommonRange = {EDamageType::GS_Common, 90.0f, 100.0f, 8, 10, 1.0f};
 	FDamageRange GS_IntensiveRange1 = {EDamageType::GS_Intensive1, 100.0f, 100.0f, 10, 12, 3.0f};
-	FDamageRange GS_IntensiveRange2 = { EDamageType::GS_Intensive2, 100.0f, 100.0f, 13, 15, 5.0f};
-	FDamageRange GS_SpecialRange1 = {EDamageType::GS_Special1, 150.0f, 100.0f, 20, 25, 15.0f};
-	FDamageRange GS_SpecialRange2 = {EDamageType::GS_Special2, 100.0f, 100.0f, 13, 15};
+	FDamageRange GS_IntensiveRange2 = { EDamageType::GS_Intensive2, 100.0f, 100.0f, 13, 15, 3.0f};
+	FDamageRange GS_SpecialRange1 = {EDamageType::GS_Special1, 200.0f, 125.0f, 20, 25, 15.0f};
+	FDamageRange GS_SpecialRange2 = {EDamageType::GS_Special2, 200.0f, 125.0f, 13, 15};
 
 	UPROPERTY()
 	class AEnemyBase* Target;

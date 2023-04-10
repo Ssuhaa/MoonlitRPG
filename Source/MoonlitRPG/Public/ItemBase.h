@@ -35,9 +35,11 @@ protected:
 	UPROPERTY()
 	class ASH_Player* Player;
 
-
 	UPROPERTY()
 	class ADataManager* DataManager;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* getSound;
 
 public:
 

@@ -56,6 +56,12 @@ AItemBase::AItemBase()
 		interactUIFactory.Add(tempgetItemUI.Class);
 	}
 
+	ConstructorHelpers::FObjectFinder<USoundBase>tempSound(TEXT("/Script/Engine.SoundWave'/Game/Sound/SFX/FX_ItemGet.FX_ItemGet'"));
+	if (tempSound.Succeeded())
+	{
+		getSound = tempSound.Object;
+	}
+
 	itemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Item Drop Effect"));
 	itemEffect->SetRelativeScale3D(FVector(0.7));
 
@@ -73,7 +79,7 @@ void AItemBase::BeginPlay()
 	interactionUI->txt_Interaction->SetText(FText::FromString(DataManager->itemList[iteminfoIndex]->ItemName));
 	interactionUI->img_Interact->SetBrushFromTexture(DataManager->itemList[iteminfoIndex]->itemImage);
 
-	getItemUI = CreateWidget< UIH_GetItemUI>(GetWorld(), interactUIFactory[1]);
+	getItemUI = CreateWidget<UIH_GetItemUI>(GetWorld(), interactUIFactory[1]);
 	getItemUI->txt_ItemName->SetText(FText::FromString(FString::Printf(TEXT("%s x %d"), *DataManager->itemList[iteminfoIndex]->ItemName, 1)));
 	getItemUI->img_Get->SetBrushFromTexture(DataManager->itemList[iteminfoIndex]->itemImage);
 
@@ -145,6 +151,7 @@ void AItemBase::GetItem()
 			interactionUI->RemoveFromParent();
 		}
 
+		UGameplayStatics::PlaySound2D(GetWorld(), getSound);
 		Destroy();
 	}
 }

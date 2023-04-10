@@ -3,6 +3,8 @@
 
 #include "MagoPiece.h"
 #include <Particles/ParticleSystemComponent.h>
+#include <Components/AudioComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 AMagoPiece::AMagoPiece()
 {
@@ -22,6 +24,9 @@ AMagoPiece::AMagoPiece()
 	{
 		magoEffect.Add(tempEffect2.Object);
 	}
+
+	floatSoundComp = CreateDefaultSubobject<UAudioComponent>(TEXT("Floating Sound Component"));
+	floatSoundComp->SetupAttachment(RootComponent);
 }
 
 void AMagoPiece::BeginPlay()

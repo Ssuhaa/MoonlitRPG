@@ -47,7 +47,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 hitCount;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundBase* impactSound;
+
 	bool isHit = false;
 
-	void DropItem();
+	virtual void DropItem();
 };
