@@ -39,7 +39,7 @@ void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-
+	player->MainHUD->SetVisibility(ESlateVisibility::Hidden);
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
 	
@@ -72,6 +72,7 @@ void UMainDialogueUI::ClosedDialouge()
 	}
 	player->playerCon->bShowMouseCursor = false;
 	player->EnableInput(player->playerCon);
+	player->MainHUD->SetVisibility(ESlateVisibility::Visible);
 	RemoveFromParent();
 }
 
@@ -137,7 +138,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		Buttons[0]->SetText(CsvColumns[2]);
 		Buttons[0]->DialogueWG = this;
 	
-		canvas->SetPosition(FVector2D(232.0, 12.0));
+		canvas->SetPosition(FVector2D(236.0, 64.0));
 		
 		VB_Choices->AddChild(Buttons[0]);
 	
@@ -157,7 +158,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		Buttons[1]->SetText(CsvColumns[4]);
 		Buttons[1]->DialogueWG = this;
 		VB_Choices->InsertChildAt(0, Buttons[1]);
-		canvas->SetPosition(FVector2D(232.0, -40.0));
+		canvas->SetPosition(FVector2D(236.0, 4.0));
 
 		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
 	}
@@ -170,7 +171,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		Buttons[2]->SetText(CsvColumns[6]);
 		Buttons[2]->DialogueWG = this;
 		VB_Choices->InsertChildAt(0, Buttons[2]);
-		canvas->SetPosition(FVector2D(232.0, -96.0));
+		canvas->SetPosition(FVector2D(236.0, -64.0));
 
 		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);
 	}

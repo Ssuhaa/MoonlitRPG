@@ -25,10 +25,7 @@ APreviewActor::APreviewActor()
 	CaptureCam->SetupAttachment(rootComp);
 	CaptureCam->SetRelativeLocation(FVector(-230.0, 85.0, 0.0));
 
-	Light = CreateDefaultSubobject<URectLightComponent>(TEXT("Light"));
-	Light->SetupAttachment(rootComp);
-	Light->SetRelativeLocation(FVector(-111.0, -6.0, 4.0));
-	Light->SetAttenuationRadius(200.0);
+
 
 	ConstructorHelpers::FObjectFinder <UTextureRenderTarget2D> tempMat(TEXT("/Script/Engine.TextureRenderTarget2D'/Game/UI/InventoryOutfit/PreViewRenderTarget.PreViewRenderTarget'"));
 	if (tempMat.Succeeded())
