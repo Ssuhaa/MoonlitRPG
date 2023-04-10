@@ -403,7 +403,7 @@ void ASH_Player::interactionObject()
 			{
 				QuestComp->CheackRequirementTarget(currNPC->idx);
 			}
-			SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
+			//SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
 			playerCon->SetViewTargetWithBlend(DialogueChildComp->GetChildActor(), 0.5f, VTBlend_EaseInOut, 1.0f);
 			currNPC->InteractNPC();
 			bTalking = true;

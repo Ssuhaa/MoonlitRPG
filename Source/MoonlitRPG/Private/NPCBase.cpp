@@ -63,7 +63,7 @@ void ANPCBase::Tick(float DeltaTime)
 
 	if (!player->bTalking)
 	{
-		if (degree < 180 && distance <= 150)
+		if (degree < 180 && distance <= 300)
 		{
 			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 			{
@@ -93,7 +93,7 @@ void ANPCBase::InteractNPC()
 
 	//bTalking = true;
 	
-	SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(player->GetActorLocation()-GetActorLocation(), FVector::UpVector));
+	//SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(player->GetActorLocation()-GetActorLocation(), FVector::UpVector));
 
 	player->dialogueUI->npc = this;
 	player->dialogueUI->ReadCSVFile(MakeCSVPath());
