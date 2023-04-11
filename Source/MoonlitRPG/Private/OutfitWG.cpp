@@ -107,13 +107,13 @@ void UOutfitWG::SetOutfItWG()
 	FText weaponType;
 	switch (int32(inventoryData->Weaponinfo->WeaponType))
 	{
-	case 1:
+	case 0:
 		weaponType = FText::FromString(TEXT("두손 검"));
 		break;
-	case 2:
+	case 1:
 		weaponType = FText::FromString(TEXT("단 검"));
 		break;
-	case 3:
+	case 2:
 		weaponType = FText::FromString(TEXT("활"));
 		break;
 	}

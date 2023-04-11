@@ -16,6 +16,7 @@ void UStartMenuUI::NativeConstruct()
 
 void UStartMenuUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
+	Super::NativeTick(MyGeometry, InDeltaTime);
 	if (gameStart)
 	{
 		currTime += InDeltaTime;

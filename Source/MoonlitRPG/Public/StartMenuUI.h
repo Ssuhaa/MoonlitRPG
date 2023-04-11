@@ -17,7 +17,7 @@ class MOONLITRPG_API UStartMenuUI : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;;
 
 // 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient);
 // 	class UWidgetAnimation* StartHover;

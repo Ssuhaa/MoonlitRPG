@@ -24,9 +24,21 @@ void AIH_EnemyManager::BeginPlay()
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		int32 randNum = FMath::RandRange(0, enemyFactory.Num()-1);
+		float Random = FMath::FRandRange(0.0 , 1.0);
 
-		AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
+		AEnemyBase* enemy;
+		if (Random < 0.2)
+		{
+			enemy= GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[2], GetActorTransform(), param);
+		}
+		else if(Random >= 0.2 && Random <= 0.5)
+		{
+			enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[1], GetActorTransform(), param);
+		}
+		else
+		{
+			enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[0], GetActorTransform(), param);
+		}
 		enemy->Manager = this;
 		enemy->SetActive(false);
 		enemyArr.Add(enemy);
