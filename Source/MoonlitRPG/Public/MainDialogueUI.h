@@ -59,6 +59,12 @@ public:
 	void SetStartDialouge(int32 Start);
 
 	void ReadCSVFile(FString CSVPath);
+
+
+	void MainQuestContect(ANPCBase* ContectNPC);
+	void CommonContect(ANPCBase* ContectNPC);
+
+
 	UFUNCTION()
 	void OnClikedNextButton(int32 Nextindex);
 
@@ -66,15 +72,6 @@ public:
 	TArray<FString> CsvRows;
 	UPROPERTY()
 	TArray<FString> CsvColumns;
-
-	FString Text;
-	FString Select1;
-	FString Select2;
-	FString Select3;
-	FString CharacterName;
-	int32 Next1;
-	int32 Next2;
-	int32 Next3;
 
 	FString PlayerName = TEXT("범블비");
 };

@@ -54,9 +54,11 @@ public:
 	void RandomTodayQuest();
 
 	void CompleteMainQuest();
-	void CheackRequirementTarget(int32 index);
+	bool CheackRequirementTarget(int32 index);
 	bool isDoneQuestRequirements(FQuestInfo* Questinfo);
 	void NaviClear();
 	void SetQuestNavi(int32 NaviIndex, AActor* Target);
+
+	
 
 };

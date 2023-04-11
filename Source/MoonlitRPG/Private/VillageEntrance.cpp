@@ -63,7 +63,7 @@ void AVillageEntrance::GoToVillage(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%d"), player->QuestComp->MainQuestIDX);
 
-		if (player->QuestComp->MainQuestIDX == 2)
+		if (player->QuestComp->MainQuestIDX >= 2)
 		{
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(0.1f, 1.0f, 1.5f, FColor::Black, true, true);
 			player->FadeInOut(true);

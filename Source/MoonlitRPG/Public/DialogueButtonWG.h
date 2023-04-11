@@ -21,6 +21,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ASH_Player* player;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ADataManager* DataManager;
+
 
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))

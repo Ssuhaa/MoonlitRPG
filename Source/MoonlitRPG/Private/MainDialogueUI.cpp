@@ -39,13 +39,13 @@ void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	
+
 	player->MainHUD->SetVisibility(ESlateVisibility::Hidden);
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
 	
 	PlayAnimation(DialogueOpenAnim);
-
-
 }
 
 FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -95,9 +95,27 @@ void UMainDialogueUI::ReadCSVFile(FString CSVPath)
 }
 
 
+
+void UMainDialogueUI::MainQuestContect(ANPCBase* ContectNPC)
+{
+	npc = ContectNPC;
+	SetStartDialouge(player->QuestComp->MainQuest->DialougueIndex);
+	SetDialogue(CurrNext);
+	ReadCSVFile(FPaths::ProjectDir() + FString::Printf(TEXT("Dialogue/MainQuest.csv")));
+	AddToViewport();
+}
+
+void UMainDialogueUI::CommonContect(ANPCBase* ContectNPC)
+{
+	npc = ContectNPC;
+	SetStartDialouge(1);
+	SetDialogue(CurrNext);
+	ReadCSVFile(ContectNPC->MakeCommonCSVPath());
+	AddToViewport();
+}
+
 void UMainDialogueUI::SetDialogue(int32 Next)
 {
-	
 	if (CsvRows.IsValidIndex(Next))
 	{
 		CsvRows[Next].ParseIntoArray(CsvColumns, TEXT(",")); //콤마를 기준으로 단어를 끊어서 CSV열에 담아라.
@@ -110,11 +128,9 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 	if (CsvColumns[0] == TEXT("Cut"))
 	{
-		player->QuestComp->CompleteMainQuest();
 		ClosedDialouge();
 		return;
 	}
-
 
 	//이름[0], 내용[1], 선택지1[2], Next1[3], 선택지2[4], Next2[5], 선택지3[6], Next3[7]
 	for (int32 i = 1; i < CsvColumns.Num(); i++)

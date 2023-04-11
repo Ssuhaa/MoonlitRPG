@@ -106,22 +106,19 @@ void UQuestComponent::CompleteMainQuest()
 		return;
 	}
 
-	if (MainQuestIDX > -1) //이후 퀘스트
+	if (MainQuestIDX >= 0) //이후 퀘스트
 	{
-		if (isDoneQuestRequirements(MainQuest))
-		{
-			MainQuest->Queststate = EQuestState::Done;
-			GiveQuestReward(MainQuest);
+		MainQuest->Queststate = EQuestState::Done;
+		GiveQuestReward(MainQuest);
 
-			MainQuestIDX++;
-			MainQuest = DataManager->MainQuestList[MainQuestIDX];
-			MainQuest->Queststate = EQuestState::Continue;
-			NaviClear();
-			DataManager->NavigateTarget(*MainQuest);
-			Player->CompleteQuest(*MainQuest);
-			QuestWG->UpdateQuestList();
+		MainQuestIDX++;
+		MainQuest = DataManager->MainQuestList[MainQuestIDX];
+		MainQuest->Queststate = EQuestState::Continue;
+		NaviClear();
+		DataManager->NavigateTarget(*MainQuest);
+		Player->CompleteQuest(*MainQuest);
+		QuestWG->UpdateQuestList();
 
-		}
 		
 	}
 	else // 첫 퀘스트.
@@ -132,13 +129,14 @@ void UQuestComponent::CompleteMainQuest()
 		NaviClear();
 		DataManager->NavigateTarget(*MainQuest);
 		Player->CompleteQuest(*MainQuest);
+		Player->dialogueUI->CurrNext = 1;
 		QuestWG->UpdateQuestList();
 	}
 
 }
 
 
-void UQuestComponent::CheackRequirementTarget(int32 index)
+bool UQuestComponent::CheackRequirementTarget(int32 index)
 {
 
 	for (int32 i = 0; i <MainQuest->Requirements.Num(); i++)
@@ -146,8 +144,11 @@ void UQuestComponent::CheackRequirementTarget(int32 index)
 		if (MainQuest->Requirements[i].Requirementindex == index)
 		{
 			MainQuest->Requirements[i].isRequirements = true;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 bool UQuestComponent::isDoneQuestRequirements(FQuestInfo* Questinfo)

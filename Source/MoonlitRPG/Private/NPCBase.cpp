@@ -90,17 +90,9 @@ void ANPCBase::InteractNPC()
 	{
 		interactionUI->RemoveFromParent();
 	}
-
-	//bTalking = true;
-	
-	//SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(player->GetActorLocation()-GetActorLocation(), FVector::UpVector));
-
-	player->dialogueUI->npc = this;
-	player->dialogueUI->ReadCSVFile(MakeCSVPath());
-	player->dialogueUI->AddToViewport();
 }
 
-FString ANPCBase::MakeCSVPath()
+FString ANPCBase::MakeCommonCSVPath()
 {
 	return FPaths::ProjectDir() + FString::Printf(TEXT("Dialogue/%s%d.csv"), *NPCName, DialogueNum); //CSV 파일명 Npc이름 + 번호
 
