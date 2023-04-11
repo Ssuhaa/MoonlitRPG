@@ -37,6 +37,7 @@
 #include <Sound/SoundCue.h>
 #include <../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h>
 #include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
+#include "IH_MagoTree.h"
 
 
 ASH_Player::ASH_Player()
@@ -370,8 +371,14 @@ void ASH_Player::ActiveBlur(bool Active)
 
 void ASH_Player::interactionObject()
 {
+	if (magoTree != nullptr)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
+		magoTree->Interaction();
+	}
+	
 	FHitResult hitinfo;
-	FCollisionShape interColli = FCollisionShape::MakeSphere(120.0f);
+	FCollisionShape interColli = FCollisionShape::MakeSphere(250.0f);
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(this);
 	bool bhit = GetWorld()->SweepSingleByObjectType(hitinfo, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_GameTraceChannel3, interColli, param);
@@ -381,10 +388,10 @@ void ASH_Player::interactionObject()
 
 	if (bhit)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 		AItemBase* curritem = Cast<AItemBase>(hitinfo.GetActor());
 		if (curritem != nullptr)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 			curritem->GetItem();
 			return;
 		}
@@ -392,6 +399,9 @@ void ASH_Player::interactionObject()
 		AInteractiveObjectBase* currobject = Cast<AInteractiveObjectBase>(hitinfo.GetActor());
 		if (currobject != nullptr)
 		{
+			if(currobject->GetName().Contains(TEXT("Mago"))) return;
+
+			UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 			currobject->Interaction();
 			return;
 		}
@@ -399,6 +409,7 @@ void ASH_Player::interactionObject()
 		ANPCBase* currNPC = Cast<ANPCBase>(hitinfo.GetActor());
 		if (currNPC != nullptr)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 			if (QuestComp->MainQuest->SubType == ESubQuestType::Contact && QuestComp->CheackRequirementTarget(currNPC->idx)) //메인퀘스트가 만나기고 현재NPC가 퀘스트 수행 NPC면
 			{
 				currNPC->InteractNPC();
@@ -410,7 +421,6 @@ void ASH_Player::interactionObject()
 					QuestComp->CompleteMainQuest();
 					return;
 				}
-
 			}
 			else
 			{
@@ -420,6 +430,7 @@ void ASH_Player::interactionObject()
 				bTalking = true;
 				return;
 			}
+			//SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
 		}
 
 		APuzzleGuide* currGuide = Cast<APuzzleGuide>(hitinfo.GetActor());
@@ -579,11 +590,13 @@ void ASH_Player::FadeInOut(bool fadeIn)
 	if (fadeIn)
 	{
 		MainHUD->SetVisibility(ESlateVisibility::Hidden);
+		DisableInput(playerCon);
 		GetCharacterMovement()->DisableMovement();
 	}
 	else
 	{
 		MainHUD->SetVisibility(ESlateVisibility::Visible);
+		EnableInput(playerCon);
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 }

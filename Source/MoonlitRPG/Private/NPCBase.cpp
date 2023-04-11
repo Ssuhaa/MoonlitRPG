@@ -29,9 +29,6 @@ ANPCBase::ANPCBase()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Compoennt"));
 	Mesh->SetupAttachment(RootComponent);
 
-	NPCCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Interaction Camera"));
-	NPCCamComp->SetupAttachment(RootComponent);
-
 	ConstructorHelpers::FClassFinder<UIH_InteractionUI>tempinteractUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Interaction.WG_Interaction_C'"));
 	if (tempinteractUI.Succeeded())
 	{
@@ -63,7 +60,7 @@ void ANPCBase::Tick(float DeltaTime)
 
 	if (!player->bTalking)
 	{
-		if (degree < 180 && distance <= 300)
+		if (degree < 180 && distance <= 250)
 		{
 			if (!player->MainHUD->InteractionBox->GetAllChildren().Contains(interactionUI))
 			{

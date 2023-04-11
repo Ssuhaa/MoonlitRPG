@@ -50,19 +50,6 @@ void AIH_EnemyManager::Tick(float DeltaTime)
 		{
 			for (int32 i = 0; i < spawnNumber ; i++)
 			{
-				if (!enemyArr.IsValidIndex(0))
-				{
-					FActorSpawnParameters param;
-					param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-					int32 randNum = FMath::RandRange(0, enemyFactory.Num() - 1);
-					AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
-					enemy->Manager = this;
-					enemy->SetActive(false);
-
-					enemyArr.Add(enemy);
-				}
-
 				float randZ = FMath::RandRange(0, 360);
 				SetActorRotation(FRotator(0, randZ, 0));
 
@@ -80,6 +67,19 @@ void AIH_EnemyManager::Tick(float DeltaTime)
 // 				}
 
 				enemyArr.RemoveAt(0);
+
+// 				if (!enemyArr.IsValidIndex(0))
+// 				{
+// 					FActorSpawnParameters param;
+// 					param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+// 
+// 					int32 randNum = FMath::RandRange(0, enemyFactory.Num() - 1);
+// 					AEnemyBase* enemy = GetWorld()->SpawnActor<AEnemyBase>(enemyFactory[randNum], GetActorTransform(), param);
+// 					enemy->Manager = this;
+// 					enemy->SetActive(false);
+// 
+// 					enemyArr.Add(enemy);
+// 				}
 
 				createTime = FMath::RandRange(minTime, maxTime);
 			}

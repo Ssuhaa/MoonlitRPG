@@ -64,6 +64,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* NPCCamComp;
-	
+
 };
 

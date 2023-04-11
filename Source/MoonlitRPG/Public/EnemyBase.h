@@ -20,7 +20,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	float dissolveValue = 1;
 	float currTime = 0;
 
 	UPROPERTY(EditAnywhere)
@@ -63,4 +62,11 @@ public:
 	UPROPERTY()
 	class AIH_EnemyManager* Manager;
 
+	UPROPERTY()
+	class USoundBase* impactSound;
+
+	void PlayImpactSound();
+
+	UPROPERTY(EditAnywhere)
+	float dissolveValue = 1;
 };

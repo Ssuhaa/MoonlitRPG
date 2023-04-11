@@ -63,8 +63,8 @@ void AHitObjectBase::Tick(float DeltaTime)
 void AHitObjectBase::DropItem()
 {
 	isHit = true;
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSound, GetActorLocation());
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSound, GetActorLocation());
 	float randZ = FMath::RandRange(0, 360);
 	compSpawnPos->SetRelativeRotation(FRotator(0, randZ, 0));
 

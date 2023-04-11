@@ -10,6 +10,7 @@
 #include "SH_Player.h"
 #include "QuestComponent.h"
 #include "DataManager.h"
+#include <Kismet/GameplayStatics.h>
 
 void UDialogueButtonWG::NativeConstruct()
 {

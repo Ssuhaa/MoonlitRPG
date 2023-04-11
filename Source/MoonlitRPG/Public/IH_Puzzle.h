@@ -22,8 +22,11 @@ protected:
 	TArray<UParticleSystemComponent*> lootArr;
 
 	void CheckAnswer();
-	void SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size);
+	void ActivePuzzle(class UParticleSystem* particle, FVector loc, FVector size);
 	void SpawnBox();
+
+	UPROPERTY()
+	TArray<USoundBase*> activeSoundArr;
 
 public:	
 	// Called every frame
@@ -73,4 +76,6 @@ public:
 	bool isBoxSpawned = false;
 
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
+
+	void PlayActiveSound(FVector meshLoc);
 };

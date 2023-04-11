@@ -18,8 +18,14 @@ class MOONLITRPG_API AIH_MagoTree : public AInteractiveObjectBase
 
 public:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	
 	virtual void Interaction() override;
+
+	UFUNCTION()
+	void CanOffering(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void CantOffering(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -30,4 +36,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class ASH_Player* Player;
+
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* compBox;
 };
