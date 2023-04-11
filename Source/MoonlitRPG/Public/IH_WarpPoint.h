@@ -19,13 +19,8 @@ class MOONLITRPG_API AIH_WarpPoint : public AInteractiveObjectBase
 protected:
 	virtual void BeginPlay() override;
 
-public:
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void Interaction() override;		// 상속하는 액터에서 바꿔쓸 수 있도록 가상함수로 선언.
-
 	UPROPERTY(EditAnywhere)
-	bool bsavePoint = false;
+	class USoundBase* activeSound;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UIH_WarpActiveUI> warpUIFactory;
@@ -35,6 +30,14 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystemComponent* activeEffect;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void Interaction() override;		// 상속하는 액터에서 바꿔쓸 수 있도록 가상함수로 선언.
+
+	UPROPERTY(EditAnywhere)
+	bool bsavePoint = false;
 
 	void RemoveUI();
 };

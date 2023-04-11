@@ -11,6 +11,7 @@
 #include "PlayerMainWG.h"
 #include <UMG/Public/Components/VerticalBox.h>
 #include <Particles/ParticleSystemComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 AIH_WarpPoint::AIH_WarpPoint()
 {
@@ -71,6 +72,7 @@ void AIH_WarpPoint::Interaction()
 		bsavePoint = true;
 		warpUI->AddToViewport();
 		activeEffect->SetActive(true);
+		UGameplayStatics::PlaySound2D(GetWorld(), activeSound);
 
 		FTimerHandle timer;
 		GetWorld()->GetTimerManager().SetTimer(timer, this, &AIH_WarpPoint::RemoveUI, 2.0f, false);
