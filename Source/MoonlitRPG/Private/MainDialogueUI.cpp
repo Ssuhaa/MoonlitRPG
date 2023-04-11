@@ -116,11 +116,15 @@ void UMainDialogueUI::CommonContect(ANPCBase* ContectNPC)
 
 void UMainDialogueUI::SetDialogue(int32 Next)
 {
-	if (CsvRows.IsValidIndex(Next))
+	if (CsvRows.IsEmpty())
+	{
+		return;
+	}
+	else if (CsvRows.IsValidIndex(Next))
 	{
 		CsvRows[Next].ParseIntoArray(CsvColumns, TEXT(",")); //콤마를 기준으로 단어를 끊어서 CSV열에 담아라.
 	}
-	else 
+	else
 	{
 		ClosedDialouge();
 		return;

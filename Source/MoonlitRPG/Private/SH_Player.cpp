@@ -410,12 +410,12 @@ void ASH_Player::interactionObject()
 		if (currNPC != nullptr)
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
+			playerCon->SetViewTargetWithBlend(DialogueChildComp->GetChildActor(), 0.5f, VTBlend_EaseInOut, 1.0f); //카메라 전환
+			currNPC->InteractNPC();
+			bTalking = true;
 			if (QuestComp->MainQuest->SubType == ESubQuestType::Contact && QuestComp->CheackRequirementTarget(currNPC->idx)) //메인퀘스트가 만나기고 현재NPC가 퀘스트 수행 NPC면
 			{
-				currNPC->InteractNPC();
-				playerCon->SetViewTargetWithBlend(DialogueChildComp->GetChildActor(), 0.5f, VTBlend_EaseInOut, 1.0f); //카메라 전환
 				dialogueUI->MainQuestContect(currNPC);
-				bTalking = true;
 				if (QuestComp->isDoneQuestRequirements(QuestComp->MainQuest)) //만약 퀘스트 수행이 완료되었다면
 				{
 					QuestComp->CompleteMainQuest();
@@ -424,13 +424,10 @@ void ASH_Player::interactionObject()
 			}
 			else
 			{
-				playerCon->SetViewTargetWithBlend(DialogueChildComp->GetChildActor(), 0.5f, VTBlend_EaseInOut, 1.0f);
 				dialogueUI->CommonContect(currNPC);
-				currNPC->InteractNPC();
-				bTalking = true;
 				return;
 			}
-			//SetActorRotation(UKismetMathLibrary::MakeRotFromXZ(currNPC->GetActorLocation() - GetActorLocation(), FVector::UpVector));
+		
 		}
 
 		APuzzleGuide* currGuide = Cast<APuzzleGuide>(hitinfo.GetActor());

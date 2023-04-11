@@ -280,12 +280,12 @@ void UAttackComponent::TargetCheck(FDamageRange damageRange)
 	param.AddIgnoredActor(player);
 
 
-	// µð¹ö±× Ä¸½¶ ±×¸®±â
+
 	FVector centerLoc = player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength * 0.5f;
 	float halfHeight = damageRange.attackLength * 0.5f + damageRange.attackRadius;
 	FQuat capsuleRot = FRotationMatrix::MakeFromZ(player->GetActorForwardVector() * damageRange.attackLength).ToQuat();
 
-	DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, damageRange.attackRadius, capsuleRot, FColor::Cyan, false, 0.5f);
+	//DrawDebugCapsule(GetWorld(), centerLoc, halfHeight, damageRange.attackRadius, capsuleRot, FColor::Cyan, false, 0.5f);
 
 	bool bHits = GetWorld()->SweepMultiByObjectType(hitinfos, player->GetActorLocation(),
 	player->GetActorLocation() + player->GetActorForwardVector() * damageRange.attackLength, FQuat::Identity, ECC_GameTraceChannel1, attackCollision, param);

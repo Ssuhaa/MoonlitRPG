@@ -9,6 +9,7 @@
 #include "QuestComponent.h"
 #include <LevelSequence/Public/LevelSequence.h>
 #include "SequencerPlayer.h"
+#include "DataManager.h"
 #include <LevelSequence/Public/LevelSequencePlayer.h>
 
 // Sets default values
@@ -48,6 +49,8 @@ void AVillageEntrance::BeginPlay()
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	sequencerActor = Cast<ASequencerPlayer>(UGameplayStatics::GetActorOfClass(GetWorld(), ASequencerPlayer::StaticClass()));
 	warningUI = CreateWidget<UQuestWarningUI>(GetWorld(), UIFactory);
+
+	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
 }
 
 // Called every frame
@@ -82,6 +85,7 @@ void AVillageEntrance::PlaySequence()
 {
 	sequencerActor->SetActorHiddenInGame(false);
 	player->SetActorHiddenInGame(true);
+	player->QuestComp->NaviClear();
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.5f, FColor::Black, true, true);
 	sequencePlayer->Play();
 }
@@ -89,6 +93,7 @@ void AVillageEntrance::PlaySequence()
 void AVillageEntrance::FinishSequence()
 {
 	sequencerActor->Destroy();
+	DataManager->NavigateTarget(*player->QuestComp->MainQuest);
 	player->SetActorHiddenInGame(false);
 	player->FadeInOut(false);
 	player->SetActorLocation(FVector(-67580, -41283, 228));
