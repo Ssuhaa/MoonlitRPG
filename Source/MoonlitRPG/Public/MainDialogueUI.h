@@ -17,6 +17,7 @@ class MOONLITRPG_API UMainDialogueUI : public UUserWidget
 	UMainDialogueUI(const FObjectInitializer& ObjectInitializer);
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -53,6 +54,12 @@ public:
 
 	UPROPERTY()
 	class ADataManager* DataManager;
+
+	bool isTextPlay = false;
+
+	float currTime = 0;
+	float showTime = 0.025;
+	int32 TextLangth;
 
 public:
 

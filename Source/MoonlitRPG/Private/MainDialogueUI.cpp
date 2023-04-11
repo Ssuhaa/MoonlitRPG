@@ -39,8 +39,6 @@ void UMainDialogueUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	
-
 	player->MainHUD->SetVisibility(ESlateVisibility::Hidden);
 	player->DisableInput(player->playerCon);
 	player->playerCon->bShowMouseCursor = true;
@@ -48,11 +46,39 @@ void UMainDialogueUI::NativeConstruct()
 	PlayAnimation(DialogueOpenAnim);
 }
 
+void UMainDialogueUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (isTextPlay == true)
+	{
+		currTime += InDeltaTime;
+		if (TextLangth <= CsvColumns[1].Len() && currTime > showTime)
+		{
+			currTime = 0;
+
+			Dialogue->SetText(FText::FromString(CsvColumns[1].Mid(0, TextLangth)));
+			TextLangth ++;
+			if (TextLangth > CsvColumns[1].Len())
+			{
+				TextLangth = 0;
+				isTextPlay = false;
+				VB_Choices->SetVisibility(ESlateVisibility::Visible);
+				if (CsvColumns[2] == TEXT("None"))
+				{
+					Pointer->SetVisibility(ESlateVisibility::Visible);
+				}
+
+			}
+		}
+	}
+}
+
 FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
-	if (CsvColumns[2] == TEXT("None"))
+	if (CsvColumns[2] == TEXT("None") && isTextPlay == false)
 	{
+		isTextPlay = true;
 		UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[3]);
 		CurrNext ++;
 		SetDialogue(CurrNext);
@@ -146,9 +172,9 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 	Name->SetText(FText::FromString(CsvColumns[0]));
 	
-
-	Dialogue->SetText(FText::FromString(CsvColumns[1]));
-
+	isTextPlay = true;
+	
+	VB_Choices->SetVisibility(ESlateVisibility::Hidden);
 	VB_Choices->ClearChildren();
 	UPanelSlot* pSlot = VB_Choices->Slot;
 	UCanvasPanelSlot* canvas = Cast<UCanvasPanelSlot>(pSlot);
@@ -160,7 +186,6 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		Buttons[0]->DialogueWG = this;
 	
 		canvas->SetPosition(FVector2D(236.0, 64.0));
-		
 		VB_Choices->AddChild(Buttons[0]);
 	
 		Buttons[0]->NextIndex = FCString::Atoi(*CsvColumns[3]);
@@ -173,6 +198,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		PlayAnimation(PointerAnim, 0.0f, 0);
 		return;
 	}
+
 
 	if (CsvColumns[4] != TEXT("None"))
 	{
@@ -196,6 +222,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);
 	}
+	
 	
 }
 
