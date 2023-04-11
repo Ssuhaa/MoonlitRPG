@@ -25,8 +25,14 @@ protected:
 	void ActivePuzzle(class UParticleSystem* particle, FVector loc, FVector size);
 	void SpawnBox();
 
+	UFUNCTION()
+	void FinishSequence();
+
 	UPROPERTY()
 	TArray<USoundBase*> activeSoundArr;
+
+	UPROPERTY(EditAnywhere)
+	class ASH_Player* player;
 
 public:	
 	// Called every frame
@@ -35,47 +41,40 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compRoot;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compGuidePos;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* compBoxPos;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* compRock;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TArray<UStaticMeshComponent*> createMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	TArray<class UStaticMeshComponent*> meshArr;
-
 	UPROPERTY(EditAnywhere, Category = "Puzzle")
 	class APuzzleGuide* puzzleGuide;
-
 	UPROPERTY(EditAnywhere, Category = "Puzzle")
 	TSubclassOf<class APuzzleGuide> guideFactory;
-	
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TArray<class UStaticMeshComponent*> hitMeshArr;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> meshPos;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AInteractiveObjectBase> treasureBoxFactory;
-
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	TArray<UParticleSystem*> particleArr;
 
 	UPROPERTY(EditAnywhere)
 	int32 componentCount = 5;
 
+	UPROPERTY(EditAnywhere)
+	class ULevelSequence* treasureSequence;
+	UPROPERTY(EditAnywhere)
+	class ULevelSequencePlayer* sequencePlayer;
+
 	int32 hitCount = 0;
 	bool isBoxSpawned = false;
 
 	void ReceiveMeshArr(class UStaticMeshComponent* mesh);
-
 	void PlayActiveSound(FVector meshLoc);
 };

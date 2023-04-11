@@ -9,6 +9,9 @@
 #include <Kismet/GameplayStatics.h>
 #include "IH_TreasureBox.h"
 #include <Sound/SoundCue.h>
+#include <LevelSequence/Public/LevelSequenceActor.h>
+#include <LevelSequence/Public/LevelSequencePlayer.h>
+#include "SH_Player.h"
 
 // Sets default values
 AIH_Puzzle::AIH_Puzzle()
@@ -104,6 +107,12 @@ void AIH_Puzzle::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ALevelSequenceActor* sequenceActor;
+	sequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), treasureSequence, FMovieSceneSequencePlaybackSettings(), sequenceActor);
+	sequencePlayer->OnFinished.AddDynamic(this, &AIH_Puzzle::FinishSequence);
+
+	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
+
 	puzzleGuide = GetWorld()->SpawnActor<APuzzleGuide>(guideFactory, compGuidePos->GetComponentLocation(), compGuidePos->GetComponentRotation());
 	puzzleGuide->ReceivePuzzleArr(meshArr);
 }
@@ -133,7 +142,6 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 			hitMeshArr.Add(mesh);
 
 			FVector hitLoc = mesh->GetComponentLocation();
-//			hitLoc.Z = 0;
 			ActivePuzzle(particleArr[2], hitLoc, FVector(0.3));
 			ActivePuzzle(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(1));
 //			UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
@@ -144,10 +152,8 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 		hitMeshArr.Add(mesh);
 
 		FVector hitLoc = mesh->GetComponentLocation();
-//		hitLoc.Z = 0;
 		ActivePuzzle(particleArr[2], hitLoc, FVector(0.3));
 		ActivePuzzle(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(1));
-
 //		UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 	}
 
@@ -185,8 +191,11 @@ void AIH_Puzzle::CheckAnswer()
 	{
 		if (meshArr[meshArr.Num() - 1] == hitMeshArr[hitMeshArr.Num() - 1])
 		{
-//			UE_LOG(LogTemp, Warning, TEXT("Correct!!!!!!!!!!!"));
-			SpawnBox();
+			player->FadeInOut(true);
+			sequencePlayer->Play();
+
+			FTimerHandle timer;
+			GetWorld()->GetTimerManager().SetTimer(timer, this, &AIH_Puzzle::SpawnBox, 1.3f, false);
 		}
 	}
 }
@@ -222,4 +231,9 @@ void AIH_Puzzle::SpawnBox()
 		isBoxSpawned = true;
 		puzzleGuide->Destroy();
 	}
+}
+
+void AIH_Puzzle::FinishSequence()
+{
+	player->FadeInOut(false);
 }

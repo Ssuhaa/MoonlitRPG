@@ -113,13 +113,15 @@ void UMoveComponent::Horizontal(const FInputActionValue& value)
 		Player->SwitchWeaponPos();
 	}
 
-	if (CurrSpeed >= 800)
+	if (CurrSpeed >= 1000)
 	{
 		bDash = true;
+		Player->ActiveBlur(true);
 	}
 	else
 	{
 		bDash = false;
+		Player->ActiveBlur(false);
 	}
 }
 

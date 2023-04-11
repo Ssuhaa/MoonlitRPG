@@ -11,6 +11,7 @@
 #include "SequencerPlayer.h"
 #include "DataManager.h"
 #include <LevelSequence/Public/LevelSequencePlayer.h>
+#include "SequencerNPC.h"
 
 // Sets default values
 AVillageEntrance::AVillageEntrance()
@@ -48,6 +49,7 @@ void AVillageEntrance::BeginPlay()
 	
 	player = Cast<ASH_Player>(UGameplayStatics::GetActorOfClass(GetWorld(), ASH_Player::StaticClass()));
 	sequencerActor = Cast<ASequencerPlayer>(UGameplayStatics::GetActorOfClass(GetWorld(), ASequencerPlayer::StaticClass()));
+	sequencerNPC = Cast<ASequencerNPC>(UGameplayStatics::GetActorOfClass(GetWorld(), ASequencerNPC::StaticClass()));
 	warningUI = CreateWidget<UQuestWarningUI>(GetWorld(), UIFactory);
 
 	DataManager = Cast<ADataManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ADataManager::StaticClass()));
@@ -84,6 +86,7 @@ void AVillageEntrance::GoToVillage(UPrimitiveComponent* OverlappedComponent, AAc
 void AVillageEntrance::PlaySequence()
 {
 	sequencerActor->SetActorHiddenInGame(false);
+	sequencerNPC->SetActorHiddenInGame(false);
 	player->SetActorHiddenInGame(true);
 	player->QuestComp->NaviClear();
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.5f, FColor::Black, true, true);
@@ -93,6 +96,7 @@ void AVillageEntrance::PlaySequence()
 void AVillageEntrance::FinishSequence()
 {
 	sequencerActor->Destroy();
+	sequencerNPC->Destroy();
 	DataManager->NavigateTarget(*player->QuestComp->MainQuest);
 	player->SetActorHiddenInGame(false);
 	player->FadeInOut(false);

@@ -216,7 +216,7 @@ void ASH_Player::BeginPlay()
 
 	PlayerPostProcess->Settings.VignetteIntensity = 0.5f;
 	PlayerPostProcess->Settings.MotionBlurAmount = 1.0f;
-	PlayerPostProcess->Settings.MotionBlurMax = 50.0f;
+	PlayerPostProcess->Settings.MotionBlurMax = 100.0f;
 	PlayerPostProcess->Settings.BloomIntensity = 4.0f;
 }
 
@@ -227,7 +227,7 @@ void ASH_Player::Tick(float DeltaTime)
 	if (AttackComp->hitAnything)
 	{
 		float randomShake = FMath::RandRange(-3.0f, 3.0f);
-		float specialShake = FMath::RandRange(-5.0f, 5.0f);
+		float specialShake = FMath::RandRange(-10.0f, 10.0f);
 
  		currTime += DeltaTime;
 		
@@ -264,15 +264,17 @@ void ASH_Player::Tick(float DeltaTime)
 	{
 		dashZoom += DeltaTime*50;
 
-		dashZoom = FMath::Clamp(dashZoom, 90, 100);
+		dashZoom = FMath::Clamp(dashZoom, 90, 110);
 		CamComp->SetFieldOfView(dashZoom);
+		ActiveBlur(true);
 	}
 	else
 	{
 		dashZoom -= DeltaTime*50;
 
-		dashZoom = FMath::Clamp(dashZoom, 90, 100);
+		dashZoom = FMath::Clamp(dashZoom, 90, 110);
 		CamComp->SetFieldOfView(dashZoom);
+		ActiveBlur(false);
 	}
 }
 

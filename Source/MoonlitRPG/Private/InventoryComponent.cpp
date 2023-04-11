@@ -26,8 +26,7 @@ UInventoryComponent::UInventoryComponent()
 	if (tempWG.Succeeded())
 	{
 		invenFactory = tempWG.Class; 
-	}
-	
+	}	
 }
 
 
@@ -169,7 +168,6 @@ bool UInventoryComponent::WeaponSwitch(TObjectPtr <FInvenItem> ChangeItem)
 	return false;
 
 }
-
 
 
 int32 UInventoryComponent::MinusItemAmount(int32 MinusInvenItem, int32 Amount) //원하는 개수만큼 아이템을 빼고 남은 개수를 반환

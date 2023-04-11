@@ -42,6 +42,8 @@ protected:
 	class ULevelSequencePlayer* sequencePlayer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ASequencerPlayer* sequencerActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ASequencerNPC* sequencerNPC;
 
 	bool enterVillage = false;
 
