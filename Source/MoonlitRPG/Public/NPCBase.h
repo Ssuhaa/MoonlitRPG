@@ -60,10 +60,6 @@ public:
 	void InteractNPC();
 	bool bTalking = false;
 
-	FString MakeCSVPath();
-
-	UPROPERTY(EditAnywhere)
-	class UCameraComponent* NPCCamComp;
-	
+	FString MakeCSVPath();	
 };
 

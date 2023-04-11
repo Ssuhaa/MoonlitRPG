@@ -16,6 +16,7 @@
 #include "Materials/MaterialParameterCollection.h"
 #include <Kismet/KismetMaterialLibrary.h>
 #include "Kismet/GameplayStatics.h"
+#include <Sound/SoundCue.h>
 
 
 AEnemyBase::AEnemyBase()
@@ -95,6 +96,11 @@ AEnemyBase::AEnemyBase()
 		impactEffectArr.Add(tempplayerHit.Object);
 	}
 
+	ConstructorHelpers::FObjectFinder<USoundCue>tempSound(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_Impact.sc_Impact'"));
+	if (tempSound.Succeeded())
+	{
+		impactSound = tempSound.Object;
+	}
 }
 
 void AEnemyBase::BeginPlay()
@@ -134,6 +140,12 @@ void AEnemyBase::SetActive(bool bActive)
 {
 	if (bActive)
 	{
+		dissolveValue = 1;
+		for (int32 i = 0; i < instArr.Num(); i++)
+		{
+			instArr[i]->SetScalarParameterValue(TEXT("Dead"), dissolveValue);
+		}
+
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		FSM->originPos = GetActorLocation();
 	}
@@ -167,4 +179,9 @@ void AEnemyBase::RandomHitImpact(FVector loc)
 {
 	UParticleSystemComponent* playerhit = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), impactEffectArr[2], loc);
 	playerhit->SetRelativeScale3D(FVector(1.0));
+}
+
+void AEnemyBase::PlayImpactSound()
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSound, GetActorLocation());
 }

@@ -174,6 +174,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	TArray<USoundBase*>SoundArr;
 
+	UPROPERTY()
+	class AIH_MagoTree* magoTree;
+
 	void PlaySkillSequence();
 
 	UFUNCTION()

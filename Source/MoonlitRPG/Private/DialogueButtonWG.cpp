@@ -7,6 +7,7 @@
 #include "MainDialogueUI.h"
 #include "NPCBase.h"
 #include "SH_Player.h"
+#include <Kismet/GameplayStatics.h>
 
 void UDialogueButtonWG::NativeConstruct()
 {

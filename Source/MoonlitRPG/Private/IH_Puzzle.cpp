@@ -8,6 +8,7 @@
 #include <Particles/ParticleSystemComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include "IH_TreasureBox.h"
+#include <Sound/SoundCue.h>
 
 // Sets default values
 AIH_Puzzle::AIH_Puzzle()
@@ -84,6 +85,18 @@ AIH_Puzzle::AIH_Puzzle()
 	{
 		particleArr.Add(tempLoot.Object);
 	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue>tempActive1(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_ObjectHit.sc_ObjectHit'"));
+	if(tempActive1.Succeeded())
+	{
+		activeSoundArr.Add(tempActive1.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue>tempActive2(TEXT("/Script/Engine.SoundCue'/Game/Effect/GoodFXLevelUp/SFX/Sound_Cue/A_GFXLU_Bokeh_Cue.A_GFXLU_Bokeh_Cue'"));
+	if (tempActive2.Succeeded())
+	{
+		activeSoundArr.Add(tempActive2.Object);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -121,8 +134,8 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 
 			FVector hitLoc = mesh->GetComponentLocation();
 //			hitLoc.Z = 0;
-			SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-			SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(0.5));
+			ActivePuzzle(particleArr[2], hitLoc, FVector(0.3));
+			ActivePuzzle(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(1));
 //			UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 		}
 	}
@@ -132,8 +145,9 @@ void AIH_Puzzle::ReceiveMeshArr(class UStaticMeshComponent* mesh)
 
 		FVector hitLoc = mesh->GetComponentLocation();
 //		hitLoc.Z = 0;
-		SpawnEffect(particleArr[2], hitLoc, FVector(0.3));
-		SpawnEffect(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(0.5));
+		ActivePuzzle(particleArr[2], hitLoc, FVector(0.3));
+		ActivePuzzle(particleArr[3], mesh->GetComponentLocation() + (mesh->GetUpVector() * 105), FVector(1));
+
 //		UE_LOG(LogTemp, Warning, TEXT("Add Mesh : %s"), *mesh->GetName());
 	}
 
@@ -177,10 +191,13 @@ void AIH_Puzzle::CheckAnswer()
 	}
 }
 
-void AIH_Puzzle::SpawnEffect(class UParticleSystem* particle, FVector loc, FVector size)
+void AIH_Puzzle::ActivePuzzle(class UParticleSystem* particle, FVector loc, FVector size)
 {
 	UParticleSystemComponent* compEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, loc);
 	compEffect->SetRelativeScale3D(size);
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), activeSoundArr[0], loc);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), activeSoundArr[1], loc);
 
 	if (particle == particleArr[3])
 	{
@@ -200,8 +217,8 @@ void AIH_Puzzle::SpawnBox()
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), treasureBox->chestSoundArr[1], compBoxPos->GetComponentLocation());
 		}
 
-		SpawnEffect(particleArr[0], compBoxPos->GetComponentLocation(), FVector(0.5));
-		SpawnEffect(particleArr[1], compBoxPos->GetComponentLocation(), FVector(0.8));
+		ActivePuzzle(particleArr[0], compBoxPos->GetComponentLocation(), FVector(0.5));
+		ActivePuzzle(particleArr[1], compBoxPos->GetComponentLocation(), FVector(0.8));
 		isBoxSpawned = true;
 		puzzleGuide->Destroy();
 	}
