@@ -63,7 +63,7 @@ public:
 	class AIH_EnemyManager* Manager;
 
 	UPROPERTY()
-	class USoundBase* impactSound;
+	TArray<USoundBase*> damagedSound;
 
 	void PlayImpactSound();
 

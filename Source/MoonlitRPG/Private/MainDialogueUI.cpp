@@ -204,7 +204,8 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 	{
 		Buttons[1]->SetText(CsvColumns[4]);
 		Buttons[1]->DialogueWG = this;
-		VB_Choices->InsertChildAt(0, Buttons[1]);
+		
+		VB_Choices->AddChildToVerticalBox(Buttons[1]);
 		canvas->SetPosition(FVector2D(236.0, 4.0));
 
 		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
@@ -217,7 +218,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 
 		Buttons[2]->SetText(CsvColumns[6]);
 		Buttons[2]->DialogueWG = this;
-		VB_Choices->InsertChildAt(0, Buttons[2]);
+		VB_Choices->AddChildToVerticalBox(Buttons[2]);
 		canvas->SetPosition(FVector2D(236.0, -64.0));
 
 		Buttons[2]->NextIndex = FCString::Atoi(*CsvColumns[7]);

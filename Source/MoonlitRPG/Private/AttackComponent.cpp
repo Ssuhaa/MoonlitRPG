@@ -170,7 +170,7 @@ void UAttackComponent::SpecialAttack()
 			isSpecialAttacking = true;		// Q 스킬 쓸 때 피격당하지 않게 하기 위해서
 			player->ActiveBlur(true);
 			player->PlaySkillSequence();
-			player->SkillCameraFollow(player->GetMesh(), TEXT("pelvis"));
+			player->SkillCameraFollow(player->GetMesh(), TEXT("Camera_Socket"));
 		}
 	}
 }

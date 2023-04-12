@@ -99,7 +99,7 @@ AEnemyBase::AEnemyBase()
 	ConstructorHelpers::FObjectFinder<USoundCue>tempSound(TEXT("/Script/Engine.SoundCue'/Game/Sound/SFX/sc_Impact.sc_Impact'"));
 	if (tempSound.Succeeded())
 	{
-		impactSound = tempSound.Object;
+		damagedSound.Add(tempSound.Object);
 	}
 }
 
@@ -183,5 +183,5 @@ void AEnemyBase::RandomHitImpact(FVector loc)
 
 void AEnemyBase::PlayImpactSound()
 {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), impactSound, GetActorLocation());
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), damagedSound[0], GetActorLocation());
 }

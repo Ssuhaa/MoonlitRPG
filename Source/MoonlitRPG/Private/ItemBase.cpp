@@ -12,7 +12,7 @@
 #include <UMG/Public/Components/VerticalBox.h>
 #include "IH_GetItemUI.h"
 #include <UMG/Public/Components/Image.h>
-#include <Cascade/Classes/CascadeParticleSystemComponent.h>
+//#include <Cascade/Classes/CascadeParticleSystemComponent.h>
 #include "DataManager.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
