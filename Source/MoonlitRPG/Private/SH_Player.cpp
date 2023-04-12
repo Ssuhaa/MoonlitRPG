@@ -126,6 +126,11 @@ ASH_Player::ASH_Player()
 	{
 		altkey = tempAlt.Object; //alt
 	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempESC(TEXT("/Script/EnhancedInput.InputAction'/Game/input/Key_ESC.Key_ESC'"));
+	if (tempESC.Succeeded())
+	{
+		esckey = tempESC.Object; //alt
+	}
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> tempWeapon1(TEXT("/Script/Engine.StaticMesh'/Game/Animation/Meshes/sword.sword'"));
 	if (tempWeapon1.Succeeded())
@@ -173,6 +178,7 @@ ASH_Player::ASH_Player()
 	warningUI = CreateWGClass<UIH_WarningUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_FightWarning.WG_FightWarning_C'"));
 	MainHUD = CreateWGClass<UPlayerMainWG>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/BP_WG_PlayerMain.BP_WG_PlayerMain_C'"));
 	screenshotUI = CreateWGClass<UScreenShotUI>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_ScreenShot.WG_ScreenShot_C'"));
+	gameMenuUI = CreateWGClass<UUserWidget>(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WG_Menu.WG_Menu_C'"));
 
 }
 
@@ -286,6 +292,7 @@ void ASH_Player::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	{
 		EnhancedInputComponent->BindAction(fkey, ETriggerEvent::Triggered, this, &ASH_Player::interactionObject); //F키
 		EnhancedInputComponent->BindAction(altkey, ETriggerEvent::Triggered, this, &ASH_Player::OpenScreenshotUI); //ALT키
+		EnhancedInputComponent->BindAction(esckey, ETriggerEvent::Triggered, this, &ASH_Player::OpenGameMenu);
 		MoveComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		InvenComp->SetupPlayerInputComponent(EnhancedInputComponent);
 		AttackComp->SetupPlayerInputComponent(EnhancedInputComponent);
@@ -308,6 +315,20 @@ void ASH_Player::OpenScreenshotUI()
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		screenshotUI->RemoveFromParent();
 		screenShotOpen = false;
+	}
+}
+
+void ASH_Player::OpenGameMenu()
+{
+	if (!menuOpen)
+	{
+		gameMenuUI->AddToViewport();
+		menuOpen = true;
+	}
+	else
+	{
+		gameMenuUI->RemoveFromParent();
+		menuOpen = false;
 	}
 }
 
@@ -403,7 +424,6 @@ void ASH_Player::interactionObject()
 		{
 			if(currobject->GetName().Contains(TEXT("Mago"))) return;
 
-			UGameplayStatics::PlaySound2D(GetWorld(), SoundArr[2]);
 			currobject->Interaction();
 			return;
 		}

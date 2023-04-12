@@ -72,6 +72,7 @@ void AIH_WarpPoint::Interaction()
 		bsavePoint = true;
 		warpUI->AddToViewport();
 		activeEffect->SetActive(true);
+		UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[2]);
 		UGameplayStatics::PlaySound2D(GetWorld(), activeSound);
 
 		FTimerHandle timer;

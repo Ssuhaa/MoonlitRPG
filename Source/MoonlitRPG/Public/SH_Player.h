@@ -48,12 +48,17 @@ protected:
 	class UInputAction* fkey;
 	UPROPERTY()
 	class UInputAction* altkey;
+	UPROPERTY()
+	class UInputAction* esckey;
+
 	void interactionObject();
 	void OpenScreenshotUI();
+	void OpenGameMenu();
 	void CameraShake(float deltaTime, float delayTime, float shakeTime);
 	void ActiveVignette(float deltaTime);
 
 	bool screenShotOpen = false;
+	bool menuOpen = false;
 	float currTime = 0;
 	float zoomIn = 90;
 	float dashZoom = 90;
@@ -103,6 +108,8 @@ public:
 	class UIH_WarningUI* warningUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
 	class UScreenShotUI* screenshotUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	class UUserWidget* gameMenuUI;
 	UPROPERTY()
 	class APlayerController* playerCon;
 	UPROPERTY()

@@ -79,6 +79,8 @@ void AInteractiveObjectBase::Tick(float DeltaTime)
 
 void AInteractiveObjectBase::Interaction()
 {
+	UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[2]);
+
 	if (spawnMoney.IsValidIndex(0))
 	{
 		int32 randCoin = FMath::RandRange(2, 3);
