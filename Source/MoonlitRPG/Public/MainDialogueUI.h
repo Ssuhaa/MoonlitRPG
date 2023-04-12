@@ -17,6 +17,7 @@ class MOONLITRPG_API UMainDialogueUI : public UUserWidget
 	UMainDialogueUI(const FObjectInitializer& ObjectInitializer);
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 

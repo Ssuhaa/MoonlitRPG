@@ -418,11 +418,7 @@ void ASH_Player::interactionObject()
 			if (QuestComp->MainQuest->SubType == ESubQuestType::Contact && QuestComp->CheackRequirementTarget(currNPC->idx)) //메인퀘스트가 만나기고 현재NPC가 퀘스트 수행 NPC면
 			{
 				dialogueUI->MainQuestContect(currNPC);
-				if (QuestComp->isDoneQuestRequirements(QuestComp->MainQuest)) //만약 퀘스트 수행이 완료되었다면
-				{
-					QuestComp->CompleteMainQuest();
-					return;
-				}
+		
 			}
 			else
 			{

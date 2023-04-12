@@ -29,8 +29,7 @@ void UDialogueButtonWG::SetText(FString Text)
 void UDialogueButtonWG::ClickedButton()
 {
 	DialogueWG->OnClikedNextButton(NextIndex);
-
-	if (NextIndex == 16)
+	if (NextIndex == 18)
 	{
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, 1.5f, FColor::Black, false, true);
 		player->FadeInOut(true);
@@ -38,6 +37,7 @@ void UDialogueButtonWG::ClickedButton()
 
 		FTimerHandle timer;
 		GetWorld()->GetTimerManager().SetTimer(timer, this, &UDialogueButtonWG::TeleportILsub, 3.0f, false);
+
 	}
 }
 

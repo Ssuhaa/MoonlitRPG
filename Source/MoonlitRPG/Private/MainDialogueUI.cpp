@@ -46,6 +46,16 @@ void UMainDialogueUI::NativeConstruct()
 	PlayAnimation(DialogueOpenAnim);
 }
 
+void UMainDialogueUI::NativeDestruct()
+{
+	Super::NativeDestruct();
+	if (player->QuestComp->isDoneQuestRequirements(player->QuestComp->MainQuest)) //만약 퀘스트 수행이 완료되었다면
+	{
+		player->QuestComp->CompleteMainQuest();
+		return;
+	}
+}
+
 void UMainDialogueUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -76,7 +86,8 @@ void UMainDialogueUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 FReply UMainDialogueUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry,InMouseEvent);
-	if (CsvColumns[2] == TEXT("None") && isTextPlay == false)
+	if(!CsvColumns.IsValidIndex(2)) return FReply::Unhandled();
+	if (Pointer->IsVisible() && isTextPlay == false)
 	{
 		isTextPlay = true;
 		UGameplayStatics::PlaySound2D(GetWorld(), player->SoundArr[3]);
@@ -127,7 +138,7 @@ void UMainDialogueUI::MainQuestContect(ANPCBase* ContectNPC)
 	npc = ContectNPC;
 	SetStartDialouge(player->QuestComp->MainQuest->DialougueIndex);
 	SetDialogue(CurrNext);
-	ReadCSVFile(FPaths::ProjectDir() + FString::Printf(TEXT("Dialogue/MainQuest.csv")));
+	ReadCSVFile(FPaths::ProjectContentDir() + FString::Printf(TEXT("Dialogue/MainQuest.csv")));
 	AddToViewport();
 }
 
@@ -208,7 +219,7 @@ void UMainDialogueUI::SetDialogue(int32 Next)
 		VB_Choices->AddChildToVerticalBox(Buttons[1]);
 		canvas->SetPosition(FVector2D(236.0, 4.0));
 
-		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]);
+		Buttons[1]->NextIndex = FCString::Atoi(*CsvColumns[5]  );
 	}
 	else return;
 

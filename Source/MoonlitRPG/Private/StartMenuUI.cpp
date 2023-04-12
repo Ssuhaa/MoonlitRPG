@@ -22,7 +22,7 @@ void UStartMenuUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		currTime += InDeltaTime;
 		if (currTime > 0.2)
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), TEXT("Main"));
+			UGameplayStatics::OpenLevel(GetWorld(), TEXT("PlayLevel"));
 			currTime = 0;
 		}
 	}
