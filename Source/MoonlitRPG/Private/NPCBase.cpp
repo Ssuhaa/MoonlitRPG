@@ -91,6 +91,6 @@ void ANPCBase::InteractNPC()
 
 FString ANPCBase::MakeCommonCSVPath()
 {
-	return FPaths::ProjectDir() + FString::Printf(TEXT("Dialogue/%s%d.csv"), *NPCName, DialogueNum); //CSV 파일명 Npc이름 + 번호
+	return FPaths::ProjectContentDir() + FString::Printf(TEXT("Dialogue/%s%d.csv"), *NPCName, DialogueNum); //CSV 파일명 Npc이름 + 번호
 
 }
